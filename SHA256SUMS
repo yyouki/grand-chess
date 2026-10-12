@@ -1,0 +1,11 @@
+73c696f7799b96060c633723500b5e59b953a73e67b58b4bdbecdd3747cebaca  APPLY.txt
+78ec3bbf6030d72b43a19b377aef6215d760bcb0fdc27d793887c7496edead3f  files/.github/workflows/ci.yml
+1e2c8c6a12a98cdbd8a2b8aa894f83b7d1c7e826687100392152a0fbe3fa4836  files/.github/workflows/format-dart.yml
+de7aeef300357dde67a0f2f5771cb306d19bb6a936aede541570ca34f3e6c9ad  files/lib/game/game_controller.dart
+c379bd561a717826bfefa47fa9f235ffe8a0eb49eff3afb618b2fc50fea7dc51  files/lib/game/game_mode.dart
+f289fe8b3aef9f305525c3221b53d08bc4f6eb108b6c85cea605a1c658b987fd  files/lib/game/game_outcome.dart
+fc8aa9e4fcfbf95af8cc219b5938cf786cd8c8f7664e65602d39cc95f52981f5  files/test/game/game_controller_test.dart
+f461c2ebe993729d719f6fe734a712ff260554e756c2cee464bd92c5a077ab0e  patches/0001-feat-game-recover-Phase-3-application-layer-from-che.patch
+68f07720449514cf2020d5250c326526414d250190c505dcfe5e33a3ec21e566  patches/0002-fix-game-make-GameController.fromFen-return-a-Result.patch
+786e72eb24718edb31d7df5380a81151c0548d13d531f277bfed12892c34c316  patches/0003-ci-build-Windows-for-real-instead-of-skipping-when-w.patch
+afa9a215d8c52c871aa783d8246a55b4edee038feac066799b401b75247ee328  patches/0004-ci-add-push-triggered-Dart-formatter-for-phase3-stag.patch

@@ -1,0 +1,55 @@
+From 0586006990cd91d9c5efde51ff407279e4ababf4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 8 Oct 2026 18:31:36 +0000
+Subject: [PATCH 3/3] ci: build Windows for real instead of skipping when
+ windows/ is missing
+
+At 0a83ff3 the build-windows job finished green in about 10 seconds
+while only printing the "windows/ directory not present yet" notice,
+because hashFiles('windows/**') was empty. A green check there said
+nothing about Windows.
+
+The job now generates windows/ the same way build-android generates
+android/ (flutter create . --platforms=windows when the folder is
+missing, using bash explicitly because the runner default is pwsh) and
+then runs flutter build windows --release.
+
+Not verified by a real GitHub Actions run yet.
+---
+ .github/workflows/ci.yml | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index ae9513d..972093a 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -61,18 +61,18 @@ jobs:
+       - uses: actions/checkout@v4
+ 
+       - uses: subosito/flutter-action@v2
+-        if: hashFiles('windows/**') != ''
+         with:
+           channel: stable
+ 
+       - name: Install dependencies
+-        if: hashFiles('windows/**') != ''
+         run: flutter pub get
+ 
+-      - name: Build Windows (debug)
+-        if: hashFiles('windows/**') != ''
+-        run: flutter build windows --debug
++      - name: Generate windows directory if missing
++        shell: bash
++        run: |
++          if [ ! -d "windows" ]; then
++            flutter create . --platforms=windows
++          fi
+ 
+-      - name: Skip notice
+-        if: hashFiles('windows/**') == ''
+-        run: echo "::warning::windows/ directory not present yet."
++      - name: Build Windows (release)
++        run: flutter build windows --release
+-- 
+2.43.0
+

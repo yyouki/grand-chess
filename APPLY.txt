@@ -1,0 +1,76 @@
+GRAND CHESS - PHASE 3 TAHAP 1 - PAKET v2
+
+BASIS
+Repo: https://github.com/yyouki/grand-chess
+Commit basis (main): 0a83ff331853fd6809c939e9d75ae33336eb1e17
+Sebelum mulai, pastikan main masih berada di commit itu. Jika sudah berubah, berhenti dan laporkan.
+
+STATUS VERIFIKASI
+
+Diverifikasi dengan inspeksi nyata (di klon scratch lokal, tanpa push ke GitHub):
+- Empat patch dapat diterapkan berurutan tanpa konflik di atas commit basis.
+- Isi folder files/ sama persis (per byte) dengan hasil penerapan keempat patch.
+- Patch 0001-0003 tidak menyentuh engine Phase 2 maupun tesnya.
+- Penerusan error GameController.fromFen() dan tesnya sudah ditinjau dengan membaca kode.
+- Job Windows di ci.yml tidak bisa sukses dengan cara di-skip (19 pemeriksaan statis lulus).
+- format-dart.yml lulus parse YAML, yamllint, actionlint (dengan shellcheck), dan 25 pemeriksaan struktur.
+
+Diverifikasi dengan simulasi lokal (BUKAN GitHub Actions): logika shell langkah publish pada repo Git lokal dengan dart palsu; 51 pemeriksaan lulus.
+
+Belum diverifikasi karena Dart/Flutter tidak ada di sandbox: dart format, flutter analyze, flutter test, build Android, build Windows.
+
+Belum diverifikasi karena GitHub Actions belum berjalan: workflow Format Dart (belum pernah dijalankan), push dengan token ke branch baru, dan semua job CI.
+
+Terblokir kredensial: sandbox tidak punya kredensial git, jadi tidak ada push dari sandbox. Push dilakukan oleh Anda.
+
+ISI PAKET
+patches/0001 sampai 0003   tiga patch tahap 1 asli (tidak diubah).
+patches/0004               menambah .github/workflows/format-dart.yml.
+files/                     versi akhir enam file yang ditambah atau diubah (path relatif ke akar repo).
+SHA256SUMS                 hash semua berkas paket kecuali SHA256SUMS sendiri.
+
+URUTAN WAJIB
+1. Buat branch phase3/stage1 dari main.
+2. Terapkan tahap 1 (patch 0001-0003).
+3. TERAKHIR tambahkan format-dart.yml (patch 0004). Push yang memuatnya memicu formatter.
+Jangan commit apa pun langsung ke main.
+
+PERIKSA PAKET (opsional)
+Di dalam folder grand_chess-phase3-stage1-v2:
+sha256sum -c SHA256SUMS
+Semua baris harus berakhir OK.
+
+CARA A - klien git (git di komputer, atau Termux di Android)
+Letakkan folder grand_chess-phase3-stage1-v2 bersebelahan dengan folder repo, lalu:
+git clone https://github.com/yyouki/grand-chess.git
+cd grand-chess
+git rev-parse HEAD
+git switch -c phase3/stage1
+git am --3way ../grand_chess-phase3-stage1-v2/patches/*.patch
+git log --oneline -5
+git push -u origin phase3/stage1
+git rev-parse HEAD harus mencetak 0a83ff331853fd6809c939e9d75ae33336eb1e17 sebelum git switch.
+Wildcard *.patch berurutan 0001 sampai 0004. Jika shell Anda tidak mendukung wildcard, tulis keempat nama berkas satu per satu dengan urutan itu.
+Push ini memuat perubahan file workflow (patch 0003 dan 0004). Jika GitHub menolak dengan pesan tentang izin "workflow", pakai kredensial yang boleh mengubah workflow (token klasik dengan scope workflow, atau token fine-grained dengan izin Workflows: write).
+
+CARA B - tanpa git (web GitHub di browser)
+1. Di halaman repo, buka daftar branch, ketik phase3/stage1, lalu pilih "Create branch phase3/stage1 from main".
+2. Pastikan branch phase3/stage1 terpilih. Buka folder lib/game, pilih Add file > Upload files, pilih tiga file dari files/lib/game/ (game_controller.dart, game_mode.dart, game_outcome.dart), lalu commit langsung ke branch phase3/stage1.
+3. Add file > Create new file. Ketik nama lengkap test/game/game_controller_test.dart, tempel isi files/test/game/game_controller_test.dart, lalu commit langsung ke phase3/stage1.
+4. Ganti isi .github/workflows/ci.yml: buka berkas, ikon pensil, hapus seluruh isi, tempel isi files/.github/workflows/ci.yml, commit langsung ke phase3/stage1.
+5. Hapus lib/game/.gitkeep.
+6. TERAKHIR: Add file > Create new file. Ketik nama lengkap .github/workflows/format-dart.yml, tempel isi files/.github/workflows/format-dart.yml, commit langsung ke phase3/stage1.
+Cara B menghasilkan pohon berkas yang sama dengan Cara A, tetapi riwayat commit-nya berbeda.
+
+SETELAH PUSH
+1. Buka tab Actions di GitHub, pilih workflow "Format Dart", tunggu run selesai.
+2. Run sukses dan ada perubahan format: ringkasan run memuat tautan PR dan branch baru format/phase3-stage1-<7 karakter SHA> dibuat. Buka Pull Request dari branch itu ke main.
+3. Run sukses tanpa perubahan format: tidak ada branch baru. Buka Pull Request dari phase3/stage1 ke main.
+4. Run gagal: salin pesan error persisnya dan kirim. Jangan buka PR.
+5. Di PR, baca tiga job CI: analyze-and-test (format, analyze, test), build-android, dan build-windows. build-windows harus benar-benar membangun; job yang di-skip bukan sukses.
+Jangan merge sebelum ketiganya hijau, dan jangan mulai UI Phase 3 sebelum itu.
+
+CATATAN
+- Formatter memakai Flutter channel stable seperti CI. Jika stable berganti versi di antara dua run, hasil format bisa berbeda.
+- Formatter tidak pernah menulis ke main atau phase3/stage1 dan tidak pernah force-push.
+- Perilaku formatter di GitHub (izin tulis token, push ke branch baru) baru terbukti setelah run pertama.
