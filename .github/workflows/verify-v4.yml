@@ -1,0 +1,138 @@
+name: Verify Grand Chess v4 fixes
+
+on:
+  push:
+    branches:
+      - verify/v4-fixes
+
+permissions:
+  contents: read
+
+jobs:
+  linux-tests-android:
+    name: Format, analyze, test, and Android release build
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Assemble complete project from trusted baseline and Stage 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          project="$GITHUB_WORKSPACE/recovered-project"
+          git clone --depth 1 --branch test-baseline/v4 "https://github.com/$GITHUB_REPOSITORY.git" "$project"
+          git -C "$project" fetch --depth=1 origin main:refs/remotes/origin/main
+
+          for path in \
+            ".github/workflows/ci.yml" \
+            ".github/workflows/format-dart.yml" \
+            "lib/game/game_controller.dart" \
+            "lib/game/game_mode.dart" \
+            "lib/game/game_outcome.dart" \
+            "test/game/game_controller_test.dart"
+          do
+            mkdir -p "$project/$(dirname "$path")"
+            git -C "$project" show "origin/main:$path" > "$project/$path"
+          done
+
+          rm -f "$project/lib/game/.gitkeep" "$project/lib/ui/.gitkeep"
+          base64 --decode "$GITHUB_WORKSPACE/verify-v4-fixes.patch.b64" > "$RUNNER_TEMP/grand-chess-v4-fixes.patch"
+          echo "d75962eb87dc2386f7d29ddbe86b9fe5183caaa43e8ee7f54060ee152790b75d  $RUNNER_TEMP/grand-chess-v4-fixes.patch" | sha256sum --check
+          git -C "$project" apply --check "$RUNNER_TEMP/grand-chess-v4-fixes.patch"
+          git -C "$project" apply "$RUNNER_TEMP/grand-chess-v4-fixes.patch"
+
+          echo "Prepared project at $project"
+          git -C "$project" status --short
+
+      - name: Install dependencies
+        working-directory: recovered-project
+        run: flutter pub get
+
+      - name: Format Dart sources
+        working-directory: recovered-project
+        run: dart format .
+
+      - name: Verify formatting
+        working-directory: recovered-project
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        working-directory: recovered-project
+        run: flutter analyze
+
+      - name: Run all tests
+        working-directory: recovered-project
+        run: flutter test
+
+      - name: Generate Android platform
+        working-directory: recovered-project
+        run: flutter create . --platforms=android
+
+      - name: Build Android release APK
+        working-directory: recovered-project
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: grand-chess-v4-android-release
+          path: recovered-project/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+
+  windows-release-build:
+    name: Generate Windows platform and build release
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Assemble complete project from trusted baseline and Stage 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          project="$GITHUB_WORKSPACE/recovered-project"
+          git clone --depth 1 --branch test-baseline/v4 "https://github.com/$GITHUB_REPOSITORY.git" "$project"
+          git -C "$project" fetch --depth=1 origin main:refs/remotes/origin/main
+
+          for path in \
+            ".github/workflows/ci.yml" \
+            ".github/workflows/format-dart.yml" \
+            "lib/game/game_controller.dart" \
+            "lib/game/game_mode.dart" \
+            "lib/game/game_outcome.dart" \
+            "test/game/game_controller_test.dart"
+          do
+            mkdir -p "$project/$(dirname "$path")"
+            git -C "$project" show "origin/main:$path" > "$project/$path"
+          done
+
+          rm -f "$project/lib/game/.gitkeep" "$project/lib/ui/.gitkeep"
+          base64 --decode "$GITHUB_WORKSPACE/verify-v4-fixes.patch.b64" > "$RUNNER_TEMP/grand-chess-v4-fixes.patch"
+          echo "d75962eb87dc2386f7d29ddbe86b9fe5183caaa43e8ee7f54060ee152790b75d  $RUNNER_TEMP/grand-chess-v4-fixes.patch" | sha256sum --check
+          git -C "$project" apply --check "$RUNNER_TEMP/grand-chess-v4-fixes.patch"
+          git -C "$project" apply "$RUNNER_TEMP/grand-chess-v4-fixes.patch"
+
+      - name: Install dependencies
+        working-directory: recovered-project
+        run: flutter pub get
+
+      - name: Format Dart sources
+        working-directory: recovered-project
+        run: dart format .
+
+      - name: Generate Windows platform
+        working-directory: recovered-project
+        shell: bash
+        run: flutter create . --platforms=windows
+
+      - name: Build Windows release
+        working-directory: recovered-project
+        run: flutter build windows --release
