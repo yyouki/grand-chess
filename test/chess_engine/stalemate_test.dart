@@ -3,15 +3,18 @@ import 'package:grand_chess/chess_engine/chess_engine.dart';
 
 void main() {
   group('Stalemate detection', () {
-    test('king with no legal moves and not in check is stalemate, not checkmate', () {
-      final state = GameState.fromFen(
-        'k7/8/1Q6/8/8/8/8/7K b - - 0 1',
-      ).valueOrNull!;
-      expect(state.status, GameStatus.stalemate);
-      expect(state.isInCheck, isFalse);
-      expect(state.legalMoves, isEmpty);
-      expect(state.result, GameResult.draw);
-    });
+    test(
+      'king with no legal moves and not in check is stalemate, not checkmate',
+      () {
+        final state = GameState.fromFen(
+          'k7/8/1Q6/8/8/8/8/7K b - - 0 1',
+        ).valueOrNull!;
+        expect(state.status, GameStatus.stalemate);
+        expect(state.isInCheck, isFalse);
+        expect(state.legalMoves, isEmpty);
+        expect(state.result, GameResult.draw);
+      },
+    );
 
     test('a classic king-and-pawn stalemate is detected', () {
       final state = GameState.fromFen(

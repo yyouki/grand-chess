@@ -21,29 +21,32 @@ void main() {
     });
   });
 
-  group('Square.fromAlgebraic — invalid input is rejected deterministically', () {
-    test('rejects an out-of-range file letter', () {
-      expect(() => Square.fromAlgebraic('i1'), throwsArgumentError);
-      expect(() => Square.fromAlgebraic('z1'), throwsArgumentError);
-    });
+  group(
+    'Square.fromAlgebraic — invalid input is rejected deterministically',
+    () {
+      test('rejects an out-of-range file letter', () {
+        expect(() => Square.fromAlgebraic('i1'), throwsArgumentError);
+        expect(() => Square.fromAlgebraic('z1'), throwsArgumentError);
+      });
 
-    test('rejects an out-of-range rank digit', () {
-      expect(() => Square.fromAlgebraic('a0'), throwsArgumentError);
-      expect(() => Square.fromAlgebraic('a9'), throwsArgumentError);
-    });
+      test('rejects an out-of-range rank digit', () {
+        expect(() => Square.fromAlgebraic('a0'), throwsArgumentError);
+        expect(() => Square.fromAlgebraic('a9'), throwsArgumentError);
+      });
 
-    test('rejects the wrong length', () {
-      expect(() => Square.fromAlgebraic('a'), throwsArgumentError);
-      expect(() => Square.fromAlgebraic('a12'), throwsArgumentError);
-      expect(() => Square.fromAlgebraic(''), throwsArgumentError);
-    });
+      test('rejects the wrong length', () {
+        expect(() => Square.fromAlgebraic('a'), throwsArgumentError);
+        expect(() => Square.fromAlgebraic('a12'), throwsArgumentError);
+        expect(() => Square.fromAlgebraic(''), throwsArgumentError);
+      });
 
-    test('rejects malformed input that is not a letter+digit pair', () {
-      expect(() => Square.fromAlgebraic('11'), throwsArgumentError);
-      expect(() => Square.fromAlgebraic('ab'), throwsArgumentError);
-      expect(() => Square.fromAlgebraic('A1'), throwsArgumentError);
-    });
-  });
+      test('rejects malformed input that is not a letter+digit pair', () {
+        expect(() => Square.fromAlgebraic('11'), throwsArgumentError);
+        expect(() => Square.fromAlgebraic('ab'), throwsArgumentError);
+        expect(() => Square.fromAlgebraic('A1'), throwsArgumentError);
+      });
+    },
+  );
 
   group('Square.tryFromAlgebraic — non-throwing equivalent', () {
     test('returns Ok for valid input', () {

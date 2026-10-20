@@ -23,7 +23,10 @@ class FenCodec {
     final fields = fen.trim().split(RegExp(r'\s+'));
     if (fields.length != 6) {
       return Result.err(
-        InvalidFenError(fen, 'expected 6 space-separated fields, got ${fields.length}'),
+        InvalidFenError(
+          fen,
+          'expected 6 space-separated fields, got ${fields.length}',
+        ),
       );
     }
     final placementResult = _parsePlacement(fen, fields[0]);
@@ -43,7 +46,9 @@ class FenCodec {
     } else if (fields[1] == 'b') {
       sideToMove = Color.black;
     } else {
-      return Result.err(InvalidFenError(fen, 'active color must be "w" or "b"'));
+      return Result.err(
+        InvalidFenError(fen, 'active color must be "w" or "b"'),
+      );
     }
 
     final castlingResult = _parseCastling(fen, fields[2]);
@@ -54,12 +59,16 @@ class FenCodec {
 
     final halfmove = int.tryParse(fields[4]);
     if (halfmove == null || halfmove < 0) {
-      return Result.err(InvalidFenError(fen, 'halfmove clock must be a non-negative integer'));
+      return Result.err(
+        InvalidFenError(fen, 'halfmove clock must be a non-negative integer'),
+      );
     }
 
     final fullmove = int.tryParse(fields[5]);
     if (fullmove == null || fullmove < 1) {
-      return Result.err(InvalidFenError(fen, 'fullmove number must be a positive integer'));
+      return Result.err(
+        InvalidFenError(fen, 'fullmove number must be a positive integer'),
+      );
     }
 
     return Result.ok(
@@ -81,7 +90,10 @@ class FenCodec {
     final ranks = placement.split('/');
     if (ranks.length != 8) {
       return Result.err(
-        InvalidFenError(fen, 'piece placement must have 8 ranks, got ${ranks.length}'),
+        InvalidFenError(
+          fen,
+          'piece placement must have 8 ranks, got ${ranks.length}',
+        ),
       );
     }
     final board = List<Piece?>.filled(64, null);
@@ -92,15 +104,21 @@ class FenCodec {
         final digit = int.tryParse(char);
         if (digit != null) {
           if (digit < 1 || digit > 8) {
-            return Result.err(InvalidFenError(fen, 'invalid empty-square count "$char"'));
+            return Result.err(
+              InvalidFenError(fen, 'invalid empty-square count "$char"'),
+            );
           }
           file += digit;
         } else {
           if (!'pnbrqkPNBRQK'.contains(char)) {
-            return Result.err(InvalidFenError(fen, 'invalid piece letter "$char"'));
+            return Result.err(
+              InvalidFenError(fen, 'invalid piece letter "$char"'),
+            );
           }
           if (file > 7) {
-            return Result.err(InvalidFenError(fen, 'rank ${rank + 1} has more than 8 squares'));
+            return Result.err(
+              InvalidFenError(fen, 'rank ${rank + 1} has more than 8 squares'),
+            );
           }
           final color = char == char.toUpperCase() ? Color.white : Color.black;
           board[Square(file, rank).index] = Piece(
@@ -112,7 +130,10 @@ class FenCodec {
       }
       if (file != 8) {
         return Result.err(
-          InvalidFenError(fen, 'rank ${rank + 1} does not sum to 8 squares (got $file)'),
+          InvalidFenError(
+            fen,
+            'rank ${rank + 1} does not sum to 8 squares (got $file)',
+          ),
         );
       }
     }
@@ -126,7 +147,9 @@ class FenCodec {
     if (castling == '-') return const Result.ok(CastlingRights.none);
     if (!RegExp(r'^[KQkq]+$').hasMatch(castling) ||
         castling.split('').toSet().length != castling.length) {
-      return Result.err(InvalidFenError(fen, 'invalid castling availability field'));
+      return Result.err(
+        InvalidFenError(fen, 'invalid castling availability field'),
+      );
     }
     return Result.ok(
       CastlingRights(
@@ -192,7 +215,9 @@ class FenCodec {
   Result<Square?, InvalidFenError> _parseEnPassant(String fen, String ep) {
     if (ep == '-') return const Result.ok(null);
     if (!RegExp(r'^[a-h][36]$').hasMatch(ep)) {
-      return Result.err(InvalidFenError(fen, 'invalid en passant target square "$ep"'));
+      return Result.err(
+        InvalidFenError(fen, 'invalid en passant target square "$ep"'),
+      );
     }
     return Result.ok(Square.fromAlgebraic(ep));
   }

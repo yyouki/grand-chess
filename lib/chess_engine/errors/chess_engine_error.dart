@@ -24,8 +24,7 @@ class InvalidChessPositionError extends ChessEngineError {
 
 class InvalidSquareError extends ChessEngineError {
   final String input;
-  const InvalidSquareError(this.input)
-    : super('Invalid square: "$input"');
+  const InvalidSquareError(this.input) : super('Invalid square: "$input"');
 }
 
 class IllegalMoveError extends ChessEngineError {

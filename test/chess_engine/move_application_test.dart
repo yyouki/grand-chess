@@ -3,48 +3,63 @@ import 'package:grand_chess/chess_engine/chess_engine.dart';
 
 void main() {
   group('Move application correctness', () {
-    test('a quiet move updates the moved piece location and flips side to move', () {
-      final state = GameState.initial();
-      final after = state
-          .applyMove(
-            Move(from: Square.fromAlgebraic('e2'), to: Square.fromAlgebraic('e4')),
-          )
-          .valueOrNull!;
-      expect(after.position.pieceAt(Square.fromAlgebraic('e2')), isNull);
-      expect(
-        after.position.pieceAt(Square.fromAlgebraic('e4')),
-        const Piece(Color.white, PieceType.pawn),
-      );
-      expect(after.position.sideToMove, Color.black);
-    });
+    test(
+      'a quiet move updates the moved piece location and flips side to move',
+      () {
+        final state = GameState.initial();
+        final after = state
+            .applyMove(
+              Move(
+                from: Square.fromAlgebraic('e2'),
+                to: Square.fromAlgebraic('e4'),
+              ),
+            )
+            .valueOrNull!;
+        expect(after.position.pieceAt(Square.fromAlgebraic('e2')), isNull);
+        expect(
+          after.position.pieceAt(Square.fromAlgebraic('e4')),
+          const Piece(Color.white, PieceType.pawn),
+        );
+        expect(after.position.sideToMove, Color.black);
+      },
+    );
 
     test('fullmove number increments only after Black moves', () {
       final afterWhite = GameState.initial()
           .applyMove(
-            Move(from: Square.fromAlgebraic('e2'), to: Square.fromAlgebraic('e4')),
+            Move(
+              from: Square.fromAlgebraic('e2'),
+              to: Square.fromAlgebraic('e4'),
+            ),
           )
           .valueOrNull!;
       expect(afterWhite.position.fullmoveNumber, 1);
 
       final afterBlack = afterWhite
           .applyMove(
-            Move(from: Square.fromAlgebraic('e7'), to: Square.fromAlgebraic('e5')),
+            Move(
+              from: Square.fromAlgebraic('e7'),
+              to: Square.fromAlgebraic('e5'),
+            ),
           )
           .valueOrNull!;
       expect(afterBlack.position.fullmoveNumber, 2);
     });
 
-    test('a capture removes the captured piece and the capturer occupies its square', () {
-      final state = GameState.fromFen(
-        '4k2r/8/8/8/8/8/8/4K2R w - - 0 1',
-      ).valueOrNull!;
-      final after = move(state, 'h1', 'h8');
-      expect(
-        after.position.pieceAt(Square.fromAlgebraic('h8')),
-        const Piece(Color.white, PieceType.rook),
-      );
-      expect(after.position.pieceAt(Square.fromAlgebraic('h1')), isNull);
-    });
+    test(
+      'a capture removes the captured piece and the capturer occupies its square',
+      () {
+        final state = GameState.fromFen(
+          '4k2r/8/8/8/8/8/8/4K2R w - - 0 1',
+        ).valueOrNull!;
+        final after = move(state, 'h1', 'h8');
+        expect(
+          after.position.pieceAt(Square.fromAlgebraic('h8')),
+          const Piece(Color.white, PieceType.rook),
+        );
+        expect(after.position.pieceAt(Square.fromAlgebraic('h1')), isNull);
+      },
+    );
 
     test('the original GameState is never mutated by applyMove', () {
       final original = GameState.initial();
@@ -55,13 +70,19 @@ void main() {
       expect(const FenCodec().toFen(original.position), originalFen);
     });
 
-    test('applying an illegal move returns an error instead of changing state', () {
-      final state = GameState.initial();
-      final result = state.applyMove(
-        Move(from: Square.fromAlgebraic('e2'), to: Square.fromAlgebraic('e5')),
-      );
-      expect(result.isErr, isTrue);
-    });
+    test(
+      'applying an illegal move returns an error instead of changing state',
+      () {
+        final state = GameState.initial();
+        final result = state.applyMove(
+          Move(
+            from: Square.fromAlgebraic('e2'),
+            to: Square.fromAlgebraic('e5'),
+          ),
+        );
+        expect(result.isErr, isTrue);
+      },
+    );
 
     test('applying a move once the game is over returns an error', () {
       final finished = GameState.fromFen(

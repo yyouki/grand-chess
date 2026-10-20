@@ -22,11 +22,7 @@ class GameRules {
   bool isInCheck(Position position) {
     final kingSquare = position.findKing(position.sideToMove);
     if (kingSquare == null) return false;
-    return isSquareAttacked(
-      position,
-      kingSquare,
-      position.sideToMove.opponent,
-    );
+    return isSquareAttacked(position, kingSquare, position.sideToMove.opponent);
   }
 
   /// [history] must include every position reached so far in the game,
@@ -59,7 +55,9 @@ class GameRules {
   }
 
   Square? _relevantEnPassantTarget(Position position) {
-    return _hasLegalEnPassantCapture(position) ? position.enPassantTarget : null;
+    return _hasLegalEnPassantCapture(position)
+        ? position.enPassantTarget
+        : null;
   }
 
   /// Whether a *legal* en passant capture is currently available — not
@@ -95,7 +93,8 @@ class GameRules {
       final square0 = pieces[0].key;
       final square1 = pieces[1].key;
       final sameSquareColor =
-          (square0.file + square0.rank) % 2 == (square1.file + square1.rank) % 2;
+          (square0.file + square0.rank) % 2 ==
+          (square1.file + square1.rank) % 2;
       return sameSquareColor;
     }
 

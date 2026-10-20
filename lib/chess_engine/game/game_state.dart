@@ -48,9 +48,7 @@ class GameState {
   }) : positionHistory = List.unmodifiable(positionHistory),
        moveHistory = List.unmodifiable(moveHistory);
 
-  factory GameState.initial({
-    GameRules gameRules = const GameRules(),
-  }) {
+  factory GameState.initial({GameRules gameRules = const GameRules()}) {
     final position = Position.initial();
     final status = gameRules.determineStatus(position, [position]);
     return GameState._(
@@ -113,15 +111,15 @@ class GameState {
     SanGenerator sanGenerator = const SanGenerator(),
   }) {
     if (status.isGameOver) {
-      return const Result.err(
-        IllegalMoveError('the game is already over'),
-      );
+      return const Result.err(IllegalMoveError('the game is already over'));
     }
 
     final legal = moveGenerator.generateLegalMoves(position);
     final matched = legal.where((m) => m == move).toList();
     if (matched.isEmpty) {
-      return Result.err(IllegalMoveError('$move is not a legal move in this position'));
+      return Result.err(
+        IllegalMoveError('$move is not a legal move in this position'),
+      );
     }
     final resolvedMove = matched.first;
 
@@ -140,7 +138,8 @@ class GameState {
       sideThatMoved: position.sideToMove,
       capturedPiece: capturedPiece,
       fullmoveNumberBeforeMove: position.fullmoveNumber,
-      givesCheck: newStatus == GameStatus.checkmate || gameRules.isInCheck(newPosition),
+      givesCheck:
+          newStatus == GameStatus.checkmate || gameRules.isInCheck(newPosition),
       givesCheckmate: newStatus == GameStatus.checkmate,
     );
 

@@ -21,21 +21,27 @@ void main() {
       expect(state.result, GameResult.whiteWins);
     });
 
-    test('back-rank mate is delivered by a rook move and detected afterward', () {
-      final before = GameState.fromFen(
-        '6k1/5ppp/8/8/8/8/8/4R1K1 w - - 0 1',
-      ).valueOrNull!;
-      expect(before.status, GameStatus.ongoing);
+    test(
+      'back-rank mate is delivered by a rook move and detected afterward',
+      () {
+        final before = GameState.fromFen(
+          '6k1/5ppp/8/8/8/8/8/4R1K1 w - - 0 1',
+        ).valueOrNull!;
+        expect(before.status, GameStatus.ongoing);
 
-      final after = before
-          .applyMove(
-            Move(from: Square.fromAlgebraic('e1'), to: Square.fromAlgebraic('e8')),
-          )
-          .valueOrNull!;
-      expect(after.status, GameStatus.checkmate);
-      expect(after.result, GameResult.whiteWins);
-      expect(after.legalMoves, isEmpty);
-    });
+        final after = before
+            .applyMove(
+              Move(
+                from: Square.fromAlgebraic('e1'),
+                to: Square.fromAlgebraic('e8'),
+              ),
+            )
+            .valueOrNull!;
+        expect(after.status, GameStatus.checkmate);
+        expect(after.result, GameResult.whiteWins);
+        expect(after.legalMoves, isEmpty);
+      },
+    );
 
     test('checkmate is never confused with an ordinary check', () {
       final state = GameState.fromFen(
