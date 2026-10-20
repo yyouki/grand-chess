@@ -1,5 +1,7 @@
 name: Format Dart
 
+# Recovery validation branch: this workflow is expected to run on push.
+
 on:
   push:
     branches:
