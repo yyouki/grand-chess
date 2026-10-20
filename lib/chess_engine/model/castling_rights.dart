@@ -52,12 +52,8 @@ class CastlingRights {
       other.blackQueenside == blackQueenside;
 
   @override
-  int get hashCode => Object.hash(
-    whiteKingside,
-    whiteQueenside,
-    blackKingside,
-    blackQueenside,
-  );
+  int get hashCode =>
+      Object.hash(whiteKingside, whiteQueenside, blackKingside, blackQueenside);
 
   @override
   String toString() => fen;

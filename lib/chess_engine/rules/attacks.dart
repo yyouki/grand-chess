@@ -4,22 +4,30 @@ import '../model/piece_type.dart';
 import '../model/square.dart';
 
 const List<(int, int)> knightDeltas = [
-  (1, 2), (2, 1), (2, -1), (1, -2),
-  (-1, -2), (-2, -1), (-2, 1), (-1, 2),
+  (1, 2),
+  (2, 1),
+  (2, -1),
+  (1, -2),
+  (-1, -2),
+  (-2, -1),
+  (-2, 1),
+  (-1, 2),
 ];
 
 const List<(int, int)> kingDeltas = [
-  (1, 0), (1, 1), (0, 1), (-1, 1),
-  (-1, 0), (-1, -1), (0, -1), (1, -1),
+  (1, 0),
+  (1, 1),
+  (0, 1),
+  (-1, 1),
+  (-1, 0),
+  (-1, -1),
+  (0, -1),
+  (1, -1),
 ];
 
-const List<(int, int)> bishopDirections = [
-  (1, 1), (1, -1), (-1, 1), (-1, -1),
-];
+const List<(int, int)> bishopDirections = [(1, 1), (1, -1), (-1, 1), (-1, -1)];
 
-const List<(int, int)> rookDirections = [
-  (1, 0), (-1, 0), (0, 1), (0, -1),
-];
+const List<(int, int)> rookDirections = [(1, 0), (-1, 0), (0, 1), (0, -1)];
 
 /// Returns true if [target] is attacked by any piece of [byColor] in
 /// [position]. Used both for check detection and for validating that a

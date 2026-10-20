@@ -8,6 +8,6 @@ enum GameResult {
 
   static GameResult fromCheckmate(Color sideDelivering) =>
       sideDelivering == Color.white
-          ? GameResult.whiteWins
-          : GameResult.blackWins;
+      ? GameResult.whiteWins
+      : GameResult.blackWins;
 }

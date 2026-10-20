@@ -63,13 +63,10 @@ class MoveGenerator {
             moves,
           );
         case PieceType.queen:
-          _generateSlidingMoves(
-            position,
-            entry.key,
-            color,
-            [...bishopDirections, ...rookDirections],
-            moves,
-          );
+          _generateSlidingMoves(position, entry.key, color, [
+            ...bishopDirections,
+            ...rookDirections,
+          ], moves);
         case PieceType.king:
           _generateStepMoves(position, entry.key, color, kingDeltas, moves);
           _generateCastlingMoves(position, entry.key, color, moves);
@@ -107,7 +104,9 @@ class MoveGenerator {
         _addPawnMove(from, target, promotionRank, moves, isCapture: true);
       } else if (position.enPassantTarget == target &&
           _hasCapturablePawnFor(position, target, from.rank, color)) {
-        moves.add(Move(from: from, to: target, isCapture: true, isEnPassant: true));
+        moves.add(
+          Move(from: from, to: target, isCapture: true, isEnPassant: true),
+        );
       }
     }
   }
@@ -219,9 +218,7 @@ class MoveGenerator {
           !isSquareAttacked(position, kingSquare, opponent) &&
           !isSquareAttacked(position, f1, opponent) &&
           !isSquareAttacked(position, f2, opponent)) {
-        moves.add(
-          Move(from: kingSquare, to: f2, isCastleKingside: true),
-        );
+        moves.add(Move(from: kingSquare, to: f2, isCastleKingside: true));
       }
     }
 
@@ -238,9 +235,7 @@ class MoveGenerator {
           !isSquareAttacked(position, kingSquare, opponent) &&
           !isSquareAttacked(position, d1, opponent) &&
           !isSquareAttacked(position, d2, opponent)) {
-        moves.add(
-          Move(from: kingSquare, to: d2, isCastleQueenside: true),
-        );
+        moves.add(Move(from: kingSquare, to: d2, isCastleQueenside: true));
       }
     }
   }
@@ -252,6 +247,8 @@ class MoveGenerator {
   /// right color, regardless of what the rights field claims.
   bool _hasRookAt(Position position, Square square, Color color) {
     final piece = position.pieceAt(square);
-    return piece != null && piece.color == color && piece.type == PieceType.rook;
+    return piece != null &&
+        piece.color == color &&
+        piece.type == PieceType.rook;
   }
 }
