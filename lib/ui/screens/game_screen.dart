@@ -624,7 +624,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.sizeOf(context);
-    final preferWide = screenSize.width >= 720 &&
+    final preferWide = screenSize.width >= 600 &&
         screenSize.width > screenSize.height;
     final title = widget.mode == GameMode.vsComputer
         ? '3D Chess · VS Bot'
@@ -635,7 +635,7 @@ class _GameScreenState extends State<GameScreen> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final wide = constraints.maxWidth >= 720 &&
+            final wide = constraints.maxWidth >= 600 &&
                 constraints.maxWidth > constraints.maxHeight;
             return wide ? _buildWideLayout(constraints) : _buildNarrowLayout();
           },
