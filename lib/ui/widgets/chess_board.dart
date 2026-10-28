@@ -8,24 +8,33 @@ import '../../chess_engine/chess_engine.dart' as engine;
 import '../../game/game_controller.dart';
 import 'piece_glyph.dart';
 import 'chess_board_3d_renderer.dart';
+import '../theme/chess_visual_theme.dart';
 
 /// A perspective-rendered chessboard with a draggable 360-degree camera.
 class ChessBoard extends StatefulWidget {
-  const ChessBoard({super.key, required this.controller});
+  const ChessBoard({
+    super.key,
+    required this.controller,
+    this.canSelect = true,
+    this.boardFinish = BoardFinish.walnut,
+    this.pieceFinish = PieceFinish.classic,
+  });
 
   final GameController controller;
+  final bool canSelect;
+  final BoardFinish boardFinish;
+  final PieceFinish pieceFinish;
 
   @override
   State<ChessBoard> createState() => _ChessBoardState();
 }
 
-class _ChessBoardState extends State<ChessBoard> {
+class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
   final FocusNode _focusNode = FocusNode(debugLabel: '3D chess board');
 
   Square _cursor = const Square(4, 1);
   Offset? _pointerDown;
   Offset? _lastPointerPosition;
-  Square? _dragFrom;
   Square? _gestureStartSquare;
   int? _activePointer;
   bool _gestureMoved = false;
@@ -33,15 +42,39 @@ class _ChessBoardState extends State<ChessBoard> {
   bool _keyboardActive = false;
   double _yaw = -0.55;
   double _pitch = 0.90;
+  late final AnimationController _moveAnimation;
+  int _lastSeenPly = 0;
 
   @override
   void initState() {
     super.initState();
+    _lastSeenPly = widget.controller.gameState.moveHistory.length;
+    _moveAnimation = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 280),
+    )..addListener(_onMoveAnimationTick);
+    widget.controller.addListener(_observeGameMove);
     _focusNode.addListener(_onFocusChanged);
+  }
+
+  void _onMoveAnimationTick() {
+    if (mounted) setState(() {});
+  }
+
+  void _observeGameMove() {
+    final ply = widget.controller.gameState.moveHistory.length;
+    if (ply > _lastSeenPly) {
+      _moveAnimation.forward(from: 0);
+    }
+    _lastSeenPly = ply;
   }
 
   @override
   void dispose() {
+    widget.controller.removeListener(_observeGameMove);
+    _moveAnimation
+      ..removeListener(_onMoveAnimationTick)
+      ..dispose();
     _focusNode.removeListener(_onFocusChanged);
     _focusNode.dispose();
     super.dispose();
@@ -140,18 +173,6 @@ class _ChessBoardState extends State<ChessBoard> {
     return inside;
   }
 
-  bool _canDragFrom(Square? square) {
-    if (square == null) {
-      return false;
-    }
-    final controller = widget.controller;
-    final piece = controller.gameState.position.pieceAt(square);
-    return !controller.isGameOver &&
-        !controller.isAwaitingPromotionChoice &&
-        piece != null &&
-        piece.color == controller.gameState.position.sideToMove;
-  }
-
   void _handlePointerDown(
     PointerDownEvent event,
     ChessBoardProjection projection,
@@ -164,7 +185,6 @@ class _ChessBoardState extends State<ChessBoard> {
     _lastPointerPosition = event.localPosition;
     _gestureStartSquare = _squareAt(event.localPosition, projection);
     _gestureMoved = false;
-    _dragFrom = null;
     _rotating = false;
     _focusNode.requestFocus();
   }
@@ -192,20 +212,19 @@ class _ChessBoardState extends State<ChessBoard> {
           ? null
           : widget.controller.gameState.position.pieceAt(square);
 
-      if (_canDragFrom(square)) {
-        _dragFrom = square;
-        if (widget.controller.selectedSquare != square) {
-          widget.controller.selectSquare(square!);
-        }
-        setState(() {
-          _cursor = square!;
-          _keyboardActive = false;
-        });
-      } else if (piece == null) {
-        // Dragging empty board space rotates the camera, not a chess piece.
-        _rotating = true;
-      }
+      // A drag that begins on a piece is never interpreted as a chess move.
+      // Empty board space controls the camera; moves always require taps.
+      _rotating = piece == null;
     }
+
+    if (!_rotating || delta == Offset.zero) {
+      return;
+    }
+    setState(() {
+      _yaw = (_yaw + delta.dx * 0.012) % (math.pi * 2);
+      _pitch = (_pitch + delta.dy * 0.005).clamp(0.35, 1.20).toDouble();
+    });
+  }
 
     if (_dragFrom != null || !_rotating || delta == Offset.zero) {
       return;
@@ -221,9 +240,7 @@ class _ChessBoardState extends State<ChessBoard> {
       return;
     }
 
-    final wasMoved = _gestureMoved;
-    final from = _dragFrom;
-    if (!wasMoved) {
+    if (!_gestureMoved && widget.canSelect) {
       final square = _squareAt(event.localPosition, projection);
       if (square != null) {
         setState(() {
@@ -231,16 +248,6 @@ class _ChessBoardState extends State<ChessBoard> {
           _keyboardActive = false;
         });
         widget.controller.selectSquare(square);
-      }
-    } else if (from != null) {
-      final destination = _squareAt(event.localPosition, projection);
-      if (destination != null && destination != from) {
-        final isLegal = widget.controller.legalMovesFromSelected.any(
-          (move) => move.to == destination,
-        );
-        if (isLegal) {
-          widget.controller.selectSquare(destination);
-        }
       }
     }
     _resetPointerGesture();
@@ -257,7 +264,6 @@ class _ChessBoardState extends State<ChessBoard> {
     _pointerDown = null;
     _lastPointerPosition = null;
     _gestureStartSquare = null;
-    _dragFrom = null;
     _gestureMoved = false;
     _rotating = false;
   }
@@ -321,7 +327,6 @@ class _ChessBoardState extends State<ChessBoard> {
     required List<Move> targets,
     required Move? lastMove,
     required Square? checkedKing,
-    required bool interactive,
     required bool focused,
   }) {
     final anchors = <Widget>[];
@@ -332,8 +337,7 @@ class _ChessBoardState extends State<ChessBoard> {
         final piece = position.pieceAt(square);
         final visual = projection.visualPosition(square);
         final center = projection.centerOf(square);
-        final isLast =
-            lastMove != null &&
+        final isLast = lastMove != null &&
             (lastMove.from == square || lastMove.to == square);
         final isSelected = selected == square;
         final isChecked = checkedKing == square;
@@ -357,36 +361,19 @@ class _ChessBoardState extends State<ChessBoard> {
             SizedBox(key: ValueKey('capture-$name'), width: 1, height: 1),
           if (isCursor)
             SizedBox(key: ValueKey('cursor-$name'), width: 1, height: 1),
-          if (visual.$1 == 0)
-            SizedBox(key: ValueKey('rank-label-$name'), width: 1, height: 1),
-          if (visual.$2 == 7)
-            SizedBox(key: ValueKey('file-label-$name'), width: 1, height: 1),
         ];
 
         if (piece != null) {
-          final glyph = Opacity(
-            opacity: 0,
-            child: PieceGlyph(
-              key: ValueKey('piece-$name'),
-              piece: piece,
-              size: 1,
+          markerChildren.add(
+            Opacity(
+              opacity: 0,
+              child: PieceGlyph(
+                key: ValueKey('piece-$name'),
+                piece: piece,
+                size: 1,
+              ),
             ),
           );
-          if (interactive &&
-              !widget.controller.isAwaitingPromotionChoice &&
-              piece.color == position.sideToMove) {
-            markerChildren.add(
-              Draggable<Square>(
-                data: square,
-                maxSimultaneousDrags: 1,
-                feedback: const SizedBox.shrink(),
-                childWhenDragging: glyph,
-                child: glyph,
-              ),
-            );
-          } else {
-            markerChildren.add(glyph);
-          }
         }
 
         anchors.add(
@@ -405,6 +392,73 @@ class _ChessBoardState extends State<ChessBoard> {
     return anchors;
   }
 
+  List<Widget> _buildFlatCoordinates(ChessBoardProjection projection) {
+    final labels = <Widget>[];
+    final labelStyle = TextStyle(
+      fontSize: (projection.size.shortestSide * 0.025).clamp(9.0, 15.0),
+      height: 1,
+      fontWeight: FontWeight.w900,
+      color: widget.boardFinish.darkSquare,
+    );
+    for (var row = 0; row < 8; row++) {
+      final square = projection.squareAtVisualPosition(0, row);
+      final point = projection.project(
+        Chess3DVector(-4.55, 0.025, row.toDouble() - 3.5),
+      );
+      labels.add(
+        Positioned(
+          left: point.dx - 6,
+          top: point.dy - 7,
+          child: IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: widget.boardFinish.lightSquare.withValues(alpha: 0.94),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+                child: Text(
+                  '${square.rank + 1}',
+                  key: ValueKey('flat-rank-${square.rank + 1}'),
+                  style: labelStyle,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    for (var column = 0; column < 8; column++) {
+      final square = projection.squareAtVisualPosition(column, 7);
+      final point = projection.project(
+        Chess3DVector(column.toDouble() - 3.5, 0.025, 4.55),
+      );
+      labels.add(
+        Positioned(
+          left: point.dx - 6,
+          top: point.dy - 7,
+          child: IgnorePointer(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: widget.boardFinish.lightSquare.withValues(alpha: 0.94),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
+                child: Text(
+                  String.fromCharCode(65 + square.file),
+                  key: ValueKey('flat-file-${String.fromCharCode(65 + square.file)}'),
+                  style: labelStyle,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return labels;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -417,8 +471,6 @@ class _ChessBoardState extends State<ChessBoard> {
         final targets = controller.legalMovesFromSelected;
         final lastMove = controller.lastMove;
         final checkedKing = _checkedKingSquare();
-        final interactive =
-            !controller.isGameOver && !controller.isAwaitingPromotionChoice;
         final focused = _focusNode.hasFocus && _keyboardActive;
 
         return AspectRatio(
@@ -435,7 +487,7 @@ class _ChessBoardState extends State<ChessBoard> {
                   child: Semantics(
                     container: true,
                     label:
-                        'Three-dimensional chess board. Drag an empty area to rotate the board 360 degrees. Tap a square to move.',
+                        'Three-dimensional chess board. Tap a piece to select it, then tap a legal destination. Drag empty board space to rotate and tilt the view.',
                     child: SizedBox(
                       width: side,
                       height: side,
@@ -467,6 +519,9 @@ class _ChessBoardState extends State<ChessBoard> {
                                     cursor: _cursor,
                                     cursorVisible: focused,
                                     projection: projection,
+                                    animationProgress: _moveAnimation.value,
+                                    boardFinish: widget.boardFinish,
+                                    pieceFinish: widget.pieceFinish,
                                   ),
                                 ),
                                 ..._buildAnchors(
@@ -476,12 +531,12 @@ class _ChessBoardState extends State<ChessBoard> {
                                   targets: targets,
                                   lastMove: lastMove,
                                   checkedKing: checkedKing,
-                                  interactive: interactive,
                                   focused: focused,
                                 ),
                               ],
                             ),
                           ),
+                          ..._buildFlatCoordinates(projection),
                           Positioned(
                             top: 4,
                             right: 4,
@@ -509,7 +564,7 @@ class _ChessBoardState extends State<ChessBoard> {
                                       ),
                                       SizedBox(width: 5),
                                       Text(
-                                        'DRAG TO ROTATE 360°',
+                                        'DRAG EMPTY SPACE TO ROTATE · DRAG DOWN TO TILT',
                                         style: TextStyle(
                                           color: Color(0xFFE8EDF4),
                                           fontSize: 9,
