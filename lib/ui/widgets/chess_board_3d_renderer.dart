@@ -155,7 +155,7 @@ class Chess3DScenePainter extends CustomPainter {
             ? const Color(0xFFFFFFFF)
             : const Color(0xFF555B64);
         final shadow = isWhite
-            ? const Color(0xFFC7C1B6)
+            ? const Color(0xFFE5E7EB)
             : const Color(0xFF080A0E);
         final material = _PieceMaterial(highlight: highlight, shadow: shadow);
         final profile = _profileFor(piece.type);
