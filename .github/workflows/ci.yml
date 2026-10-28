@@ -46,14 +46,15 @@ jobs:
             flutter create . --platforms=android
           fi
 
-      - name: Build Android (debug)
+      - name: Build Android (release)
         run: flutter build apk --release
 
-      - name: Upload APK Artifact
+      - name: Upload Android release APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: grand-chess-android-release
           path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
 
   build-windows:
     runs-on: windows-latest
