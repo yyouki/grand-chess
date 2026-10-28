@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - phase3/stage1-recovery-v4
+      - phase3/playable-ui
 
 permissions:
   contents: read
@@ -46,10 +47,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          if [ "${GITHUB_REF}" != "refs/heads/phase3/stage1-recovery-v4" ]; then
-            echo "Refusing to run for ${GITHUB_REF}. Only refs/heads/phase3/stage1 is allowed." >&2
-            exit 1
-          fi
+          case "${GITHUB_REF}" in
+            refs/heads/phase3/stage1-recovery-v4 | refs/heads/phase3/playable-ui)
+              ;;
+            *)
+              echo "Refusing to run for ${GITHUB_REF}. Allowed: phase3/stage1-recovery-v4 and phase3/playable-ui." >&2
+              exit 1
+              ;;
+          esac
 
           changed_files="$(git diff --name-only -- '*.dart')"
           if [ -z "${changed_files}" ]; then
