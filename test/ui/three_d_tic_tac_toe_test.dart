@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:grand_chess/app/grand_chess_app.dart';
 import 'package:grand_chess/ui/screens/three_d_arcade_screen.dart';
 import 'package:grand_chess/ui/screens/three_d_tic_tac_toe_screen.dart';
-import 'package:grand_chess/ui/screens/three_d_tower_screen.dart';
 
 void main() {
   testWidgets('home screen opens the playable 3D arcade', (tester) async {
