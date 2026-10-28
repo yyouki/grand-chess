@@ -545,13 +545,10 @@ class _GameScreenState extends State<GameScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(
-                                  width: 13,
-                                  height: 13,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Color(0xFFD8B77C),
-                                  ),
+                                const Icon(
+                                  Icons.psychology_alt,
+                                  size: 16,
+                                  color: Color(0xFFD8B77C),
                                 ),
                                 SizedBox(width: 8),
                                 Text(
