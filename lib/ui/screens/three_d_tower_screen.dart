@@ -137,7 +137,7 @@ class _ThreeDTowerScreenState extends State<ThreeDTowerScreen> {
                       final visibleCount = min(
                         _blocks.length,
                         max(1, ((constraints.maxHeight - 35) / blockHeight).floor()),
-                      );
+                      ).toInt();
                       final firstIndex = _blocks.length - visibleCount;
                       return SizedBox(
                         width: _baseWidth + 30,
