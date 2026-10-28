@@ -79,9 +79,7 @@ void main() {
     },
   );
 
-  testWidgets('dragging a piece never moves it; tapping does', (
-    tester,
-  ) async {
+  testWidgets('dragging a piece never moves it; tapping does', (tester) async {
     await startGameFromHome(tester);
 
     await playMoves(tester, ['e2e4']);
