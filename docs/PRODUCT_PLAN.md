@@ -54,7 +54,8 @@ A public release must meet all of these requirements:
 
 - Save and resume local games.
 - Export and import PGN games.
-- Add configurable board materials, piece sets, camera presets, and color-blind-friendly highlights.
+- [x] Add selectable board and piece finishes.
+- Add camera presets and color-blind-friendly highlights.
 - Add sound, animation preferences, and keyboard/mouse accessibility checks.
 - Add localized app UI and language selection.
 
