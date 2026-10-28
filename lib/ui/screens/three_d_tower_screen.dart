@@ -150,7 +150,7 @@ class _ThreeDTowerScreenState extends State<ThreeDTowerScreen> {
                                 index < _blocks.length;
                                 index++)
                               Positioned(
-                                bottom: (_blocks.length - 1 - index) * blockHeight,
+                                bottom: (index - firstIndex) * blockHeight,
                                 child: _buildBlock(_blocks[index], index),
                               ),
                             Positioned(
@@ -184,7 +184,7 @@ class _ThreeDTowerScreenState extends State<ThreeDTowerScreen> {
                   width: 320,
                   child: FilledButton.icon(
                     key: const ValueKey('tower-drop-block'),
-                    onPressed: _gameOver ? null : _dropBlock,
+                    onPressed: _gameOver ? () => setState(_reset) : _dropBlock,
                     icon: Icon(_gameOver ? Icons.refresh : Icons.add_box),
                     label: Text(_gameOver ? 'Restart from the top' : 'Drop block'),
                     style: FilledButton.styleFrom(
