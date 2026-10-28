@@ -214,7 +214,7 @@ jobs:
           name: grand-chess-web-release
           path: release-assets/web
       - name: Publish release and attach platform packages
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: Grand Chess ${{ github.ref_name }}
           generate_release_notes: true
