@@ -3,77 +3,224 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: grand-chess-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   analyze-and-test:
+    name: Format, analyze, and test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Check formatting
+      - name: Check Dart formatting
         run: dart format --output=none --set-exit-if-changed .
-
-      - name: Analyze
+      - name: Analyze source
         run: flutter analyze
-
-      - name: Run tests
+      - name: Run automated tests
         run: flutter test
 
   build-android:
+    name: Build Android APK
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-
+      - name: Generate Android runner files
+        run: flutter create . --project-name grand_chess --platforms=android
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Generate android directory if missing
-        run: |
-          if [ ! -d "android" ]; then
-            flutter create . --platforms=android
-          fi
-
-      - name: Build Android (release)
+      - name: Build release APK
         run: flutter build apk --release
-
-      - name: Upload Android release APK
+      - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
           name: grand-chess-android-release
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+          retention-days: 30
 
   build-windows:
+    name: Build Windows desktop
     runs-on: windows-latest
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
-
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-
+      - name: Generate Windows runner files
+        run: flutter create . --project-name grand_chess --platforms=windows
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Generate windows directory if missing
-        shell: bash
-        run: |
-          if [ ! -d "windows" ]; then
-            flutter create . --platforms=windows
-          fi
-
-      - name: Build Windows (release)
+      - name: Build Windows release
         run: flutter build windows --release
+      - name: Package Windows application
+        shell: pwsh
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath grand-chess-windows-x64.zip
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: grand-chess-windows-release
+          path: grand-chess-windows-x64.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  build-linux:
+    name: Build Linux desktop
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux desktop dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libstdc++-12-dev
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Generate Linux runner files
+        run: flutter create . --project-name grand_chess --platforms=linux
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build Linux release
+        run: flutter build linux --release
+      - name: Package Linux application
+        run: tar -czf grand-chess-linux-x64.tar.gz -C build/linux/x64/release bundle
+      - name: Upload Linux package
+        uses: actions/upload-artifact@v4
+        with:
+          name: grand-chess-linux-release
+          path: grand-chess-linux-x64.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+
+  build-macos:
+    name: Build macOS desktop
+    runs-on: macos-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Generate macOS runner files
+        run: flutter create . --project-name grand_chess --platforms=macos
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build macOS release
+        run: flutter build macos --release
+      - name: Package macOS application
+        run: ditto -c -k --sequesterRsrc --keepParent build/macos/Build/Products/Release/grand_chess.app grand-chess-macos.zip
+      - name: Upload macOS package
+        uses: actions/upload-artifact@v4
+        with:
+          name: grand-chess-macos-release
+          path: grand-chess-macos.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  build-ios:
+    name: Compile iOS app (unsigned)
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Generate iOS runner files
+        run: flutter create . --project-name grand_chess --platforms=ios
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Compile iOS release without signing
+        run: flutter build ios --release --no-codesign
+
+  build-web:
+    name: Build web application
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - name: Generate web runner files
+        run: flutter create . --project-name grand_chess --platforms=web
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build web release
+        run: flutter build web --release
+      - name: Package web application
+        run: zip -qr "$GITHUB_WORKSPACE/grand-chess-web.zip" .
+        working-directory: build/web
+      - name: Upload web package
+        uses: actions/upload-artifact@v4
+        with:
+          name: grand-chess-web-release
+          path: grand-chess-web.zip
+          if-no-files-found: error
+          retention-days: 30
+
+  publish-release:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - analyze-and-test
+      - build-android
+      - build-windows
+      - build-linux
+      - build-macos
+      - build-ios
+      - build-web
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: grand-chess-android-release
+          path: release-assets/android
+      - uses: actions/download-artifact@v4
+        with:
+          name: grand-chess-windows-release
+          path: release-assets/windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: grand-chess-linux-release
+          path: release-assets/linux
+      - uses: actions/download-artifact@v4
+        with:
+          name: grand-chess-macos-release
+          path: release-assets/macos
+      - uses: actions/download-artifact@v4
+        with:
+          name: grand-chess-web-release
+          path: release-assets/web
+      - name: Publish release and attach platform packages
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Grand Chess ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            release-assets/android/app-release.apk
+            release-assets/windows/grand-chess-windows-x64.zip
+            release-assets/linux/grand-chess-linux-x64.tar.gz
+            release-assets/macos/grand-chess-macos.zip
+            release-assets/web/grand-chess-web.zip

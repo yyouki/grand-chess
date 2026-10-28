@@ -1,0 +1,28 @@
+name: Feature request / Usulan fitur
+description: Suggest an improvement / Usulkan peningkatan
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: "Write in English or Indonesian. / Tulis dalam bahasa Inggris atau Indonesia."
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem should this solve? / Masalah apa yang ingin diselesaikan?
+      description: Describe the current difficulty. / Jelaskan kesulitan saat ini.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution / Usulan solusi
+      description: Describe the behavior you would like. / Jelaskan perilaku yang diharapkan.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or extra context / Alternatif atau konteks tambahan
+    validations:
+      required: false

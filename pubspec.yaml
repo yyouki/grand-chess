@@ -1,5 +1,5 @@
 name: grand_chess
-description: A modern, high-quality multiplatform chess application.
+description: A cross-platform chess app with a custom Dart engine and a rotatable 3D board.
 publish_to: 'none'
 version: 0.1.0
 
