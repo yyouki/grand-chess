@@ -376,7 +376,7 @@ void main() {
       expect(markerSquares('selected-'), isEmpty);
       expect(textOf(tester, 'result-headline'), 'Black wins');
       expect(
-        tester.widget<OutlinedButton>(keyed('resign-button')).onPressed,
+        tester.widget<IconButton>(keyed('resign-button')).onPressed,
         isNull,
       );
     });
