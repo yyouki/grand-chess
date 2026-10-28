@@ -24,6 +24,7 @@ class _ChessBoardState extends State<ChessBoard> {
 
   Square _cursor = const Square(4, 1);
   Offset? _pointerDown;
+  Offset? _lastPointerPosition;
   Square? _dragFrom;
   Square? _gestureStartSquare;
   int? _activePointer;
@@ -459,97 +460,97 @@ class _ChessBoardState extends State<ChessBoard> {
                               fit: StackFit.expand,
                               clipBehavior: Clip.none,
                               children: <Widget>[
-                            CustomPaint(
-                              key: const ValueKey('chess-board-3d-scene'),
-                              painter: Chess3DScenePainter(
-                                position: position,
-                                selected: selected,
-                                targets: targets,
-                                lastMove: lastMove,
-                                checkedKing: checkedKing,
-                                cursor: _cursor,
-                                cursorVisible: focused,
-                                projection: projection,
-                              ),
-                            ),
-                            ..._buildAnchors(
-                              projection,
-                              position: position,
-                              selected: selected,
-                              targets: targets,
-                              lastMove: lastMove,
-                              checkedKing: checkedKing,
-                              interactive: interactive,
-                              focused: focused,
-                            ),
+                                CustomPaint(
+                                  key: const ValueKey('chess-board-3d-scene'),
+                                  painter: Chess3DScenePainter(
+                                    position: position,
+                                    selected: selected,
+                                    targets: targets,
+                                    lastMove: lastMove,
+                                    checkedKing: checkedKing,
+                                    cursor: _cursor,
+                                    cursorVisible: focused,
+                                    projection: projection,
+                                  ),
+                                ),
+                                ..._buildAnchors(
+                                  projection,
+                                  position: position,
+                                  selected: selected,
+                                  targets: targets,
+                                  lastMove: lastMove,
+                                  checkedKing: checkedKing,
+                                  interactive: interactive,
+                                  focused: focused,
+                                ),
                               ],
                             ),
                           ),
-                            Positioned(
-                              top: 4,
-                              right: 4,
-                              child: IgnorePointer(
-                                child: DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xAA141820),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: const Color(0x557D8796),
-                                    ),
-                                  ),
-                                  child: const Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 9,
-                                      vertical: 5,
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.threed_rotation,
-                                          size: 14,
-                                          color: Color(0xFFE8EDF4),
-                                        ),
-                                        SizedBox(width: 5),
-                                        Text(
-                                          'DRAG TO ROTATE 360°',
-                                          style: TextStyle(
-                                            color: Color(0xFFE8EDF4),
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.8,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: IgnorePointer(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: const Color(0xAA141820),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: const Color(0x557D8796),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 4,
-                              right: 4,
-                              child: Tooltip(
-                                message: 'Reset 3D view',
-                                child: Material(
-                                  color: const Color(0xCC202630),
-                                  borderRadius: BorderRadius.circular(24),
-                                  child: InkWell(
-                                    key: const ValueKey('reset-3d-view'),
-                                    borderRadius: BorderRadius.circular(24),
-                                    onTap: _resetView,
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(7),
-                                      child: Icon(
-                                        Icons.center_focus_strong,
-                                        size: 17,
-                                        color: Color(0xFFF5F3EF),
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 9,
+                                    vertical: 5,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.threed_rotation,
+                                        size: 14,
+                                        color: Color(0xFFE8EDF4),
                                       ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        'DRAG TO ROTATE 360°',
+                                        style: TextStyle(
+                                          color: Color(0xFFE8EDF4),
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 0.8,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 4,
+                            right: 4,
+                            child: Tooltip(
+                              message: 'Reset 3D view',
+                              child: Material(
+                                color: const Color(0xCC202630),
+                                borderRadius: BorderRadius.circular(24),
+                                child: InkWell(
+                                  key: const ValueKey('reset-3d-view'),
+                                  borderRadius: BorderRadius.circular(24),
+                                  onTap: _resetView,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(7),
+                                    child: Icon(
+                                      Icons.center_focus_strong,
+                                      size: 17,
+                                      color: Color(0xFFF5F3EF),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
+                          ),
                         ],
                       ),
                     ),
