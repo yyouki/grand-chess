@@ -62,43 +62,43 @@ class Chess3DScenePainter extends CustomPainter {
     const bottom = -0.34;
 
     _addFace(faces, [
-      const _Vec3(left, top, far),
-      const _Vec3(right, top, far),
-      const _Vec3(right, top, near),
-      const _Vec3(left, top, near),
+      const Chess3DVector(left, top, far),
+      const Chess3DVector(right, top, far),
+      const Chess3DVector(right, top, near),
+      const Chess3DVector(left, top, near),
     ], const Color(0xFF85502F));
     _addFace(faces, [
-      const _Vec3(left, bottom, near),
-      const _Vec3(right, bottom, near),
-      const _Vec3(right, top, near),
-      const _Vec3(left, top, near),
+      const Chess3DVector(left, bottom, near),
+      const Chess3DVector(right, bottom, near),
+      const Chess3DVector(right, top, near),
+      const Chess3DVector(left, top, near),
     ], const Color(0xFF4D2A1C));
     _addFace(faces, [
-      const _Vec3(left, bottom, far),
-      const _Vec3(left, bottom, near),
-      const _Vec3(left, top, near),
-      const _Vec3(left, top, far),
+      const Chess3DVector(left, bottom, far),
+      const Chess3DVector(left, bottom, near),
+      const Chess3DVector(left, top, near),
+      const Chess3DVector(left, top, far),
     ], const Color(0xFF633923));
     _addFace(faces, [
-      const _Vec3(right, bottom, far),
-      const _Vec3(right, top, far),
-      const _Vec3(right, top, near),
-      const _Vec3(right, bottom, near),
+      const Chess3DVector(right, bottom, far),
+      const Chess3DVector(right, top, far),
+      const Chess3DVector(right, top, near),
+      const Chess3DVector(right, bottom, near),
     ], const Color(0xFF704128));
     _addFace(faces, [
-      const _Vec3(left, bottom, far),
-      const _Vec3(right, bottom, far),
-      const _Vec3(right, top, far),
-      const _Vec3(left, top, far),
+      const Chess3DVector(left, bottom, far),
+      const Chess3DVector(right, bottom, far),
+      const Chess3DVector(right, top, far),
+      const Chess3DVector(left, top, far),
     ], const Color(0xFF5A321F));
 
     // A thin, brighter wooden lip gives the board a finished furniture-like edge.
     const lip = 4.38;
     _addFace(faces, [
-      const _Vec3(-lip, -0.02, -lip),
-      const _Vec3(lip, -0.02, -lip),
-      const _Vec3(lip, -0.02, lip),
-      const _Vec3(-lip, -0.02, lip),
+      const Chess3DVector(-lip, -0.02, -lip),
+      const Chess3DVector(lip, -0.02, -lip),
+      const Chess3DVector(lip, -0.02, lip),
+      const Chess3DVector(-lip, -0.02, lip),
     ], const Color(0xFFAA7548));
   }
 
@@ -123,19 +123,19 @@ class Chess3DScenePainter extends CustomPainter {
         final x = column.toDouble() - 3.5;
         final z = row.toDouble() - 3.5;
         _addFace(faces, [
-          _Vec3(x - 0.5, 0.0, z - 0.5),
-          _Vec3(x + 0.5, 0.0, z - 0.5),
-          _Vec3(x + 0.5, 0.0, z + 0.5),
-          _Vec3(x - 0.5, 0.0, z + 0.5),
+          Chess3DVector(x - 0.5, 0.0, z - 0.5),
+          Chess3DVector(x + 0.5, 0.0, z - 0.5),
+          Chess3DVector(x + 0.5, 0.0, z + 0.5),
+          Chess3DVector(x - 0.5, 0.0, z + 0.5),
         ], color);
 
         // Small, quiet bevels between individual squares make the surface read
         // as separate finished wooden tiles rather than a flat printed image.
         _addFace(faces, [
-          _Vec3(x - 0.5, 0.002, z - 0.5),
-          _Vec3(x + 0.5, 0.002, z - 0.5),
-          _Vec3(x + 0.5, 0.002, z - 0.46),
-          _Vec3(x - 0.5, 0.002, z - 0.46),
+          Chess3DVector(x - 0.5, 0.002, z - 0.5),
+          Chess3DVector(x + 0.5, 0.002, z - 0.5),
+          Chess3DVector(x + 0.5, 0.002, z - 0.46),
+          Chess3DVector(x - 0.5, 0.002, z - 0.46),
         ], isLight ? const Color(0xFFE7D4B7) : const Color(0xFF744426));
       }
     }
@@ -363,13 +363,13 @@ class Chess3DScenePainter extends CustomPainter {
       (0.02, 0.43),
       (0.00, 0.35),
     ];
-    final front = <_Vec3>[
+    final front = <Chess3DVector>[
       for (final point in outline)
-        _Vec3(centerX + point.$1, point.$2, centerZ - 0.085),
+        Chess3DVector(centerX + point.$1, point.$2, centerZ - 0.085),
     ];
-    final back = <_Vec3>[
+    final back = <Chess3DVector>[
       for (final point in outline)
-        _Vec3(centerX + point.$1, point.$2, centerZ + 0.085),
+        Chess3DVector(centerX + point.$1, point.$2, centerZ + 0.085),
     ];
     _addFace(faces, front, material.highlight, shade: 0.90);
     _addFace(faces, back.reversed.toList(), material.shadow, shade: 0.95);
@@ -404,22 +404,22 @@ class Chess3DScenePainter extends CustomPainter {
         final light = 0.78 + 0.22 * (0.5 + 0.5 * math.cos(normalAngle - 0.8));
         final color = Color.lerp(material.shadow, material.highlight, light)!;
         _addFace(faces, [
-          _Vec3(
+          Chess3DVector(
             centerX + lower.$1 * math.cos(angleA),
             lower.$2,
             centerZ + lower.$1 * math.sin(angleA),
           ),
-          _Vec3(
+          Chess3DVector(
             centerX + lower.$1 * math.cos(angleB),
             lower.$2,
             centerZ + lower.$1 * math.sin(angleB),
           ),
-          _Vec3(
+          Chess3DVector(
             centerX + upper.$1 * math.cos(angleB),
             upper.$2,
             centerZ + upper.$1 * math.sin(angleB),
           ),
-          _Vec3(
+          Chess3DVector(
             centerX + upper.$1 * math.cos(angleA),
             upper.$2,
             centerZ + upper.$1 * math.sin(angleA),
@@ -433,7 +433,7 @@ class Chess3DScenePainter extends CustomPainter {
         faces,
         [
           for (var index = segments - 1; index >= 0; index--)
-            _Vec3(
+            Chess3DVector(
               centerX + first.$1 * math.cos(math.pi * 2 * index / segments),
               first.$2,
               centerZ + first.$1 * math.sin(math.pi * 2 * index / segments),
@@ -461,14 +461,14 @@ class Chess3DScenePainter extends CustomPainter {
     final y1 = centerY + height / 2;
     final z0 = centerZ - depth / 2;
     final z1 = centerZ + depth / 2;
-    final a = _Vec3(x0, y0, z0);
-    final b = _Vec3(x1, y0, z0);
-    final c = _Vec3(x1, y0, z1);
-    final d = _Vec3(x0, y0, z1);
-    final e = _Vec3(x0, y1, z0);
-    final f = _Vec3(x1, y1, z0);
-    final g = _Vec3(x1, y1, z1);
-    final h = _Vec3(x0, y1, z1);
+    final a = Chess3DVector(x0, y0, z0);
+    final b = Chess3DVector(x1, y0, z0);
+    final c = Chess3DVector(x1, y0, z1);
+    final d = Chess3DVector(x0, y0, z1);
+    final e = Chess3DVector(x0, y1, z0);
+    final f = Chess3DVector(x1, y1, z0);
+    final g = Chess3DVector(x1, y1, z1);
+    final h = Chess3DVector(x0, y1, z1);
     _addFace(faces, [a, b, f, e], material.shadow, shade: 0.84);
     _addFace(faces, [b, c, g, f], material.highlight, shade: 0.90);
     _addFace(faces, [c, d, h, g], material.shadow, shade: 0.88);
@@ -479,7 +479,7 @@ class Chess3DScenePainter extends CustomPainter {
 
   void _addFace(
     List<_Face> faces,
-    List<_Vec3> vertices,
+    List<Chess3DVector> vertices,
     Color color, {
     double shade = 1.0,
   }) {
@@ -582,7 +582,7 @@ class Chess3DScenePainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
       final rankPoint = projection.project(
-        _Vec3(-3.88, 0.015, row.toDouble() - 3.5),
+        Chess3DVector(-3.88, 0.015, row.toDouble() - 3.5),
       );
       rankPainter.paint(
         canvas,
@@ -602,7 +602,7 @@ class Chess3DScenePainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
       final filePoint = projection.project(
-        _Vec3(row.toDouble() - 3.5, 0.016, 3.88),
+        Chess3DVector(row.toDouble() - 3.5, 0.016, 3.88),
       );
       filePainter.paint(
         canvas,
@@ -638,10 +638,10 @@ class Chess3DScenePainter extends CustomPainter {
     final path = Path();
     const half = 4.29;
     final points = [
-      projection.project(const _Vec3(-half, -0.01, -half)),
-      projection.project(const _Vec3(half, -0.01, -half)),
-      projection.project(const _Vec3(half, -0.01, half)),
-      projection.project(const _Vec3(-half, -0.01, half)),
+      projection.project(const Chess3DVector(-half, -0.01, -half)),
+      projection.project(const Chess3DVector(half, -0.01, -half)),
+      projection.project(const Chess3DVector(half, -0.01, half)),
+      projection.project(const Chess3DVector(-half, -0.01, half)),
     ];
     path.moveTo(points.first.dx, points.first.dy);
     for (final point in points.skip(1)) {
@@ -676,7 +676,7 @@ class ChessBoardProjection {
 
   double get _scale => size.shortestSide / 11.6;
 
-  Offset project(_Vec3 point) {
+  Offset project(Chess3DVector point) {
     final cosineYaw = math.cos(yaw);
     final sineYaw = math.sin(yaw);
     final cosinePitch = math.cos(pitch);
@@ -692,7 +692,7 @@ class ChessBoardProjection {
     );
   }
 
-  double depthOf(_Vec3 point) {
+  double depthOf(Chess3DVector point) {
     final rotatedZ = point.x * math.sin(yaw) + point.z * math.cos(yaw);
     return rotatedZ * math.cos(pitch) + point.y * math.sin(pitch);
   }
@@ -708,9 +708,9 @@ class ChessBoardProjection {
     );
   }
 
-  _Vec3 worldCenterOf(Square square, {double height = 0}) {
+  Chess3DVector worldCenterOf(Square square, {double height = 0}) {
     final visual = visualPosition(square);
-    return _Vec3(visual.$1 - 3.5, height, visual.$2 - 3.5);
+    return Chess3DVector(visual.$1 - 3.5, height, visual.$2 - 3.5);
   }
 
   Offset centerOf(Square square, {double height = 0}) {
@@ -720,16 +720,16 @@ class ChessBoardProjection {
   List<Offset> polygonOf(Square square) {
     final center = worldCenterOf(square);
     return [
-      project(_Vec3(center.x - 0.5, 0, center.z - 0.5)),
-      project(_Vec3(center.x + 0.5, 0, center.z - 0.5)),
-      project(_Vec3(center.x + 0.5, 0, center.z + 0.5)),
-      project(_Vec3(center.x - 0.5, 0, center.z + 0.5)),
+      project(Chess3DVector(center.x - 0.5, 0, center.z - 0.5)),
+      project(Chess3DVector(center.x + 0.5, 0, center.z - 0.5)),
+      project(Chess3DVector(center.x + 0.5, 0, center.z + 0.5)),
+      project(Chess3DVector(center.x - 0.5, 0, center.z + 0.5)),
     ];
   }
 }
 
-class _Vec3 {
-  const _Vec3(this.x, this.y, this.z);
+class Chess3DVector {
+  const Chess3DVector(this.x, this.y, this.z);
 
   final double x;
   final double y;
@@ -743,7 +743,7 @@ class _Face {
     required this.depth,
   });
 
-  final List<_Vec3> vertices;
+  final List<Chess3DVector> vertices;
   final Color color;
   final double depth;
 }

@@ -310,30 +310,30 @@ class _ChessBoardState extends State<ChessBoard> {
         final isCursor = focused && _cursor == square;
 
         final markerChildren = <Widget>[
-          SizedBox(key: ValueKey('square-' + name), width: 1, height: 1),
+          SizedBox(key: ValueKey('square-$name'), width: 1, height: 1),
           if (isLast)
-            SizedBox(key: ValueKey('last-move-' + name), width: 1, height: 1),
+            SizedBox(key: ValueKey('last-move-$name'), width: 1, height: 1),
           if (isSelected)
-            SizedBox(key: ValueKey('selected-' + name), width: 1, height: 1),
+            SizedBox(key: ValueKey('selected-$name'), width: 1, height: 1),
           if (isChecked)
-            SizedBox(key: ValueKey('check-' + name), width: 1, height: 1),
+            SizedBox(key: ValueKey('check-$name'), width: 1, height: 1),
           if (isTarget && !isCapture)
-            SizedBox(key: ValueKey('legal-' + name), width: 1, height: 1),
+            SizedBox(key: ValueKey('legal-$name'), width: 1, height: 1),
           if (isCapture)
-            SizedBox(key: ValueKey('capture-' + name), width: 1, height: 1),
+            SizedBox(key: ValueKey('capture-$name'), width: 1, height: 1),
           if (isCursor)
-            SizedBox(key: ValueKey('cursor-' + name), width: 1, height: 1),
+            SizedBox(key: ValueKey('cursor-$name'), width: 1, height: 1),
           if (visual.$1 == 0)
-            SizedBox(key: ValueKey('rank-label-' + name), width: 1, height: 1),
+            SizedBox(key: ValueKey('rank-label-$name'), width: 1, height: 1),
           if (visual.$2 == 7)
-            SizedBox(key: ValueKey('file-label-' + name), width: 1, height: 1),
+            SizedBox(key: ValueKey('file-label-$name'), width: 1, height: 1),
         ];
 
         if (piece != null) {
           final glyph = Opacity(
             opacity: 0,
             child: PieceGlyph(
-              key: ValueKey('piece-' + name),
+              key: ValueKey('piece-$name'),
               piece: piece,
               size: 1,
             ),
@@ -425,6 +425,7 @@ class _ChessBoardState extends State<ChessBoard> {
                           clipBehavior: Clip.none,
                           children: <Widget>[
                             CustomPaint(
+                              key: const ValueKey('chess-board-3d-scene'),
                               painter: Chess3DScenePainter(
                                 position: position,
                                 selected: selected,

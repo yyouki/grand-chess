@@ -159,4 +159,37 @@ void main() {
       expect(markerSquares('cursor-'), {'d1'});
     });
   });
+
+  group('3D camera', () {
+    testWidgets('rotates the perspective view and resets to the default angle', (
+      tester,
+    ) async {
+      await pumpBoard(tester);
+      final scene = find.byKey(const ValueKey('chess-board-3d-scene'));
+
+      double yaw() {
+        final painter = tester.widget<CustomPaint>(scene).painter!;
+        return (painter as Chess3DScenePainter).projection.yaw;
+      }
+
+      const initialYaw = -0.55;
+      expect(yaw(), closeTo(initialYaw, 0.0001));
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(squareFinder('d4')),
+      );
+      await tester.pump();
+      await gesture.moveBy(const Offset(70, 0));
+      await tester.pump();
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(yaw(), isNot(closeTo(initialYaw, 0.01)));
+      await tester.tap(keyed('reset-3d-view'));
+      await tester.pumpAndSettle();
+      expect(yaw(), closeTo(initialYaw, 0.0001));
+      expect(tester.takeException(), isNull);
+    });
+  });
+
 }
