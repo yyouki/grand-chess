@@ -91,6 +91,9 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void _handleControllerChanged() {
+    if (mounted) {
+      setState(() {});
+    }
     if (_controller.outcome == null) {
       _resultDialogShown = false;
     }
@@ -353,100 +356,190 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _buildControls() {
-    return Wrap(
-      spacing: 4,
-      runSpacing: 4,
-      alignment: WrapAlignment.center,
-      children: [
-        IconButton(
-          key: const ValueKey('flip-board'),
-          tooltip: 'Flip board',
-          onPressed: _controller.flipOrientation,
-          icon: const Icon(Icons.flip),
-          color: const Color(0xFFF3E8D4),
-        ),
-        IconButton(
-          key: const ValueKey('undo-move'),
-          tooltip: 'Undo move',
-          onPressed: _controller.canUndo ? _undoMove : null,
-          icon: const Icon(Icons.undo),
-          color: const Color(0xFFF3E8D4),
-          disabledColor: const Color(0xFF65717F),
-        ),
-        IconButton(
-          key: const ValueKey('redo-move'),
-          tooltip: 'Redo move',
-          onPressed: _controller.canRedo ? _redoMove : null,
-          icon: const Icon(Icons.redo),
-          color: const Color(0xFFF3E8D4),
-          disabledColor: const Color(0xFF65717F),
-        ),
-        PopupMenuButton<String>(
-          tooltip: 'Export game',
-          icon: const Icon(Icons.ios_share, color: Color(0xFFF3E8D4)),
-          onSelected: (value) => _showExportDialog(asPgn: value == 'pgn'),
-          itemBuilder: (context) => const [
-            PopupMenuItem(value: 'pgn', child: Text('Export PGN')),
-            PopupMenuItem(value: 'fen', child: Text('Copy FEN')),
-          ],
-        ),
-        IconButton(
-          key: const ValueKey('resign-button'),
-          tooltip: 'Resign',
-          onPressed: _controller.isGameOver ? null : _confirmResign,
-          icon: const Icon(Icons.flag_outlined),
-          color: const Color(0xFFF3E8D4),
-        ),
-        IconButton(
-          key: const ValueKey('new-game-button'),
-          tooltip: 'New game',
-          onPressed: _confirmNewGame,
-          icon: const Icon(Icons.refresh),
-          color: const Color(0xFFF3E8D4),
-        ),
-      ],
+  Widget _buildControls({bool compact = false}) {
+    final iconConstraints = compact
+        ? const BoxConstraints.tightFor(width: 32, height: 32)
+        : null;
+    final buttonPadding = compact ? EdgeInsets.zero : const EdgeInsets.all(8);
+    final buttonDensity =
+        compact ? VisualDensity.compact : VisualDensity.standard;
+
+    return Theme(
+      data: Theme.of(context).copyWith(
+        visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
+      ),
+      child: Wrap(
+        spacing: compact ? 2 : 4,
+        runSpacing: compact ? 2 : 4,
+        alignment: WrapAlignment.center,
+        children: [
+          IconButton(
+            key: const ValueKey('flip-board'),
+            tooltip: 'Flip board',
+            onPressed: _controller.flipOrientation,
+            icon: const Icon(Icons.flip),
+            iconSize: compact ? 18 : 24,
+            padding: buttonPadding,
+            visualDensity: buttonDensity,
+            constraints: iconConstraints,
+            color: const Color(0xFFF3E8D4),
+          ),
+          IconButton(
+            key: const ValueKey('undo-move'),
+            tooltip: 'Undo move',
+            onPressed: _controller.canUndo ? _undoMove : null,
+            icon: const Icon(Icons.undo),
+            iconSize: compact ? 18 : 24,
+            padding: buttonPadding,
+            visualDensity: buttonDensity,
+            constraints: iconConstraints,
+            color: const Color(0xFFF3E8D4),
+            disabledColor: const Color(0xFF65717F),
+          ),
+          IconButton(
+            key: const ValueKey('redo-move'),
+            tooltip: 'Redo move',
+            onPressed: _controller.canRedo ? _redoMove : null,
+            icon: const Icon(Icons.redo),
+            iconSize: compact ? 18 : 24,
+            padding: buttonPadding,
+            visualDensity: buttonDensity,
+            constraints: iconConstraints,
+            color: const Color(0xFFF3E8D4),
+            disabledColor: const Color(0xFF65717F),
+          ),
+          PopupMenuButton<String>(
+            tooltip: 'Export game',
+            icon: const Icon(Icons.ios_share, color: Color(0xFFF3E8D4)),
+            iconSize: compact ? 18 : 24,
+            padding: buttonPadding,
+            onSelected: (value) => _showExportDialog(asPgn: value == 'pgn'),
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'pgn', child: Text('Export PGN')),
+              PopupMenuItem(value: 'fen', child: Text('Copy FEN')),
+            ],
+          ),
+          IconButton(
+            key: const ValueKey('resign-button'),
+            tooltip: 'Resign',
+            onPressed: _controller.isGameOver ? null : _confirmResign,
+            icon: const Icon(Icons.flag_outlined),
+            iconSize: compact ? 18 : 24,
+            padding: buttonPadding,
+            visualDensity: buttonDensity,
+            constraints: iconConstraints,
+            color: const Color(0xFFF3E8D4),
+          ),
+          IconButton(
+            key: const ValueKey('new-game-button'),
+            tooltip: 'New game',
+            onPressed: _confirmNewGame,
+            icon: const Icon(Icons.refresh),
+            iconSize: compact ? 18 : 24,
+            padding: buttonPadding,
+            visualDensity: buttonDensity,
+            constraints: iconConstraints,
+            color: const Color(0xFFF3E8D4),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildVisualSettings() {
+  Widget _buildVisualSettings({bool compact = false}) {
+    final boardLabel = compact ? 'Board' : 'Chessboard';
+    final pieceLabel = compact ? 'Pieces' : 'Chess pieces';
+
+    String boardFinishLabel(BoardFinish finish) {
+      if (!compact) return finish.label;
+      return switch (finish) {
+        BoardFinish.walnut => 'Walnut',
+        BoardFinish.tournament => 'Green',
+        BoardFinish.midnight => 'Midnight',
+      };
+    }
+
+    String pieceFinishLabel(PieceFinish finish) {
+      if (!compact) return finish.label;
+      return switch (finish) {
+        PieceFinish.classic => 'Classic',
+        PieceFinish.marble => 'Marble',
+        PieceFinish.gold => 'Gold',
+      };
+    }
+
+    final boardPicker = DropdownButtonFormField<BoardFinish>(
+      key: const ValueKey('board-finish-choice'),
+      initialValue: _boardFinish,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: boardLabel,
+        isDense: true,
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 10,
+        ),
+      ),
+      items: [
+        for (final finish in BoardFinish.values)
+          DropdownMenuItem(
+            value: finish,
+            child: Text(
+              boardFinishLabel(finish),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+      onChanged: (value) {
+        if (value != null) setState(() => _boardFinish = value);
+      },
+    );
+
+    final piecePicker = DropdownButtonFormField<PieceFinish>(
+      key: const ValueKey('style-choice-pieces'),
+      initialValue: _pieceFinish,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: pieceLabel,
+        isDense: true,
+        border: const OutlineInputBorder(),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 10,
+        ),
+      ),
+      items: [
+        for (final finish in PieceFinish.values)
+          DropdownMenuItem(
+            value: finish,
+            child: Text(
+              pieceFinishLabel(finish),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+      onChanged: (value) {
+        if (value != null) setState(() => _pieceFinish = value);
+      },
+    );
+
+    if (compact) {
+      return Row(
+        children: [
+          Expanded(child: boardPicker),
+          const SizedBox(width: 6),
+          Expanded(child: piecePicker),
+        ],
+      );
+    }
     return Column(
       children: [
-        DropdownButtonFormField<BoardFinish>(
-          key: const ValueKey('board-finish-choice'),
-          initialValue: _boardFinish,
-          isExpanded: true,
-          decoration: const InputDecoration(
-            labelText: 'Chessboard',
-            isDense: true,
-            border: OutlineInputBorder(),
-          ),
-          items: [
-            for (final finish in BoardFinish.values)
-              DropdownMenuItem(value: finish, child: Text(finish.label)),
-          ],
-          onChanged: (value) {
-            if (value != null) setState(() => _boardFinish = value);
-          },
-        ),
+        boardPicker,
         const SizedBox(height: 8),
-        DropdownButtonFormField<PieceFinish>(
-          key: const ValueKey('style-choice-pieces'),
-          initialValue: _pieceFinish,
-          isExpanded: true,
-          decoration: const InputDecoration(
-            labelText: 'Chess pieces',
-            isDense: true,
-            border: OutlineInputBorder(),
-          ),
-          items: [
-            for (final finish in PieceFinish.values)
-              DropdownMenuItem(value: finish, child: Text(finish.label)),
-          ],
-          onChanged: (value) {
-            if (value != null) setState(() => _pieceFinish = value);
-          },
-        ),
+        piecePicker,
       ],
     );
   }
@@ -590,9 +683,9 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ),
                 const SizedBox(height: 6),
-                _buildControls(),
+                _buildControls(compact: true),
                 const SizedBox(height: 6),
-                _buildVisualSettings(),
+                _buildVisualSettings(compact: true),
                 const SizedBox(height: 8),
                 Expanded(
                   child: ClipRRect(
