@@ -108,6 +108,21 @@ void main() {
   });
 
   group('keyboard', () {
+    testWidgets('read-only board ignores keyboard activation', (
+      tester,
+    ) async {
+      final controller = await pumpBoard(tester, canSelect: false);
+
+      await tester.tap(squareFinder('e2'));
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+
+      expect(controller.selectedSquare, isNull);
+      expect(sanList(controller), isEmpty);
+      expect(markerSquares('selected-'), isEmpty);
+    });
+
     testWidgets('Escape clears the selection', (tester) async {
       await pumpBoard(tester);
       await tapSquare(tester, 'e2');
