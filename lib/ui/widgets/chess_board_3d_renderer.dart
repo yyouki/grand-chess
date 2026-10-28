@@ -137,12 +137,18 @@ class Chess3DScenePainter extends CustomPainter {
 
         // Small, quiet bevels between individual squares make the surface read
         // as separate finished wooden tiles rather than a flat printed image.
-        _addFace(faces, [
-          Chess3DVector(x - 0.5, 0.002, z - 0.5),
-          Chess3DVector(x + 0.5, 0.002, z - 0.5),
-          Chess3DVector(x + 0.5, 0.002, z - 0.46),
-          Chess3DVector(x - 0.5, 0.002, z - 0.46),
-        ], isLight ? boardFinish.lightSquare.withValues(alpha: 0.78) : boardFinish.frameNear);
+        _addFace(
+          faces,
+          [
+            Chess3DVector(x - 0.5, 0.002, z - 0.5),
+            Chess3DVector(x + 0.5, 0.002, z - 0.5),
+            Chess3DVector(x + 0.5, 0.002, z - 0.46),
+            Chess3DVector(x - 0.5, 0.002, z - 0.46),
+          ],
+          isLight
+              ? boardFinish.lightSquare.withValues(alpha: 0.78)
+              : boardFinish.frameNear,
+        );
       }
     }
   }

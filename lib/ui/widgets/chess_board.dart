@@ -327,7 +327,8 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
         final name = square.algebraic;
         final piece = position.pieceAt(square);
         final center = projection.centerOf(square);
-        final isLast = lastMove != null &&
+        final isLast =
+            lastMove != null &&
             (lastMove.from == square || lastMove.to == square);
         final isSelected = selected == square;
         final isChecked = checkedKing == square;
@@ -385,7 +386,9 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
   List<Widget> _buildFlatCoordinates(ChessBoardProjection projection) {
     final labels = <Widget>[];
     final labelStyle = TextStyle(
-      fontSize: (projection.size.shortestSide * 0.025).clamp(9.0, 15.0).toDouble(),
+      fontSize: (projection.size.shortestSide * 0.025)
+          .clamp(9.0, 15.0)
+          .toDouble(),
       height: 1,
       fontWeight: FontWeight.w900,
       color: widget.boardFinish.darkSquare,
@@ -437,7 +440,9 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
                 padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
                 child: Text(
                   String.fromCharCode(65 + square.file),
-                  key: ValueKey('flat-file-${String.fromCharCode(65 + square.file)}'),
+                  key: ValueKey(
+                    'flat-file-${String.fromCharCode(65 + square.file)}',
+                  ),
                   style: labelStyle,
                 ),
               ),

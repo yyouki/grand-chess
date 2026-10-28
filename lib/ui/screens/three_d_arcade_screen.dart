@@ -20,11 +20,7 @@ class ThreeDArcadeScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF101927),
-              Color(0xFF263C50),
-              Color(0xFF101927),
-            ],
+            colors: [Color(0xFF101927), Color(0xFF263C50), Color(0xFF101927)],
           ),
         ),
         child: SafeArea(

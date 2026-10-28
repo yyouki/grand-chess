@@ -31,9 +31,7 @@ class _ThreeDTicTacToeScreenState extends State<ThreeDTicTacToeScreen> {
       for (var dy = -1; dy <= 1; dy++) {
         for (var dz = -1; dz <= 1; dz++) {
           if (dx == 0 && dy == 0 && dz == 0) continue;
-          if (dx < 0 ||
-              (dx == 0 && dy < 0) ||
-              (dx == 0 && dy == 0 && dz < 0)) {
+          if (dx < 0 || (dx == 0 && dy < 0) || (dx == 0 && dy == 0 && dz < 0)) {
             continue;
           }
           for (var z = 0; z < 3; z++) {
@@ -71,7 +69,9 @@ class _ThreeDTicTacToeScreenState extends State<ThreeDTicTacToeScreen> {
     if (_winner != null || _cells[index] != null) return;
     setState(() {
       _cells[index] = _turn;
-      if (_winningLines.any((line) => line.every((cell) => _cells[cell] == _turn))) {
+      if (_winningLines.any(
+        (line) => line.every((cell) => _cells[cell] == _turn),
+      )) {
         _winner = _turn;
       } else if (_cells.every((cell) => cell != null)) {
         _winner = 'DRAW';

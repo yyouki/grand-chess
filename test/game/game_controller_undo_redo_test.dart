@@ -14,21 +14,30 @@ void main() {
     controller.selectSquare(const Square(4, 3));
 
     expect(controller.gameState.moveHistory, hasLength(1));
-    expect(controller.gameState.position.pieceAt(const Square(4, 3)), isNotNull);
+    expect(
+      controller.gameState.position.pieceAt(const Square(4, 3)),
+      isNotNull,
+    );
     expect(controller.canUndo, isTrue);
     expect(controller.canRedo, isFalse);
 
     controller.undoMove();
 
     expect(controller.gameState.moveHistory, isEmpty);
-    expect(controller.gameState.position.pieceAt(const Square(4, 1)), isNotNull);
+    expect(
+      controller.gameState.position.pieceAt(const Square(4, 1)),
+      isNotNull,
+    );
     expect(controller.canUndo, isFalse);
     expect(controller.canRedo, isTrue);
 
     controller.redoMove();
 
     expect(controller.gameState.moveHistory, hasLength(1));
-    expect(controller.gameState.position.pieceAt(const Square(4, 3)), isNotNull);
+    expect(
+      controller.gameState.position.pieceAt(const Square(4, 3)),
+      isNotNull,
+    );
     expect(controller.canRedo, isFalse);
   });
 

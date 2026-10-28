@@ -4,9 +4,7 @@ import 'package:grand_chess/ui/screens/three_d_tower_screen.dart';
 
 void main() {
   testWidgets('tower builder adds a block and can restart', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(home: ThreeDTowerScreen()),
-    );
+    await tester.pumpWidget(const MaterialApp(home: ThreeDTowerScreen()));
     expect(find.text('SCORE  0'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('tower-drop-block')));

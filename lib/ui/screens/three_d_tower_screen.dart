@@ -46,11 +46,7 @@ class _ThreeDTowerScreenState extends State<ThreeDTowerScreen> {
 
   void _reset() {
     _blocks = [
-      const _TowerBlock(
-        width: _baseWidth,
-        center: 0,
-        color: Color(0xFF4F806F),
-      ),
+      const _TowerBlock(width: _baseWidth, center: 0, color: Color(0xFF4F806F)),
     ];
     _gameOver = false;
   }
@@ -136,7 +132,10 @@ class _ThreeDTowerScreenState extends State<ThreeDTowerScreen> {
                       const blockHeight = 30.0;
                       final visibleCount = min(
                         _blocks.length,
-                        max(1, ((constraints.maxHeight - 35) / blockHeight).floor()),
+                        max(
+                          1,
+                          ((constraints.maxHeight - 35) / blockHeight).floor(),
+                        ),
                       ).toInt();
                       final firstIndex = _blocks.length - visibleCount;
                       return SizedBox(
@@ -146,9 +145,11 @@ class _ThreeDTowerScreenState extends State<ThreeDTowerScreen> {
                           alignment: Alignment.bottomCenter,
                           clipBehavior: Clip.none,
                           children: [
-                            for (var index = firstIndex;
-                                index < _blocks.length;
-                                index++)
+                            for (
+                              var index = firstIndex;
+                              index < _blocks.length;
+                              index++
+                            )
                               Positioned(
                                 bottom: (index - firstIndex) * blockHeight,
                                 child: _buildBlock(_blocks[index], index),
@@ -186,7 +187,9 @@ class _ThreeDTowerScreenState extends State<ThreeDTowerScreen> {
                     key: const ValueKey('tower-drop-block'),
                     onPressed: _gameOver ? () => setState(_reset) : _dropBlock,
                     icon: Icon(_gameOver ? Icons.refresh : Icons.add_box),
-                    label: Text(_gameOver ? 'Restart from the top' : 'Drop block'),
+                    label: Text(
+                      _gameOver ? 'Restart from the top' : 'Drop block',
+                    ),
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFFE4B868),
                       foregroundColor: const Color(0xFF1C2835),
@@ -225,10 +228,7 @@ class _ThreeDTowerScreenState extends State<ThreeDTowerScreen> {
             ],
           ),
           borderRadius: BorderRadius.circular(5),
-          border: Border.all(
-            color: const Color(0x66FFFFFF),
-            width: 1,
-          ),
+          border: Border.all(color: const Color(0x66FFFFFF), width: 1),
           boxShadow: const [
             BoxShadow(
               color: Color(0x66000000),

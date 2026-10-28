@@ -64,7 +64,9 @@ class _GameScreenState extends State<GameScreen> {
         DeviceOrientation.landscapeRight,
       ]),
     );
-    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky));
+    unawaited(
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky),
+    );
   }
 
   @override
@@ -271,7 +273,8 @@ class _GameScreenState extends State<GameScreen> {
         if (out.isNotEmpty) out.write(' ');
         out.write('${record.fullmoveNumberBeforeMove}. ${record.san}');
       } else {
-        final pairedWhiteMove = index > 0 &&
+        final pairedWhiteMove =
+            index > 0 &&
             records[index - 1].sideThatMoved == engine.Color.white &&
             records[index - 1].fullmoveNumberBeforeMove ==
                 record.fullmoveNumberBeforeMove;
@@ -450,19 +453,15 @@ class _GameScreenState extends State<GameScreen> {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final panelWidth = math.min(
-              340.0,
-              math.max(250.0, constraints.maxWidth * 0.31),
-            ).toDouble();
-            final availableBoardWidth = (constraints.maxWidth -
-                    panelWidth -
-                    28)
+            final panelWidth = math
+                .min(340.0, math.max(250.0, constraints.maxWidth * 0.31))
+                .toDouble();
+            final availableBoardWidth = (constraints.maxWidth - panelWidth - 28)
                 .clamp(220.0, 2000.0)
                 .toDouble();
-            final boardSide = math.min(
-              constraints.maxHeight,
-              availableBoardWidth,
-            ).toDouble();
+            final boardSide = math
+                .min(constraints.maxHeight, availableBoardWidth)
+                .toDouble();
             return Row(
               children: [
                 Expanded(
