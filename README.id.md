@@ -2,18 +2,20 @@
 
 **Bahasa / Language:** [Bahasa Indonesia](README.id.md) | [English](README.md)
 
-Grand Chess adalah aplikasi catur Flutter untuk dua orang yang bermain bergantian pada satu perangkat. Aplikasi ini menggunakan mesin catur yang ditulis dengan Dart dan papan perspektif 3D yang bisa diputar dengan menggeser jari atau mouse.
+Grand Chess adalah aplikasi catur Flutter lintas platform dengan mesin aturan Dart, papan perspektif 3D, dan bot offline. Pada ponsel yang mendukungnya, meja catur dibuka dalam mode landscape layar penuh.
 
 Menurut [daftar platform resmi Flutter](https://docs.flutter.dev/reference/supported-platforms), Flutter mendukung Android, iOS, Windows, macOS, Linux, dan web. Workflow GitHub di repositori ini membangun target-target tersebut agar dukungannya diperiksa oleh CI, bukan hanya diasumsikan dari label Flutter.
 
 ## Fitur saat ini
 
-- Permainan lokal dua pemain pada satu perangkat.
-- Papan perspektif 3D dan buah catur bervolume yang dirender dengan Flutter Canvas, tanpa mesin 3D tambahan.
-- Geser area kosong papan untuk memutar pandangan hingga 360 derajat. Gunakan ikon reset untuk kembali ke sudut awal.
-- Pilih buah untuk melihat kotak tujuan yang legal. Buah juga bisa dipindahkan dengan drag.
-- Riwayat langkah, membalik orientasi papan, promosi pion, skak, skakmat, remis, rokade, dan en passant.
-- Tata letak responsif untuk ponsel dan jendela desktop.
+- Permainan lokal dua pemain pada satu perangkat atau melawan bot offline dengan gaya Easy dan Tactical. Bot memakai daftar langkah legal dari mesin yang sama; ini bot ringan, bukan Stockfish.
+- Papan perspektif 3D dan buah catur bervolume yang dirender dengan Flutter Canvas.
+- Ketuk sebuah buah untuk memilihnya, lalu ketuk kotak tujuan yang disorot. Drag buah tidak akan memindahkannya.
+- Geser area kosong papan untuk memutar kamera hingga 360 derajat dan mengubah kemiringan. Gunakan tombol reset untuk kembali ke sudut awal.
+- Koordinat A–H dan 1–8 yang datar dan tegak, animasi langkah, serta pilihan material papan dan buah.
+- Riwayat langkah, membalik papan, undo/redo, promosi pion, skak/skakmat/remis, rokade, en passant, serta salin/ekspor teks FEN dan PGN.
+- Catur memakai mode landscape imersif di perangkat seluler yang mendukungnya. Di desktop, layar permainan memakai tata letak lebar tetapi tidak memaksa ukuran jendela OS menjadi fullscreen.
+- 3D Arcade terpisah dengan Cube Tic-Tac-Toe dan Tower Builder yang bisa dimainkan.
 - Pemeriksaan format kode, analisis statis, tes, dan build platform melalui GitHub Actions.
 
 ## Status platform
@@ -90,9 +92,9 @@ Pisahkan aturan catur dari widget UI. Letakkan logika tampilan yang dapat dipaka
 
 ## Batasan sebelum rilis publik 1.0
 
-Grand Chess saat ini berfokus pada permainan lokal. Belum tersedia lawan komputer, matchmaking online, akun cloud, penyimpanan file permainan, efek suara, atau paket App Store yang sudah ditandatangani. Penandatanganan iOS dan pengiriman ke toko aplikasi membutuhkan kredensial milik pengelola proyek.
+Bot bawaan adalah lawan offline sederhana, bukan mesin setara Stockfish. Matchmaking online, akun cloud, simpan/lanjut permainan secara permanen, jam catur, efek suara, pipeline model 3D/PBR lengkap, serta paket App Store yang sudah ditandatangani belum tersedia. Penandatanganan iOS dan pengiriman ke toko aplikasi membutuhkan kredensial milik pengelola proyek.
 
-Deskripsi repositori dan lisensi source code harus dipastikan oleh pemilik sebelum mengumumkan rilis publik. Tampilan aplikasi juga perlu diperiksa pada perangkat Android, Windows, macOS, Linux, dan browser web secara nyata.
+Pemilik masih perlu menentukan lisensi source code sebelum mengumumkan rilis publik. Build CI sudah berhasil, tetapi pemeriksaan visual pada perangkat Android/iOS serta komputer desktop tetap diperlukan.
 
 ## Dokumen proyek
 
