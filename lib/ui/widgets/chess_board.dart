@@ -155,6 +155,7 @@ class _ChessBoardState extends State<ChessBoard> {
 
   void _handleTapUp(TapUpDetails details, ChessBoardProjection projection) {
     final square = _squareAt(details.localPosition, projection);
+    _pointerDown = null;
     if (square == null) {
       return;
     }
@@ -406,7 +407,6 @@ class _ChessBoardState extends State<ChessBoard> {
                       behavior: HitTestBehavior.opaque,
                       onTapDown: _handleTapDown,
                       onTapUp: (details) => _handleTapUp(details, projection),
-                      onTapCancel: () => _pointerDown = null,
                       onPanStart: (details) =>
                           _handlePanStart(details, projection),
                       onPanUpdate: _handlePanMove,
