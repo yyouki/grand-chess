@@ -361,8 +361,9 @@ class _GameScreenState extends State<GameScreen> {
         ? const BoxConstraints.tightFor(width: 32, height: 32)
         : null;
     final buttonPadding = compact ? EdgeInsets.zero : const EdgeInsets.all(8);
-    final buttonDensity =
-        compact ? VisualDensity.compact : VisualDensity.standard;
+    final buttonDensity = compact
+        ? VisualDensity.compact
+        : VisualDensity.standard;
 
     return Theme(
       data: Theme.of(context).copyWith(
@@ -476,10 +477,7 @@ class _GameScreenState extends State<GameScreen> {
         labelText: boardLabel,
         isDense: true,
         border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 10,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       ),
       items: [
         for (final finish in BoardFinish.values)
@@ -505,10 +503,7 @@ class _GameScreenState extends State<GameScreen> {
         labelText: pieceLabel,
         isDense: true,
         border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 8,
-          vertical: 10,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       ),
       items: [
         for (final finish in PieceFinish.values)
@@ -536,11 +531,7 @@ class _GameScreenState extends State<GameScreen> {
       );
     }
     return Column(
-      children: [
-        boardPicker,
-        const SizedBox(height: 8),
-        piecePicker,
-      ],
+      children: [boardPicker, const SizedBox(height: 8), piecePicker],
     );
   }
 
