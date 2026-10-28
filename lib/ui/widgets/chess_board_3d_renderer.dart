@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../chess_engine/chess_engine.dart' hide Color;
 import '../../chess_engine/chess_engine.dart' as engine;
 import '../theme/board_colors.dart';
+import '../theme/chess_visual_theme.dart';
 
 class Chess3DScenePainter extends CustomPainter {
   const Chess3DScenePainter({
@@ -16,6 +17,9 @@ class Chess3DScenePainter extends CustomPainter {
     required this.cursor,
     required this.cursorVisible,
     required this.projection,
+    this.animationProgress = 1,
+    this.boardFinish = BoardFinish.walnut,
+    this.pieceFinish = PieceFinish.classic,
   });
 
   final Position position;
@@ -26,6 +30,9 @@ class Chess3DScenePainter extends CustomPainter {
   final Square cursor;
   final bool cursorVisible;
   final ChessBoardProjection projection;
+  final double animationProgress;
+  final BoardFinish boardFinish;
+  final PieceFinish pieceFinish;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -48,7 +55,6 @@ class Chess3DScenePainter extends CustomPainter {
     _drawFaces(canvas, pieceFaces);
 
     _drawMarkers(canvas, size);
-    _drawCoordinates(canvas, size);
     _drawCursor(canvas);
     _drawOuterRim(canvas);
   }
@@ -66,31 +72,31 @@ class Chess3DScenePainter extends CustomPainter {
       const Chess3DVector(right, top, far),
       const Chess3DVector(right, top, near),
       const Chess3DVector(left, top, near),
-    ], const Color(0xFF85502F));
+    ], boardFinish.frameTop);
     _addFace(faces, [
       const Chess3DVector(left, bottom, near),
       const Chess3DVector(right, bottom, near),
       const Chess3DVector(right, top, near),
       const Chess3DVector(left, top, near),
-    ], const Color(0xFF4D2A1C));
+    ], boardFinish.frameNear);
     _addFace(faces, [
       const Chess3DVector(left, bottom, far),
       const Chess3DVector(left, bottom, near),
       const Chess3DVector(left, top, near),
       const Chess3DVector(left, top, far),
-    ], const Color(0xFF633923));
+    ], boardFinish.frameSide);
     _addFace(faces, [
       const Chess3DVector(right, bottom, far),
       const Chess3DVector(right, top, far),
       const Chess3DVector(right, top, near),
       const Chess3DVector(right, bottom, near),
-    ], const Color(0xFF704128));
+    ], boardFinish.frameTop);
     _addFace(faces, [
       const Chess3DVector(left, bottom, far),
       const Chess3DVector(right, bottom, far),
       const Chess3DVector(right, top, far),
       const Chess3DVector(left, top, far),
-    ], const Color(0xFF5A321F));
+    ], boardFinish.frameFar);
 
     // A thin, brighter wooden lip gives the board a finished furniture-like edge.
     const lip = 4.38;
@@ -99,7 +105,7 @@ class Chess3DScenePainter extends CustomPainter {
       const Chess3DVector(lip, -0.02, -lip),
       const Chess3DVector(lip, -0.02, lip),
       const Chess3DVector(-lip, -0.02, lip),
-    ], const Color(0xFFAA7548));
+    ], boardFinish.frameTop);
   }
 
   void _addBoardTiles(List<_Face> faces) {
@@ -107,7 +113,7 @@ class Chess3DScenePainter extends CustomPainter {
       for (var column = 0; column < 8; column++) {
         final square = projection.squareAtVisualPosition(column, row);
         final isLight = (square.file + square.rank).isOdd;
-        var color = isLight ? const Color(0xFFEEDFC8) : const Color(0xFF895431);
+        var color = isLight ? boardFinish.lightSquare : boardFinish.darkSquare;
 
         if (lastMove != null &&
             (lastMove!.from == square || lastMove!.to == square)) {
@@ -136,7 +142,7 @@ class Chess3DScenePainter extends CustomPainter {
           Chess3DVector(x + 0.5, 0.002, z - 0.5),
           Chess3DVector(x + 0.5, 0.002, z - 0.46),
           Chess3DVector(x - 0.5, 0.002, z - 0.46),
-        ], isLight ? const Color(0xFFE7D4B7) : const Color(0xFF744426));
+        ], isLight ? boardFinish.lightSquare.withValues(alpha: 0.78) : boardFinish.frameNear);
       }
     }
   }
@@ -149,14 +155,10 @@ class Chess3DScenePainter extends CustomPainter {
         if (piece == null) {
           continue;
         }
-        final center = projection.worldCenterOf(square);
+        final center = _pieceCenter(square);
         final isWhite = piece.color == engine.Color.white;
-        final highlight = isWhite
-            ? const Color(0xFFFFFFFF)
-            : const Color(0xFF555B64);
-        final shadow = isWhite
-            ? const Color(0xFFE5E7EB)
-            : const Color(0xFF080A0E);
+        final highlight = pieceFinish.highlight(isWhite);
+        final shadow = pieceFinish.shadow(isWhite);
         final material = _PieceMaterial(highlight: highlight, shadow: shadow);
         final profile = _profileFor(piece.type);
         _addLathe(faces, center.x, center.z, profile, material);
@@ -531,7 +533,10 @@ class Chess3DScenePainter extends CustomPainter {
         if (position.pieceAt(square) == null) {
           continue;
         }
-        final center = projection.centerOf(square, height: 0.01);
+        final worldCenter = _pieceCenter(square);
+        final center = projection.project(
+          Chess3DVector(worldCenter.x, 0.01, worldCenter.z),
+        );
         canvas.drawOval(
           Rect.fromCenter(
             center: center,
@@ -565,53 +570,19 @@ class Chess3DScenePainter extends CustomPainter {
     }
   }
 
-  void _drawCoordinates(Canvas canvas, Size size) {
-    final fontSize = math.max(8.0, size.shortestSide * 0.023);
-    final style = TextStyle(
-      fontSize: fontSize,
-      fontWeight: FontWeight.w800,
-      color: const Color(0xCC382719),
-      height: 1,
-    );
-
-    for (var row = 0; row < 8; row++) {
-      final rankSquare = projection.squareAtVisualPosition(0, row);
-      final rankText = (rankSquare.rank + 1).toString();
-      final rankPainter = TextPainter(
-        text: TextSpan(text: rankText, style: style),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final rankPoint = projection.project(
-        Chess3DVector(-3.88, 0.015, row.toDouble() - 3.5),
-      );
-      rankPainter.paint(
-        canvas,
-        Offset(
-          rankPoint.dx - rankPainter.width / 2,
-          rankPoint.dy - rankPainter.height / 2,
-        ),
-      );
-
-      final fileSquare = projection.squareAtVisualPosition(row, 7);
-      final fileText = String.fromCharCode(97 + fileSquare.file);
-      final filePainter = TextPainter(
-        text: TextSpan(
-          text: fileText,
-          style: style.copyWith(color: const Color(0xDDF4E5D2)),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      final filePoint = projection.project(
-        Chess3DVector(row.toDouble() - 3.5, 0.016, 3.88),
-      );
-      filePainter.paint(
-        canvas,
-        Offset(
-          filePoint.dx - filePainter.width / 2,
-          filePoint.dy - filePainter.height / 2,
-        ),
-      );
+  Chess3DVector _pieceCenter(Square square) {
+    final move = lastMove;
+    if (move == null || square != move.to || animationProgress >= 1) {
+      return projection.worldCenterOf(square);
     }
+    final progress = animationProgress.clamp(0.0, 1.0).toDouble();
+    final from = projection.worldCenterOf(move.from);
+    final to = projection.worldCenterOf(move.to);
+    return Chess3DVector(
+      from.x + (to.x - from.x) * progress,
+      from.y + (to.y - from.y) * progress,
+      from.z + (to.z - from.z) * progress,
+    );
   }
 
   void _drawCursor(Canvas canvas) {
