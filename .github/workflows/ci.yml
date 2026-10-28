@@ -49,7 +49,7 @@ jobs:
       - name: Build release APK
         run: flutter build apk --release
       - name: Upload Android APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: grand-chess-android-release
           path: build/app/outputs/flutter-apk/app-release.apk
@@ -75,7 +75,7 @@ jobs:
         shell: pwsh
         run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath grand-chess-windows-x64.zip
       - name: Upload Windows package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: grand-chess-windows-release
           path: grand-chess-windows-x64.zip
@@ -104,7 +104,7 @@ jobs:
       - name: Package Linux application
         run: tar -czf grand-chess-linux-x64.tar.gz -C build/linux/x64/release bundle
       - name: Upload Linux package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: grand-chess-linux-release
           path: grand-chess-linux-x64.tar.gz
@@ -129,7 +129,7 @@ jobs:
       - name: Package macOS application
         run: ditto -c -k --sequesterRsrc --keepParent build/macos/Build/Products/Release/grand_chess.app grand-chess-macos.zip
       - name: Upload macOS package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: grand-chess-macos-release
           path: grand-chess-macos.zip
@@ -171,7 +171,7 @@ jobs:
         run: zip -qr "$GITHUB_WORKSPACE/grand-chess-web.zip" .
         working-directory: build/web
       - name: Upload web package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: grand-chess-web-release
           path: grand-chess-web.zip
