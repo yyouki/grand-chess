@@ -327,6 +327,7 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
         final square = Square(file, rank);
         final name = square.algebraic;
         final piece = position.pieceAt(square);
+        final visual = projection.visualPosition(square);
         final center = projection.centerOf(square);
         final isLast =
             lastMove != null &&
@@ -353,6 +354,10 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
             SizedBox(key: ValueKey('capture-$name'), width: 1, height: 1),
           if (isCursor)
             SizedBox(key: ValueKey('cursor-$name'), width: 1, height: 1),
+          if (visual.$1 == 0)
+            SizedBox(key: ValueKey('rank-label-$name'), width: 1, height: 1),
+          if (visual.$2 == 7)
+            SizedBox(key: ValueKey('file-label-$name'), width: 1, height: 1),
         ];
 
         if (piece != null) {
