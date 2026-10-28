@@ -191,12 +191,7 @@ class _ChessBoardState extends State<ChessBoard> {
     );
   }
 
-  Widget _buildSquare(
-    _BoardView view,
-    int row,
-    int column,
-    double squareSize,
-  ) {
+  Widget _buildSquare(_BoardView view, int row, int column, double squareSize) {
     final square = Square(
       view.flipped ? 7 - column : column,
       view.flipped ? row : 7 - row,

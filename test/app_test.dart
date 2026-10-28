@@ -80,37 +80,40 @@ void main() {
       expect(textOf(tester, 'turn-indicator'), 'White to move');
     });
 
-    testWidgets('selecting e2 and then e4 plays a legal move through the controller and the engine', (
+    testWidgets(
+      'selecting e2 and then e4 plays a legal move through the controller and the engine',
+      (tester) async {
+        await startLocalGame(tester);
+        final controller = runningController(tester);
+        const e2 = Square(4, 1);
+        const e4 = Square(4, 3);
+        expect(
+          controller.gameState.legalMoves.any(
+            (move) => move.from == e2 && move.to == e4,
+          ),
+          isTrue,
+        );
+
+        await tapSquare(tester, 'e2');
+        expect(controller.selectedSquare, e2);
+        await tapSquare(tester, 'e4');
+
+        expect(sanList(controller), ['e4']);
+        expect(controller.selectedSquare, isNull);
+        expect(controller.lastMove?.from, e2);
+        expect(controller.lastMove?.to, e4);
+        expect(controller.gameState.position.sideToMove, engine.Color.black);
+        expect(
+          pieceOn(tester, 'e4'),
+          const Piece(engine.Color.white, PieceType.pawn),
+        );
+        expect(pieceOn(tester, 'e2'), isNull);
+      },
+    );
+
+    testWidgets('after e2 to e4 the turn indicator shows Black', (
       tester,
     ) async {
-      await startLocalGame(tester);
-      final controller = runningController(tester);
-      const e2 = Square(4, 1);
-      const e4 = Square(4, 3);
-      expect(
-        controller.gameState.legalMoves.any(
-          (move) => move.from == e2 && move.to == e4,
-        ),
-        isTrue,
-      );
-
-      await tapSquare(tester, 'e2');
-      expect(controller.selectedSquare, e2);
-      await tapSquare(tester, 'e4');
-
-      expect(sanList(controller), ['e4']);
-      expect(controller.selectedSquare, isNull);
-      expect(controller.lastMove?.from, e2);
-      expect(controller.lastMove?.to, e4);
-      expect(controller.gameState.position.sideToMove, engine.Color.black);
-      expect(
-        pieceOn(tester, 'e4'),
-        const Piece(engine.Color.white, PieceType.pawn),
-      );
-      expect(pieceOn(tester, 'e2'), isNull);
-    });
-
-    testWidgets('after e2 to e4 the turn indicator shows Black', (tester) async {
       await startLocalGame(tester);
 
       await playMoves(tester, ['e2e4']);

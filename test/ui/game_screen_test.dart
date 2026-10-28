@@ -393,23 +393,24 @@ void main() {
       expect(textOf(tester, 'turn-indicator'), 'White to move');
     });
 
-    testWidgets('asks for confirmation after a move and keeps the game on Cancel', (
-      tester,
-    ) async {
-      await pumpGameScreen(tester);
-      await playMoves(tester, ['e2e4']);
+    testWidgets(
+      'asks for confirmation after a move and keeps the game on Cancel',
+      (tester) async {
+        await pumpGameScreen(tester);
+        await playMoves(tester, ['e2e4']);
 
-      await tester.tap(keyed('new-game-button'));
-      await tester.pumpAndSettle();
-      expect(find.text('Start a new game?'), findsOneWidget);
+        await tester.tap(keyed('new-game-button'));
+        await tester.pumpAndSettle();
+        expect(find.text('Start a new game?'), findsOneWidget);
 
-      await tester.tap(keyed('new-game-cancel'));
-      await tester.pumpAndSettle();
+        await tester.tap(keyed('new-game-cancel'));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Start a new game?'), findsNothing);
-      expect(textOf(tester, 'turn-indicator'), 'Black to move');
-      expect(pieceOn(tester, 'e4'), whitePawn);
-    });
+        expect(find.text('Start a new game?'), findsNothing);
+        expect(textOf(tester, 'turn-indicator'), 'Black to move');
+        expect(pieceOn(tester, 'e4'), whitePawn);
+      },
+    );
 
     testWidgets('resets the board and the history when confirmed', (
       tester,

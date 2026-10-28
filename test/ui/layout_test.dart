@@ -46,27 +46,29 @@ void expectSideBySide(WidgetTester tester, Size screen) {
 void main() {
   group('game screen layout', () {
     for (final size in singleColumnSizes) {
-      testWidgets('uses a single column on a ${describe(size)} portrait screen', (
-        tester,
-      ) async {
-        useScreenSize(tester, size);
+      testWidgets(
+        'uses a single column on a ${describe(size)} portrait screen',
+        (tester) async {
+          useScreenSize(tester, size);
 
-        await pumpGameScreen(tester);
+          await pumpGameScreen(tester);
 
-        expectSingleColumn(tester, size);
-      });
+          expectSingleColumn(tester, size);
+        },
+      );
     }
 
     for (final size in sideBySideSizes) {
-      testWidgets('puts the board beside the sidebar on a ${describe(size)} screen', (
-        tester,
-      ) async {
-        useScreenSize(tester, size);
+      testWidgets(
+        'puts the board beside the sidebar on a ${describe(size)} screen',
+        (tester) async {
+          useScreenSize(tester, size);
 
-        await pumpGameScreen(tester);
+          await pumpGameScreen(tester);
 
-        expectSideBySide(tester, size);
-      });
+          expectSideBySide(tester, size);
+        },
+      );
     }
 
     testWidgets('switches layout when the window size changes', (tester) async {

@@ -56,9 +56,7 @@ Piece? pieceOn(WidgetTester tester, String name) {
 }
 
 List<String> sanList(GameController controller) {
-  return controller.gameState.moveHistory
-      .map((record) => record.san)
-      .toList();
+  return controller.gameState.moveHistory.map((record) => record.san).toList();
 }
 
 bool isWhiteAtBottom(WidgetTester tester) {

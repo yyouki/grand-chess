@@ -23,19 +23,20 @@ void main() {
       expect(markerSquares('selected-'), isEmpty);
     });
 
-    testWidgets('a drop on an illegal square makes no move and keeps the selection', (
-      tester,
-    ) async {
-      final controller = await pumpBoard(tester);
+    testWidgets(
+      'a drop on an illegal square makes no move and keeps the selection',
+      (tester) async {
+        final controller = await pumpBoard(tester);
 
-      await dragPiece(tester, 'e2', 'e5');
+        await dragPiece(tester, 'e2', 'e5');
 
-      expect(sanList(controller), isEmpty);
-      expect(pieceOn(tester, 'e2'), whitePawn);
-      expect(pieceOn(tester, 'e5'), isNull);
-      expect(markerSquares('selected-'), {'e2'});
-      expect(markerSquares('legal-'), {'e3', 'e4'});
-    });
+        expect(sanList(controller), isEmpty);
+        expect(pieceOn(tester, 'e2'), whitePawn);
+        expect(pieceOn(tester, 'e5'), isNull);
+        expect(markerSquares('selected-'), {'e2'});
+        expect(markerSquares('legal-'), {'e3', 'e4'});
+      },
+    );
 
     testWidgets('drags a piece onto an enemy piece to capture it', (
       tester,
@@ -86,16 +87,17 @@ void main() {
       expect(sanList(controller), ['Nf3']);
     });
 
-    testWidgets('dragging a pawn to the last rank asks for a promotion choice', (
-      tester,
-    ) async {
-      final controller = await pumpBoard(tester, fen: promotionFen);
+    testWidgets(
+      'dragging a pawn to the last rank asks for a promotion choice',
+      (tester) async {
+        final controller = await pumpBoard(tester, fen: promotionFen);
 
-      await dragPiece(tester, 'e7', 'e8');
+        await dragPiece(tester, 'e7', 'e8');
 
-      expect(controller.isAwaitingPromotionChoice, isTrue);
-      expect(sanList(controller), isEmpty);
-    });
+        expect(controller.isAwaitingPromotionChoice, isTrue);
+        expect(sanList(controller), isEmpty);
+      },
+    );
   });
 
   group('keyboard', () {

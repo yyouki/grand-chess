@@ -25,57 +25,59 @@ Future<void> startGameFromHome(
 }
 
 void main() {
-  testWidgets('plays a game from the home screen to checkmate and starts another', (
-    tester,
-  ) async {
-    await startGameFromHome(tester, whiteName: 'Alice', blackName: 'Bob');
+  testWidgets(
+    'plays a game from the home screen to checkmate and starts another',
+    (tester) async {
+      await startGameFromHome(tester, whiteName: 'Alice', blackName: 'Bob');
 
-    expect(find.byType(GameScreen), findsOneWidget);
-    expect(textOf(tester, 'turn-indicator'), 'Alice (White) to move');
-    expect(markerSquares('piece-'), hasLength(32));
+      expect(find.byType(GameScreen), findsOneWidget);
+      expect(textOf(tester, 'turn-indicator'), 'Alice (White) to move');
+      expect(markerSquares('piece-'), hasLength(32));
 
-    await playMoves(tester, foolsMateMoves);
-    await tester.pumpAndSettle();
+      await playMoves(tester, foolsMateMoves);
+      await tester.pumpAndSettle();
 
-    expect(textOf(tester, 'result-title'), 'Black wins');
-    expect(textOf(tester, 'result-subtitle'), 'Checkmate');
+      expect(textOf(tester, 'result-title'), 'Black wins');
+      expect(textOf(tester, 'result-subtitle'), 'Checkmate');
 
-    await tester.tap(keyed('result-new-game'));
-    await tester.pumpAndSettle();
+      await tester.tap(keyed('result-new-game'));
+      await tester.pumpAndSettle();
 
-    expect(textOf(tester, 'turn-indicator'), 'Alice (White) to move');
-    expect(markerSquares('piece-'), hasLength(32));
-    expect(keyed('history-empty'), findsOneWidget);
-  });
+      expect(textOf(tester, 'turn-indicator'), 'Alice (White) to move');
+      expect(markerSquares('piece-'), hasLength(32));
+      expect(keyed('history-empty'), findsOneWidget);
+    },
+  );
 
-  testWidgets('resigns on a phone screen and navigates back to the home screen', (
-    tester,
-  ) async {
-    useScreenSize(tester, const Size(390, 844));
-    await startGameFromHome(tester);
-    await playMoves(tester, ['e2e4']);
+  testWidgets(
+    'resigns on a phone screen and navigates back to the home screen',
+    (tester) async {
+      useScreenSize(tester, const Size(390, 844));
+      await startGameFromHome(tester);
+      await playMoves(tester, ['e2e4']);
 
-    await tester.ensureVisible(keyed('resign-button'));
-    await tester.pumpAndSettle();
-    await tester.tap(keyed('resign-button'));
-    await tester.pumpAndSettle();
-    await tester.tap(keyed('resign-confirm'));
-    await tester.pumpAndSettle();
+      await tester.ensureVisible(keyed('resign-button'));
+      await tester.pumpAndSettle();
+      await tester.tap(keyed('resign-button'));
+      await tester.pumpAndSettle();
+      await tester.tap(keyed('resign-confirm'));
+      await tester.pumpAndSettle();
 
-    expect(textOf(tester, 'result-title'), 'White wins');
-    expect(textOf(tester, 'result-subtitle'), 'Black resigned');
+      expect(textOf(tester, 'result-title'), 'White wins');
+      expect(textOf(tester, 'result-subtitle'), 'Black resigned');
 
-    await tester.tap(keyed('result-view-board'));
-    await tester.pumpAndSettle();
-    await tester.pageBack();
-    await tester.pumpAndSettle();
-    await tester.pageBack();
-    await tester.pumpAndSettle();
+      await tester.tap(keyed('result-view-board'));
+      await tester.pumpAndSettle();
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      await tester.pageBack();
+      await tester.pumpAndSettle();
 
-    expect(find.byType(HomeScreen), findsOneWidget);
-    expect(textOf(tester, 'home-title'), 'Grand Chess');
-    expect(tester.takeException(), isNull);
-  });
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(textOf(tester, 'home-title'), 'Grand Chess');
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('mixes taps and drags in the same game', (tester) async {
     await startGameFromHome(tester);

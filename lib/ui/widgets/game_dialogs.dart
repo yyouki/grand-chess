@@ -85,7 +85,8 @@ Future<GameResultAction?> showGameResultDialog(
       actions: [
         TextButton(
           key: const ValueKey('result-view-board'),
-          onPressed: () => Navigator.of(context).pop(GameResultAction.viewBoard),
+          onPressed: () =>
+              Navigator.of(context).pop(GameResultAction.viewBoard),
           child: const Text('View board'),
         ),
         FilledButton(

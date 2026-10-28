@@ -91,17 +91,18 @@ void main() {
       expect(markerSquares('legal-'), {'f3', 'h3'});
     });
 
-    testWidgets('clears the selection when the selected piece is tapped again', (
-      tester,
-    ) async {
-      await pumpBoard(tester);
+    testWidgets(
+      'clears the selection when the selected piece is tapped again',
+      (tester) async {
+        await pumpBoard(tester);
 
-      await tapSquare(tester, 'e2');
-      await tapSquare(tester, 'e2');
+        await tapSquare(tester, 'e2');
+        await tapSquare(tester, 'e2');
 
-      expect(markerSquares('selected-'), isEmpty);
-      expect(markerSquares('legal-'), isEmpty);
-    });
+        expect(markerSquares('selected-'), isEmpty);
+        expect(markerSquares('legal-'), isEmpty);
+      },
+    );
 
     testWidgets('moves the selection to another piece of the same side', (
       tester,
@@ -115,17 +116,18 @@ void main() {
       expect(markerSquares('legal-'), {'f3', 'h3'});
     });
 
-    testWidgets('clears the selection when an unrelated empty square is tapped', (
-      tester,
-    ) async {
-      await pumpBoard(tester);
+    testWidgets(
+      'clears the selection when an unrelated empty square is tapped',
+      (tester) async {
+        await pumpBoard(tester);
 
-      await tapSquare(tester, 'e2');
-      await tapSquare(tester, 'e5');
+        await tapSquare(tester, 'e2');
+        await tapSquare(tester, 'e5');
 
-      expect(markerSquares('selected-'), isEmpty);
-      expect(markerSquares('legal-'), isEmpty);
-    });
+        expect(markerSquares('selected-'), isEmpty);
+        expect(markerSquares('legal-'), isEmpty);
+      },
+    );
 
     testWidgets('ignores a tap on an opponent piece when nothing is selected', (
       tester,
@@ -167,24 +169,25 @@ void main() {
       expect(markerSquares('last-move-'), {'e7', 'e5'});
     });
 
-    testWidgets('shows capture markers and captures when the enemy piece is tapped', (
-      tester,
-    ) async {
-      final controller = await pumpBoard(tester);
-      await playMoves(tester, ['e2e4', 'd7d5']);
+    testWidgets(
+      'shows capture markers and captures when the enemy piece is tapped',
+      (tester) async {
+        final controller = await pumpBoard(tester);
+        await playMoves(tester, ['e2e4', 'd7d5']);
 
-      await tapSquare(tester, 'e4');
+        await tapSquare(tester, 'e4');
 
-      expect(markerSquares('legal-'), {'e5'});
-      expect(markerSquares('capture-'), {'d5'});
+        expect(markerSquares('legal-'), {'e5'});
+        expect(markerSquares('capture-'), {'d5'});
 
-      await tapSquare(tester, 'd5');
+        await tapSquare(tester, 'd5');
 
-      expect(pieceOn(tester, 'd5'), whitePawn);
-      expect(pieceOn(tester, 'e4'), isNull);
-      expect(sanList(controller), ['e4', 'd5', 'exd5']);
-      expect(controller.gameState.moveHistory.last.capturedPiece, blackPawn);
-    });
+        expect(pieceOn(tester, 'd5'), whitePawn);
+        expect(pieceOn(tester, 'e4'), isNull);
+        expect(sanList(controller), ['e4', 'd5', 'exd5']);
+        expect(controller.gameState.moveHistory.last.capturedPiece, blackPawn);
+      },
+    );
 
     testWidgets('castles kingside by moving the king two squares', (
       tester,
