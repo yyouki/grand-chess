@@ -431,7 +431,7 @@ class _GameScreenState extends State<GameScreen> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<PieceFinish>(
-          key: const ValueKey('piece-style-choice'),
+          key: const ValueKey('style-choice-pieces'),
           initialValue: _pieceFinish,
           isExpanded: true,
           decoration: const InputDecoration(
