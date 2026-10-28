@@ -165,7 +165,10 @@ class _ChessBoardState extends State<ChessBoard> {
     widget.controller.selectSquare(square);
   }
 
-  void _handlePanStart(DragStartDetails details, ChessBoardProjection projection) {
+  void _handlePanStart(
+    DragStartDetails details,
+    ChessBoardProjection projection,
+  ) {
     final start = _pointerDown ?? details.localPosition;
     final square = _squareAt(start, projection);
     _focusNode.requestFocus();
@@ -192,9 +195,7 @@ class _ChessBoardState extends State<ChessBoard> {
     }
     setState(() {
       _yaw = (_yaw + details.delta.dx * 0.012) % (math.pi * 2);
-      _pitch = (_pitch + details.delta.dy * 0.004)
-          .clamp(0.43, 1.18)
-          .toDouble();
+      _pitch = (_pitch + details.delta.dy * 0.004).clamp(0.43, 1.18).toDouble();
     });
   }
 
@@ -202,8 +203,9 @@ class _ChessBoardState extends State<ChessBoard> {
     final from = _dragFrom;
     if (from != null) {
       final endPoint = _lastPointerPosition ?? _pointerDown;
-      final destination =
-          endPoint == null ? null : _squareAt(endPoint, projection);
+      final destination = endPoint == null
+          ? null
+          : _squareAt(endPoint, projection);
       if (destination != null && destination != from) {
         final isLegal = widget.controller.legalMovesFromSelected.any(
           (move) => move.to == destination,
@@ -257,13 +259,14 @@ class _ChessBoardState extends State<ChessBoard> {
     return <ShortcutActivator, VoidCallback>{
       const SingleActivator(LogicalKeyboardKey.escape):
           widget.controller.cancelSelection,
-      const SingleActivator(LogicalKeyboardKey.arrowUp): () => _moveCursor(0, 1),
-      const SingleActivator(LogicalKeyboardKey.arrowDown):
-          () => _moveCursor(0, -1),
-      const SingleActivator(LogicalKeyboardKey.arrowLeft):
-          () => _moveCursor(-1, 0),
-      const SingleActivator(LogicalKeyboardKey.arrowRight):
-          () => _moveCursor(1, 0),
+      const SingleActivator(LogicalKeyboardKey.arrowUp): () =>
+          _moveCursor(0, 1),
+      const SingleActivator(LogicalKeyboardKey.arrowDown): () =>
+          _moveCursor(0, -1),
+      const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
+          _moveCursor(-1, 0),
+      const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
+          _moveCursor(1, 0),
       const SingleActivator(LogicalKeyboardKey.enter): _activateCursor,
       const SingleActivator(LogicalKeyboardKey.space): _activateCursor,
     };
@@ -295,7 +298,8 @@ class _ChessBoardState extends State<ChessBoard> {
         final piece = position.pieceAt(square);
         final visual = projection.visualPosition(square);
         final center = projection.centerOf(square);
-        final isLast = lastMove != null &&
+        final isLast =
+            lastMove != null &&
             (lastMove.from == square || lastMove.to == square);
         final isSelected = selected == square;
         final isChecked = checkedKing == square;
@@ -306,59 +310,23 @@ class _ChessBoardState extends State<ChessBoard> {
         final isCursor = focused && _cursor == square;
 
         final markerChildren = <Widget>[
-          SizedBox(
-            key: ValueKey('square-' + name),
-            width: 1,
-            height: 1,
-          ),
+          SizedBox(key: ValueKey('square-' + name), width: 1, height: 1),
           if (isLast)
-            SizedBox(
-              key: ValueKey('last-move-' + name),
-              width: 1,
-              height: 1,
-            ),
+            SizedBox(key: ValueKey('last-move-' + name), width: 1, height: 1),
           if (isSelected)
-            SizedBox(
-              key: ValueKey('selected-' + name),
-              width: 1,
-              height: 1,
-            ),
+            SizedBox(key: ValueKey('selected-' + name), width: 1, height: 1),
           if (isChecked)
-            SizedBox(
-              key: ValueKey('check-' + name),
-              width: 1,
-              height: 1,
-            ),
+            SizedBox(key: ValueKey('check-' + name), width: 1, height: 1),
           if (isTarget && !isCapture)
-            SizedBox(
-              key: ValueKey('legal-' + name),
-              width: 1,
-              height: 1,
-            ),
+            SizedBox(key: ValueKey('legal-' + name), width: 1, height: 1),
           if (isCapture)
-            SizedBox(
-              key: ValueKey('capture-' + name),
-              width: 1,
-              height: 1,
-            ),
+            SizedBox(key: ValueKey('capture-' + name), width: 1, height: 1),
           if (isCursor)
-            SizedBox(
-              key: ValueKey('cursor-' + name),
-              width: 1,
-              height: 1,
-            ),
+            SizedBox(key: ValueKey('cursor-' + name), width: 1, height: 1),
           if (visual.$1 == 0)
-            SizedBox(
-              key: ValueKey('rank-label-' + name),
-              width: 1,
-              height: 1,
-            ),
+            SizedBox(key: ValueKey('rank-label-' + name), width: 1, height: 1),
           if (visual.$2 == 7)
-            SizedBox(
-              key: ValueKey('file-label-' + name),
-              width: 1,
-              height: 1,
-            ),
+            SizedBox(key: ValueKey('file-label-' + name), width: 1, height: 1),
         ];
 
         if (piece != null) {
@@ -394,10 +362,7 @@ class _ChessBoardState extends State<ChessBoard> {
             width: 1,
             height: 1,
             child: IgnorePointer(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: markerChildren,
-              ),
+              child: Stack(clipBehavior: Clip.none, children: markerChildren),
             ),
           ),
         );
@@ -445,8 +410,7 @@ class _ChessBoardState extends State<ChessBoard> {
                       onPanStart: (details) =>
                           _handlePanStart(details, projection),
                       onPanUpdate: _handlePanMove,
-                      onPanEnd: (details) =>
-                          _handlePanEnd(details, projection),
+                      onPanEnd: (details) => _handlePanEnd(details, projection),
                       onPanCancel: () {
                         _dragFrom = null;
                         _rotating = false;
@@ -578,4 +542,3 @@ double _pieceHeightFor(PieceType type) {
       return 1.15;
   }
 }
-

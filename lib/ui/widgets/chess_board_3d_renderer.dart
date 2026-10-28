@@ -107,9 +107,7 @@ class Chess3DScenePainter extends CustomPainter {
       for (var column = 0; column < 8; column++) {
         final square = projection.squareAtVisualPosition(column, row);
         final isLight = (square.file + square.rank).isOdd;
-        var color = isLight
-            ? const Color(0xFFEEDFC8)
-            : const Color(0xFF895431);
+        var color = isLight ? const Color(0xFFEEDFC8) : const Color(0xFF895431);
 
         if (lastMove != null &&
             (lastMove!.from == square || lastMove!.to == square)) {
@@ -138,9 +136,7 @@ class Chess3DScenePainter extends CustomPainter {
           _Vec3(x + 0.5, 0.002, z - 0.5),
           _Vec3(x + 0.5, 0.002, z - 0.46),
           _Vec3(x - 0.5, 0.002, z - 0.46),
-        ], isLight
-            ? const Color(0xFFE7D4B7)
-            : const Color(0xFF744426));
+        ], isLight ? const Color(0xFFE7D4B7) : const Color(0xFF744426));
       }
     }
   }
@@ -161,18 +157,9 @@ class Chess3DScenePainter extends CustomPainter {
         final shadow = isWhite
             ? const Color(0xFFC7C1B6)
             : const Color(0xFF080A0E);
-        final material = _PieceMaterial(
-          highlight: highlight,
-          shadow: shadow,
-        );
+        final material = _PieceMaterial(highlight: highlight, shadow: shadow);
         final profile = _profileFor(piece.type);
-        _addLathe(
-          faces,
-          center.x,
-          center.z,
-          profile,
-          material,
-        );
+        _addLathe(faces, center.x, center.z, profile, material);
 
         switch (piece.type) {
           case PieceType.king:
@@ -396,16 +383,7 @@ class Chess3DScenePainter extends CustomPainter {
       );
     }
     // A small raised mane follows the back of the horse's head.
-    _addBox(
-      faces,
-      centerX - 0.09,
-      0.52,
-      centerZ,
-      0.055,
-      0.25,
-      0.10,
-      material,
-    );
+    _addBox(faces, centerX - 0.09, 0.52, centerZ, 0.055, 0.25, 0.10, material);
   }
 
   void _addLathe(
@@ -424,11 +402,7 @@ class Chess3DScenePainter extends CustomPainter {
         final angleB = math.pi * 2 * (segment + 1) / segments;
         final normalAngle = (angleA + angleB) / 2;
         final light = 0.78 + 0.22 * (0.5 + 0.5 * math.cos(normalAngle - 0.8));
-        final color = Color.lerp(
-          material.shadow,
-          material.highlight,
-          light,
-        )!;
+        final color = Color.lerp(material.shadow, material.highlight, light)!;
         _addFace(faces, [
           _Vec3(
             centerX + lower.$1 * math.cos(angleA),
@@ -455,14 +429,19 @@ class Chess3DScenePainter extends CustomPainter {
     }
     final first = profile.first;
     if (first.$1 > 0.01) {
-      _addFace(faces, [
-        for (var index = segments - 1; index >= 0; index--)
-          _Vec3(
-            centerX + first.$1 * math.cos(math.pi * 2 * index / segments),
-            first.$2,
-            centerZ + first.$1 * math.sin(math.pi * 2 * index / segments),
-          ),
-      ], material.shadow, shade: 0.88);
+      _addFace(
+        faces,
+        [
+          for (var index = segments - 1; index >= 0; index--)
+            _Vec3(
+              centerX + first.$1 * math.cos(math.pi * 2 * index / segments),
+              first.$2,
+              centerZ + first.$1 * math.sin(math.pi * 2 * index / segments),
+            ),
+        ],
+        material.shadow,
+        shade: 0.88,
+      );
     }
   }
 
@@ -504,7 +483,8 @@ class Chess3DScenePainter extends CustomPainter {
     Color color, {
     double shade = 1.0,
   }) {
-    final averageDepth = vertices
+    final averageDepth =
+        vertices
             .map(projection.depthOf)
             .fold<double>(0, (sum, depth) => sum + depth) /
         vertices.length;
@@ -541,7 +521,10 @@ class Chess3DScenePainter extends CustomPainter {
   void _drawPieceShadows(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = const Color(0x500D0E11)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, size.shortestSide * 0.006);
+      ..maskFilter = MaskFilter.blur(
+        BlurStyle.normal,
+        size.shortestSide * 0.006,
+      );
     for (var rank = 0; rank < 8; rank++) {
       for (var file = 0; file < 8; file++) {
         final square = Square(file, rank);
@@ -603,7 +586,10 @@ class Chess3DScenePainter extends CustomPainter {
       );
       rankPainter.paint(
         canvas,
-        Offset(rankPoint.dx - rankPainter.width / 2, rankPoint.dy - rankPainter.height / 2),
+        Offset(
+          rankPoint.dx - rankPainter.width / 2,
+          rankPoint.dy - rankPainter.height / 2,
+        ),
       );
 
       final fileSquare = projection.squareAtVisualPosition(row, 7);
@@ -620,7 +606,10 @@ class Chess3DScenePainter extends CustomPainter {
       );
       filePainter.paint(
         canvas,
-        Offset(filePoint.dx - filePainter.width / 2, filePoint.dy - filePainter.height / 2),
+        Offset(
+          filePoint.dx - filePainter.width / 2,
+          filePoint.dy - filePainter.height / 2,
+        ),
       );
     }
   }
@@ -699,9 +688,7 @@ class ChessBoardProjection {
     return Offset(
       size.width / 2 + rotatedX * perspective * _scale,
       size.height * 0.52 -
-          (point.y * cosinePitch - rotatedZ * sinePitch) *
-              perspective *
-              _scale,
+          (point.y * cosinePitch - rotatedZ * sinePitch) * perspective * _scale,
     );
   }
 
@@ -711,10 +698,7 @@ class ChessBoardProjection {
   }
 
   Square squareAtVisualPosition(int column, int row) {
-    return Square(
-      flipped ? 7 - column : column,
-      flipped ? row : 7 - row,
-    );
+    return Square(flipped ? 7 - column : column, flipped ? row : 7 - row);
   }
 
   (int, int) visualPosition(Square square) {
@@ -765,10 +749,7 @@ class _Face {
 }
 
 class _PieceMaterial {
-  const _PieceMaterial({
-    required this.highlight,
-    required this.shadow,
-  });
+  const _PieceMaterial({required this.highlight, required this.shadow});
 
   final Color highlight;
   final Color shadow;
