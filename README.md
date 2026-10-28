@@ -1,80 +1,107 @@
 # Grand Chess
 
-Aplikasi catur multiplatform open-source untuk Android, Windows, macOS, dan Linux. Dibangun dengan Flutter.
+**Language / Bahasa:** [English](README.md) | [Bahasa Indonesia](README.id.md)
 
-Dokumen produk & arsitektur: `Grand-Chess-PRD.md` dan `Grand-Chess-ADR.md`.
+Grand Chess is a Flutter chess app for two people sharing one device. It uses a chess engine written in Dart and a perspective 3D board that can be rotated by dragging.
 
-Status saat ini: **Phase 1 — Project Foundation.** Belum ada fitur catur; ini kerangka proyek yang bisa dibuild dan dijalankan.
+[Flutter platform support](https://docs.flutter.dev/reference/supported-platforms) includes Android, iOS, Windows, macOS, Linux, and the web. This repository's GitHub Actions workflow builds these targets so support is checked by CI, not inferred from the Flutter label alone.
 
-## Toolchain
+## Current features
 
-- **Flutter 3.44.x** (channel stable)
-- **Dart 3.12.x** — dibundel otomatis bersama Flutter, tidak perlu instalasi terpisah
+- Local two-player games on one device.
+- 3D board and sculpted 3D-style pieces rendered with Flutter Canvas; no separate 3D engine is required.
+- Drag an empty part of the board to rotate the view through 360 degrees. Use the reset icon to return to the default angle.
+- Select a piece to see legal destinations. Tapping and dragging pieces are supported.
+- Move history, board flip, promotion choice, check, checkmate, stalemate, castling, and en passant.
+- Responsive layouts for narrow screens and wide desktop windows.
+- Automated formatting, static analysis, tests, and platform build checks in GitHub Actions.
 
-Versi patch (`.x`) sengaja tidak dikunci ke angka tertentu — pakai rilis stable terbaru di jalur minor tersebut. Sebelum mulai, verifikasi versi yang benar-benar terinstal di komputer kamu (bukan asumsi dari dokumen ini):
+## Platform status
 
-```
-flutter --version
-dart --version
-```
+The goal is one shared Dart codebase. A green workflow run is the source of truth for whether a target currently builds.
 
-Prasyarat tambahan per platform:
-- Build Android: Android Studio + Android SDK
-- Build Windows: Windows 10/11 dengan Visual Studio 2022 (workload "Desktop development with C++")
+| Target | Build command | Important note |
+| --- | --- | --- |
+| Android | `flutter build apk --release` | APK can be installed on a compatible Android device. |
+| Windows | `flutter build windows --release` | Build on Windows with Visual Studio C++ tools. |
+| Linux | `flutter build linux --release` | Needs Clang, CMake, Ninja, GTK development files, and pkg-config. |
+| macOS | `flutter build macos --release` | Build on macOS with Xcode. |
+| iOS | `flutter build ios --release --no-codesign` | CI checks compilation; distribution requires Apple signing. |
+| Web | `flutter build web --release` | Runs in a supported modern browser. |
 
-## Setup awal (sekali saja)
+Flutter supports these target families, but a successful CI build does not replace testing on real devices. See [Flutter's official platform list](https://docs.flutter.dev/reference/supported-platforms).
 
-Paket ini **belum menyertakan folder `android/` dan `windows/`.** Folder itu dihasilkan oleh `flutter create` dan isinya sangat spesifik terhadap versi SDK yang kamu pakai — supaya tidak ketinggalan zaman atau salah, generate langsung dari Flutter SDK kamu sendiri:
+## Try the app
 
-1. Clone/salin folder proyek ini ke lokasi kerja kamu.
-2. Di lokasi TERPISAH (bukan di dalam folder proyek ini), jalankan:
-   ```
-   flutter create --platforms=android,windows --project-name grand_chess --org com.example.grandchess /tmp/gc_platform_gen
-   ```
-   (Ganti `com.example.grandchess` dengan domain/org kamu sendiri kalau ada.)
-3. Salin folder `android/` dan `windows/` hasil generate itu ke root proyek Grand Chess ini. **Jangan salin `lib/`, `test/`, atau `pubspec.yaml`-nya** — punya proyek ini yang dipakai.
-4. Dari root proyek Grand Chess:
-   ```
-   flutter pub get
-   flutter run
-   ```
+### Download a test build
 
-## Perintah yang berguna
+1. Open the repository's [Actions page](https://github.com/yyouki/grand-chess/actions).
+2. Select a successful run on the commit you want to test.
+3. Open **Artifacts** and download the Android release artifact.
+4. Extract the downloaded ZIP. Install the file named `app-release.apk`, not the outer artifact ZIP.
 
-```
-flutter analyze                              # cek lint & error statis
-dart format .                                # format semua kode
-dart format --output=none --set-exit-if-changed .   # cek format tanpa mengubah file (dipakai CI)
-flutter test                                 # jalankan semua test
-```
+Artifacts are temporary CI outputs. A version tag starting with `v` triggers the release workflow after all required tests and builds pass.
 
-## Struktur folder
+### Build from source
 
-```
+Install the Flutter stable SDK first. Platform-specific requirements are listed in the official [Flutter setup guides](https://docs.flutter.dev/platform-integration).
+
+This repository keeps generated native runner folders out of source control. Generate them once from the project root:
+
+~~~sh
+flutter create . --project-name grand_chess --platforms=android,ios,web,windows,linux,macos
+flutter pub get
+~~~
+
+Build the target supported by your computer:
+
+~~~sh
+flutter run
+flutter test
+flutter analyze
+dart format --output=none --set-exit-if-changed .
+flutter build apk --release
+flutter build web --release
+~~~
+
+Windows desktop builds must run on Windows. macOS and iOS builds must run on macOS. Linux desktop builds need the packages listed in the Linux section of the [Flutter guide](https://docs.flutter.dev/platform-integration/linux/setup).
+
+## Project layout
+
+~~~text
 lib/
-├── core/          → utilitas umum (belum ada isi di Phase 1)
-├── chess_engine/  → logika catur murni, tanpa dependensi UI (Phase 2)
-├── game/          → domain model Game State (Phase 2)
-├── ai/            → integrasi Stockfish via ChessAI interface (Phase 4, lihat ADR-002)
-├── ui/            → widget, layar, tema (Phase 3+)
-├── audio/         → audio manager (Version 1.0)
-├── database/      → integrasi Drift (Version 1.0, lihat ADR-003)
-├── network/       → fitur online (Fase 6, paling akhir)
-└── settings/      → preferensi pengguna (Version 1.0)
-```
+  app/             App entry point and application setup
+  chess_engine/    Chess rules and move validation
+  game/            Current game state and player actions
+  ui/
+    screens/       Home, setup, and game screens
+    theme/         Board and application colors
+    widgets/       Reusable controls and the 3D board renderer
+test/
+  chess_engine/    Tests for chess rules
+  game/            Tests for the game controller
+  integration/     Full-game tests
+  ui/               Board, screens, and layout tests
+.github/
+  workflows/       CI, release, and branch-maintenance automation
+~~~
 
-Folder-folder di atas sengaja masih kosong (hanya berisi `.gitkeep`) — ini kerangka akhir yang akan diisi bertahap per fase, bukan folder yang terlewat.
+Keep chess rules independent from widgets. Put reusable display logic in `ui/widgets`, screen-level flows in `ui/screens`, and add a test whenever a behavior changes.
 
-## Yang sudah ada di Phase 1
+## Known limitations before a public 1.0 release
 
-- Project shell yang bisa dibuild & dijalankan (`lib/main.dart`)
-- Konfigurasi lint (`analysis_options.yaml`, pakai `flutter_lints`)
-- Infrastruktur testing (`test/app_test.dart`, satu test yang memverifikasi app shell)
-- CI (`.github/workflows/ci.yml`): format check, analyze, test — plus build verification Android & Windows yang otomatis aktif begitu folder `android/`/`windows/` ada di repo (lihat catatan di bawah)
-- Struktur folder final untuk seluruh proyek
+Grand Chess currently focuses on local play. It does not yet provide a computer opponent, online matchmaking, cloud accounts, saved game files, sound effects, or signed App Store packages. iOS signing and store submission need credentials owned by the project maintainer.
 
-**Catatan soal CI build verification:** job `build-android` dan `build-windows` mengecek dulu apakah folder platform terkait sudah ada. Kalau belum (kondisi saat ini), job itu menuliskan warning dan berhenti — bukan gagal, tapi juga bukan benar-benar menguji apa pun. Begitu kamu generate & commit `android/`/`windows/` (lihat bagian Setup di atas), build sungguhan otomatis mulai berjalan di push/PR berikutnya tanpa perlu mengubah file CI lagi.
+The repository description and source-code license must be confirmed by the owner before announcing a public release. Real-device visual checks are also needed for Android, Windows, macOS, Linux, and web browsers.
 
-## Yang belum ada (menyusul di fase berikutnya)
+## Project documents
 
-Chess engine, integrasi Stockfish, papan catur, database, audio, sistem tema, dan fitur online — lihat `Grand-Chess-PRD.md` untuk pembagian fase lengkap.
+- Product plan: [English](docs/PRODUCT_PLAN.md) | [Bahasa Indonesia](docs/PRODUCT_PLAN.id.md)
+- Technical decisions: [English](docs/ARCHITECTURE.md) | [Bahasa Indonesia](docs/ARCHITECTURE.id.md)
+- Contributing guide: [English](CONTRIBUTING.md) | [Bahasa Indonesia](CONTRIBUTING.id.md)
+- Changelog: [English](docs/CHANGELOG.md) | [Bahasa Indonesia](docs/CHANGELOG.id.md)
+- Security policy: [English](.github/SECURITY.md) | [Bahasa Indonesia](.github/SECURITY.id.md)
+
+## Contributing
+
+Start with the contributing guide before editing the code. Keep changes focused, run formatting, analysis, and tests, and open a pull request with a short explanation and test results.

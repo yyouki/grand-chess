@@ -1,0 +1,44 @@
+name: Cleanup obsolete development branches
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup:
+    name: Remove confirmed obsolete development branches
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete only the confirmed retired branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          branches_to_delete=(
+            "ci/v4-verification"
+            "format/phase3-playable-ui-3053aeb"
+            "format/phase3-playable-ui-32c3c33"
+            "format/phase3-playable-ui-3da7ffd"
+            "format/phase3-playable-ui-ceb3aa5"
+            "format/phase3-playable-ui-1c021e6"
+            "format/phase3-stage1-recovery-v4-1f8d53b"
+            "phase3/playable-ui"
+            "phase3/stage1"
+            "phase3/stage1-recovery-v4"
+            "test-baseline/v4"
+            "verify/v4-fixes"
+          )
+
+          for branch in "${branches_to_delete[@]}"; do
+            if gh api --silent "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" >/dev/null 2>&1; then
+              gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+              echo "Deleted confirmed obsolete branch: ${branch}"
+            else
+              echo "Branch already absent or inaccessible; kept no further action: ${branch}"
+            fi
+          done

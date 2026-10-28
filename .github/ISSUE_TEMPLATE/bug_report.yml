@@ -1,0 +1,49 @@
+name: Bug report / Laporan bug
+description: Report an issue with the app / Laporkan masalah aplikasi
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Please describe the issue in English or Indonesian. / Jelaskan masalah dalam bahasa Inggris atau Indonesia."
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened? / Apa yang terjadi?
+      description: Explain what you expected and what actually happened. / Jelaskan harapan dan kejadian sebenarnya.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce / Langkah untuk mengulang
+      placeholder: |
+        1. Open the app / Buka aplikasi
+        2. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android
+        - Windows
+        - Linux
+        - macOS
+        - iOS
+        - Web
+        - Other / Lainnya
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version or commit / Versi aplikasi atau commit
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or logs / Screenshot atau log
+      description: Remove personal data before attaching. / Hapus data pribadi sebelum melampirkan.
+    validations:
+      required: false
