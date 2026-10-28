@@ -185,8 +185,7 @@ class _ChessBoardState extends State<ChessBoard> {
     final delta = event.localPosition - previousPoint;
     _lastPointerPosition = event.localPosition;
 
-    if (!_gestureMoved &&
-        (event.localPosition - startPoint).distance >= 6) {
+    if (!_gestureMoved && (event.localPosition - startPoint).distance >= 6) {
       _gestureMoved = true;
       final square = _gestureStartSquare;
       final piece = square == null
@@ -217,10 +216,7 @@ class _ChessBoardState extends State<ChessBoard> {
     });
   }
 
-  void _handlePointerUp(
-    PointerUpEvent event,
-    ChessBoardProjection projection,
-  ) {
+  void _handlePointerUp(PointerUpEvent event, ChessBoardProjection projection) {
     if (event.pointer != _activePointer) {
       return;
     }
