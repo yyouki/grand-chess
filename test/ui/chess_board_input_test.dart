@@ -108,9 +108,7 @@ void main() {
   });
 
   group('keyboard', () {
-    testWidgets('read-only board ignores keyboard activation', (
-      tester,
-    ) async {
+    testWidgets('read-only board ignores keyboard activation', (tester) async {
       final controller = await pumpBoard(tester, canSelect: false);
 
       await tester.tap(squareFinder('e2'));
