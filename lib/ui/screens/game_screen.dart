@@ -557,6 +557,7 @@ class _GameScreenState extends State<GameScreen> {
                       ),
                     ),
                     IconButton(
+                      key: const ValueKey('exit-game-button'),
                       tooltip: 'Exit game',
                       onPressed: () => Navigator.of(context).maybePop(),
                       icon: const Icon(Icons.close),
