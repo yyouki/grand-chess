@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../game/chess_bot.dart';
+import '../../game/game_mode.dart';
 import 'game_screen.dart';
 
 class LocalGameSetupScreen extends StatefulWidget {
@@ -12,6 +14,9 @@ class LocalGameSetupScreen extends StatefulWidget {
 class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
   final TextEditingController _whiteController = TextEditingController();
   final TextEditingController _blackController = TextEditingController();
+
+  GameMode _mode = GameMode.localTwoPlayer;
+  BotLevel _botLevel = BotLevel.easy;
 
   @override
   void dispose() {
@@ -27,11 +32,17 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
 
   void _startGame() {
     final whiteName = _nameOrDefault(_whiteController, 'White');
-    final blackName = _nameOrDefault(_blackController, 'Black');
+    final blackName = _mode == GameMode.vsComputer
+        ? 'Grand Bot'
+        : _nameOrDefault(_blackController, 'Black');
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (context) =>
-            GameScreen(whiteName: whiteName, blackName: blackName),
+        builder: (context) => GameScreen(
+          whiteName: whiteName,
+          blackName: blackName,
+          mode: _mode,
+          botLevel: _botLevel,
+        ),
       ),
     );
   }
@@ -56,6 +67,49 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 24),
+                  DropdownButtonFormField<GameMode>(
+                    key: const ValueKey('game-mode-choice'),
+                    initialValue: _mode,
+                    decoration: const InputDecoration(
+                      labelText: 'Game mode',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: GameMode.localTwoPlayer,
+                        child: Text('Two players · same device'),
+                      ),
+                      DropdownMenuItem(
+                        value: GameMode.vsComputer,
+                        child: Text('Play against a bot'),
+                      ),
+                    ],
+                    onChanged: (mode) {
+                      if (mode != null) setState(() => _mode = mode);
+                    },
+                  ),
+                  if (_mode == GameMode.vsComputer) ...[
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<BotLevel>(
+                      key: const ValueKey('bot-level-choice'),
+                      initialValue: _botLevel,
+                      decoration: const InputDecoration(
+                        labelText: 'Bot style',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: [
+                        for (final level in BotLevel.values)
+                          DropdownMenuItem(
+                            value: level,
+                            child: Text(level.label),
+                          ),
+                      ],
+                      onChanged: (level) {
+                        if (level != null) setState(() => _botLevel = level);
+                      },
+                    ),
+                  ],
+                  const SizedBox(height: 16),
                   TextField(
                     key: const ValueKey('white-name-field'),
                     controller: _whiteController,
@@ -68,10 +122,11 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    key: const ValueKey('black-name-field'),
-                    controller: _blackController,
+                  if (_mode == GameMode.localTwoPlayer) ...[
+                    const SizedBox(height: 16),
+                    TextField(
+                      key: const ValueKey('black-name-field'),
+                      controller: _blackController,
                     textInputAction: TextInputAction.done,
                     onSubmitted: (_) => _startGame(),
                     maxLength: 20,
@@ -81,7 +136,8 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                       counterText: '',
                       border: OutlineInputBorder(),
                     ),
-                  ),
+                    ),
+                  ],
                   const SizedBox(height: 32),
                   FilledButton(
                     key: const ValueKey('start-game'),
