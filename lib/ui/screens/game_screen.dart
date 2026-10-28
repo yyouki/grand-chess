@@ -453,13 +453,16 @@ class _GameScreenState extends State<GameScreen> {
             final panelWidth = math.min(
               340.0,
               math.max(250.0, constraints.maxWidth * 0.31),
-            );
-            final availableBoardWidth =
-                (constraints.maxWidth - panelWidth - 28).clamp(220.0, 2000.0);
+            ).toDouble();
+            final availableBoardWidth = (constraints.maxWidth -
+                    panelWidth -
+                    28)
+                .clamp(220.0, 2000.0)
+                .toDouble();
             final boardSide = math.min(
               constraints.maxHeight,
               availableBoardWidth,
-            );
+            ).toDouble();
             return Row(
               children: [
                 Expanded(
