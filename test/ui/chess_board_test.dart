@@ -296,7 +296,7 @@ void main() {
       expect(pieceOn(tester, 'e7'), whitePawn);
       expect(pieceOn(tester, 'e8'), isNull);
       expect(sanList(controller), isEmpty);
-      expect(find.byType(Draggable<Square>), findsNWidgets(2));
+      expect(find.byType(Draggable<Square>), findsNothing);
     });
   });
 
