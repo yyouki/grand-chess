@@ -2,18 +2,20 @@
 
 **Language / Bahasa:** [English](README.md) | [Bahasa Indonesia](README.id.md)
 
-Grand Chess is a Flutter chess app for two people sharing one device. It uses a chess engine written in Dart and a perspective 3D board that can be rotated by dragging.
+Grand Chess is a cross-platform Flutter chess app with a Dart rules engine, a sculpted perspective 3D board, and an offline bot. On supported phones, the chess table opens in immersive landscape mode.
 
 [Flutter platform support](https://docs.flutter.dev/reference/supported-platforms) includes Android, iOS, Windows, macOS, Linux, and the web. This repository's GitHub Actions workflow builds these targets so support is checked by CI, not inferred from the Flutter label alone.
 
 ## Current features
 
-- Local two-player games on one device.
-- 3D board and sculpted 3D-style pieces rendered with Flutter Canvas; no separate 3D engine is required.
-- Drag an empty part of the board to rotate the view through 360 degrees. Use the reset icon to return to the default angle.
-- Select a piece to see legal destinations. Tapping and dragging pieces are supported.
-- Move history, board flip, promotion choice, check, checkmate, stalemate, castling, and en passant.
-- Responsive layouts for narrow screens and wide desktop windows.
+- Local two-player games on one device, plus a built-in offline bot with Easy and Tactical styles. The bot uses legal moves from the same engine; it is a lightweight bot, not Stockfish.
+- A perspective 3D board and sculpted chess pieces rendered with Flutter Canvas.
+- Tap a piece to select it, then tap a highlighted destination. Dragging a piece never moves it.
+- Drag empty board space to rotate the camera through 360 degrees and tilt the view. Use the reset button to restore the default angle.
+- Flat uppercase A–H and 1–8 coordinates, animated piece movement, and selectable board and piece finishes.
+- Move history, flip board, undo/redo, pawn promotion, check/checkmate/stalemate, castling, en passant, and copy/export of FEN and PGN text.
+- Chess uses immersive landscape mode on supported mobile devices. Desktop targets use a full-window chess layout without forcing the operating-system window into fullscreen.
+- A separate 3D Arcade with playable Cube Tic-Tac-Toe and Tower Builder.
 - Automated formatting, static analysis, tests, and platform build checks in GitHub Actions.
 
 ## Platform status
@@ -90,9 +92,9 @@ Keep chess rules independent from widgets. Put reusable display logic in `ui/wid
 
 ## Known limitations before a public 1.0 release
 
-Grand Chess currently focuses on local play. It does not yet provide a computer opponent, online matchmaking, cloud accounts, saved game files, sound effects, or signed App Store packages. iOS signing and store submission need credentials owned by the project maintainer.
+The built-in bot is a lightweight offline opponent, not a Stockfish-strength engine. Online matchmaking, cloud accounts, persistent save/resume, clocks, sound effects, a full 3D model/PBR pipeline, and signed App Store packages are not yet included. iOS signing and store submission need credentials owned by the project maintainer.
 
-The repository description and source-code license must be confirmed by the owner before announcing a public release. Real-device visual checks are also needed for Android, Windows, macOS, Linux, and web browsers.
+The owner still needs to choose a source-code license before announcing a public release. CI builds pass, but visual checks on real Android/iOS devices and desktop computers are still needed.
 
 ## Project documents
 
