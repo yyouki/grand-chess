@@ -1,11 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grand_chess/app/grand_chess_app.dart';
+import 'package:grand_chess/ui/screens/three_d_arcade_screen.dart';
 import 'package:grand_chess/ui/screens/three_d_tic_tac_toe_screen.dart';
+import 'package:grand_chess/ui/screens/three_d_tower_screen.dart';
 
 void main() {
   testWidgets('home screen opens the playable 3D arcade', (tester) async {
     await tester.pumpWidget(const GrandChessApp());
     await tester.tap(find.byKey(const ValueKey('open-3d-arcade')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ThreeDArcadeScreen), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('arcade-cube-tic-tac-toe')));
     await tester.pumpAndSettle();
 
     expect(find.byType(ThreeDTicTacToeScreen), findsOneWidget);
@@ -19,6 +25,8 @@ void main() {
     await tester.pumpWidget(const GrandChessApp());
     await tester.tap(find.byKey(const ValueKey('open-3d-arcade')));
     await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('arcade-cube-tic-tac-toe')));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byKey(const ValueKey('cube-cell-0')));
     await tester.pumpAndSettle();
@@ -31,3 +39,4 @@ void main() {
     expect(find.text('Player X to move'), findsOneWidget);
   });
 }
+
