@@ -431,7 +431,7 @@ class _GameScreenState extends State<GameScreen> {
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<PieceFinish>(
-          key: const ValueKey('piece-finish-choice'),
+          key: const ValueKey('piece-style-choice'),
           initialValue: _pieceFinish,
           isExpanded: true,
           decoration: const InputDecoration(
@@ -451,147 +451,193 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final botTurn = _botTurn;
-    final title = widget.mode == GameMode.vsComputer
-        ? '3D CHESS · VS BOT'
-        : '3D CHESS · LOCAL';
-    return Scaffold(
-      backgroundColor: const Color(0xFF101821),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final panelWidth = math
-                .min(340.0, math.max(250.0, constraints.maxWidth * 0.31))
-                .toDouble();
-            final availableBoardWidth = (constraints.maxWidth - panelWidth - 28)
-                .clamp(220.0, 2000.0)
-                .toDouble();
-            final boardSide = math
-                .min(constraints.maxHeight, availableBoardWidth)
-                .toDouble();
-            return Row(
+  Widget _buildNarrowLayout() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildStatusCard(),
+            const SizedBox(height: 12),
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: ChessBoard(
+                    controller: _controller,
+                    canSelect: !_botTurn,
+                    boardFinish: _boardFinish,
+                    pieceFinish: _pieceFinish,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildControls(),
+            const SizedBox(height: 12),
+            _buildVisualSettings(),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 220,
+              child: MoveHistoryPanel(controller: _controller),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWideLayout(BoxConstraints constraints) {
+    final panelWidth = math
+        .min(340.0, math.max(250.0, constraints.maxWidth * 0.31))
+        .toDouble();
+    final availableBoardWidth = (constraints.maxWidth - panelWidth - 28)
+        .clamp(220.0, 2000.0)
+        .toDouble();
+    final boardSide = math
+        .min(math.max(220.0, constraints.maxHeight - 16), availableBoardWidth)
+        .toDouble();
+    return Row(
+      children: [
+        Expanded(
+          child: Center(
+            child: SizedBox.square(
+              dimension: boardSide,
+              child: ChessBoard(
+                controller: _controller,
+                canSelect: !_botTurn,
+                boardFinish: _boardFinish,
+                pieceFinish: _pieceFinish,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: panelWidth,
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1C2835),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFF34485B)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x55000000),
+                  blurRadius: 16,
+                  offset: Offset(-4, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: SizedBox.square(
-                        dimension: boardSide,
-                        child: ChessBoard(
-                          controller: _controller,
-                          canSelect: !botTurn,
-                          boardFinish: _boardFinish,
-                          pieceFinish: _pieceFinish,
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.view_in_ar,
+                      color: Color(0xFFD8B77C),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        widget.mode == GameMode.vsComputer
+                            ? '3D CHESS · VS BOT'
+                            : '3D CHESS · LOCAL',
+                        key: const ValueKey('game-screen-title'),
+                        style: const TextStyle(
+                          color: Color(0xFFF4E9D6),
+                          fontWeight: FontWeight.w900,
+                          fontSize: 15,
+                          letterSpacing: 1.1,
                         ),
                       ),
                     ),
+                    IconButton(
+                      tooltip: 'Exit game',
+                      onPressed: () => Navigator.of(context).maybePop(),
+                      icon: const Icon(Icons.close),
+                      color: const Color(0xFFF4E9D6),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                _buildStatusCard(),
+                if (_botThinking)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 5, bottom: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.psychology_alt,
+                          size: 16,
+                          color: Color(0xFFD8B77C),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Bot is thinking…',
+                          style: TextStyle(
+                            color: Color(0xFFD8B77C),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 6),
+                _buildControls(),
+                const SizedBox(height: 6),
+                _buildVisualSettings(),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      color: const Color(0xFFF4EEE3),
+                      padding: const EdgeInsets.all(4),
+                      child: MoveHistoryPanel(controller: _controller),
+                    ),
                   ),
                 ),
-                SizedBox(
-                  width: panelWidth,
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1C2835),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFF34485B)),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x55000000),
-                          blurRadius: 16,
-                          offset: Offset(-4, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.view_in_ar,
-                              color: Color(0xFFD8B77C),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                title,
-                                key: const ValueKey('game-screen-title'),
-                                style: const TextStyle(
-                                  color: Color(0xFFF4E9D6),
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 15,
-                                  letterSpacing: 1.1,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              tooltip: 'Exit game',
-                              onPressed: () => Navigator.of(context).maybePop(),
-                              icon: const Icon(Icons.close),
-                              color: const Color(0xFFF4E9D6),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        _buildStatusCard(),
-                        if (_botThinking)
-                          const Padding(
-                            padding: EdgeInsets.only(top: 5, bottom: 2),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.psychology_alt,
-                                  size: 16,
-                                  color: Color(0xFFD8B77C),
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Bot is thinking…',
-                                  style: TextStyle(
-                                    color: Color(0xFFD8B77C),
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        const SizedBox(height: 6),
-                        _buildControls(),
-                        const SizedBox(height: 6),
-                        _buildVisualSettings(),
-                        const SizedBox(height: 8),
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Container(
-                              color: const Color(0xFFF4EEE3),
-                              padding: const EdgeInsets.all(4),
-                              child: MoveHistoryPanel(controller: _controller),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          'TAP PIECE → TAP DESTINATION  ·  DRAG EMPTY BOARD TO ROTATE',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xFFACB8C5),
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+                const SizedBox(height: 4),
+                const Text(
+                  'TAP PIECE → TAP DESTINATION  ·  DRAG EMPTY BOARD TO ROTATE',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xFFACB8C5),
+                    fontSize: 8,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
-            );
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.sizeOf(context);
+    final preferWide = screenSize.width >= 720 &&
+        screenSize.width > screenSize.height;
+    final title = widget.mode == GameMode.vsComputer
+        ? '3D Chess · VS Bot'
+        : '3D Chess · Local';
+    return Scaffold(
+      backgroundColor: const Color(0xFF101821),
+      appBar: preferWide ? null : AppBar(title: Text(title)),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final wide = constraints.maxWidth >= 720 &&
+                constraints.maxWidth > constraints.maxHeight;
+            return wide ? _buildWideLayout(constraints) : _buildNarrowLayout();
           },
         ),
       ),
