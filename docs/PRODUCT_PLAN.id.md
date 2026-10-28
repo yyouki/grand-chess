@@ -14,16 +14,18 @@ Grand Chess adalah aplikasi catur multiplatform yang dibangun dengan Flutter dan
 
 ## 3. Lingkup saat ini
 
-Aplikasi mencakup mesin aturan catur, pengendali permainan, UI responsif, riwayat langkah, dialog promosi dan hasil permainan, serta papan perspektif 3D. Geser area kosong papan untuk memutar kamera; material buah putih dan hitam dibuat konsisten.
+Aplikasi saat ini mencakup mesin aturan catur, layar landscape imersif di perangkat seluler yang mendukungnya, kontrol ketuk-buah-lalu-tujuan, bot offline sederhana, undo/redo, teks ekspor FEN/PGN, pilihan material visual, animasi langkah, dan papan perspektif 3D. Geser area kosong papan hanya menggerakkan kamera, tidak menjalankan langkah catur.
 
-Tes aturan mencakup validasi langkah legal, skak, skakmat, remis, rokade, en passant, promosi pion, aturan hasil remis, dan notasi langkah. Scene 3D menggunakan Flutter Canvas agar renderer yang sama dapat digunakan di platform Flutter yang didukung.
+3D Arcade terpisah saat ini memiliki Cube Tic-Tac-Toe dan Tower Builder yang dapat dimainkan. Tes catur mencakup legalitas langkah, skak, skakmat, remis, rokade, en passant, promosi, aturan remis, dan notasi. Renderer memakai Flutter Canvas di target Flutter yang didukung.
 
 ## 4. Cerita pengguna
 
 - Sebagai pemain, saya bisa memulai permainan lokal baru dan mengisi nama pemain bila perlu.
 - Saya bisa melihat giliran dan tujuan langkah legal.
-- Saya bisa memindahkan buah dengan mengetuk kotak atau drag.
-- Saya bisa memutar papan 3D sampai 360 derajat dan mengembalikan sudut awal.
+- Saya memilih buah dengan mengetuknya, lalu mengetuk tujuan legal; drag papan mengendalikan kamera.
+- Saya bisa memutar/memiringkan papan 3D, mereset sudut pandang, dan memilih material papan/buah.
+- Saya bisa undo/redo langkah dan menyalin posisi sebagai FEN atau riwayat sebagai teks PGN.
+- Saya bisa bermain lokal melawan bot offline sederhana atau membuka 3D Arcade.
 - Saya bisa melihat riwayat, membalik orientasi papan, memilih promosi pion, dan melihat hasil pertandingan.
 - Sebagai developer, saya bisa menjalankan tes aturan dan build platform melalui GitHub Actions.
 
@@ -58,7 +60,8 @@ Rilis publik harus memenuhi semua syarat berikut:
 
 ### Rilis berikutnya
 
-- Lawan komputer opsional setelah kekuatan dan performa mesin dievaluasi.
+- Tingkatkan bot bawaan atau integrasikan Stockfish setelah evaluasi performa serta packaging lintas platform.
+- Tambahkan simpan/lanjut permainan, jam catur, pengaturan animasi, serta pipeline model/material 3D yang lebih lengkap.
 - Permainan online hanya setelah keamanan, akun, sinkronisasi, dan pencegahan kecurangan ditinjau.
 - Sinkronisasi cloud hanya dengan pilihan privasi yang jelas serta penanganan konflik yang andal.
 
