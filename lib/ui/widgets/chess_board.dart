@@ -385,7 +385,7 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
   List<Widget> _buildFlatCoordinates(ChessBoardProjection projection) {
     final labels = <Widget>[];
     final labelStyle = TextStyle(
-      fontSize: (projection.size.shortestSide * 0.025).clamp(9.0, 15.0),
+      fontSize: (projection.size.shortestSide * 0.025).clamp(9.0, 15.0).toDouble(),
       height: 1,
       fontWeight: FontWeight.w900,
       color: widget.boardFinish.darkSquare,
