@@ -58,6 +58,27 @@ void main() {
       expect(markerSquares('piece-'), hasLength(32));
     });
 
+    testWidgets('starts a game against the built-in offline bot', (
+      tester,
+    ) async {
+      await openSetup(tester);
+      await tester.tap(keyed('game-mode-choice'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Play against a bot').last);
+      await tester.pumpAndSettle();
+
+      expect(keyed('bot-level-choice'), findsOneWidget);
+      expect(keyed('black-name-field'), findsNothing);
+      await startGame(tester);
+      expect(find.byType(GameScreen), findsOneWidget);
+
+      await playMoves(tester, ['e2e4']);
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+
+      expect(textOf(tester, 'turn-indicator'), 'White to move');
+    });
+
     testWidgets('uses the names that were entered', (tester) async {
       await openSetup(tester);
       await tester.enterText(keyed('white-name-field'), 'Alice');
