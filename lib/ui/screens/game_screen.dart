@@ -1,8 +1,15 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../chess_engine/chess_engine.dart' hide Color;
 import '../../chess_engine/chess_engine.dart' as engine;
+import '../../game/chess_bot.dart';
 import '../../game/game_controller.dart';
+import '../../game/game_mode.dart';
+import '../theme/chess_visual_theme.dart';
 import '../widgets/chess_board.dart';
 import '../widgets/game_dialogs.dart';
 import '../widgets/game_status_bar.dart';
@@ -14,11 +21,15 @@ class GameScreen extends StatefulWidget {
     this.whiteName = 'White',
     this.blackName = 'Black',
     this.initialState,
+    this.mode = GameMode.localTwoPlayer,
+    this.botLevel = BotLevel.easy,
   });
 
   final String whiteName;
   final String blackName;
   final GameState? initialState;
+  final GameMode mode;
+  final BotLevel botLevel;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -29,19 +40,42 @@ class _GameScreenState extends State<GameScreen> {
   bool _promotionDialogOpen = false;
   bool _resultDialogShown = false;
   bool _dialogCheckScheduled = false;
+  bool _botThinking = false;
+  int _botTurnToken = 0;
+  BoardFinish _boardFinish = BoardFinish.walnut;
+  PieceFinish _pieceFinish = PieceFinish.classic;
 
   @override
   void initState() {
     super.initState();
     _controller = GameController(initialState: widget.initialState);
     _controller.addListener(_handleControllerChanged);
+    _enterImmersiveLandscape();
     _scheduleDialogCheck();
+    _queueBotIfNeeded();
+  }
+
+  void _enterImmersiveLandscape() {
+    // These settings are applied on supported mobile targets. Desktop targets
+    // keep their host window size and still render this screen without chrome.
+    unawaited(
+      SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]),
+    );
+    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky));
   }
 
   @override
   void dispose() {
+    _botTurnToken++;
     _controller.removeListener(_handleControllerChanged);
     _controller.dispose();
+    unawaited(
+      SystemChrome.setPreferredOrientations(const <DeviceOrientation>[]),
+    );
+    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
     super.dispose();
   }
 
@@ -50,6 +84,42 @@ class _GameScreenState extends State<GameScreen> {
       _resultDialogShown = false;
     }
     _scheduleDialogCheck();
+    _queueBotIfNeeded();
+  }
+
+  bool get _botTurn =>
+      widget.mode == GameMode.vsComputer &&
+      _controller.gameState.position.sideToMove == engine.Color.black &&
+      !_controller.isGameOver &&
+      !_controller.isAwaitingPromotionChoice;
+
+  void _queueBotIfNeeded() {
+    final ticket = ++_botTurnToken;
+    if (!_botTurn) {
+      if (_botThinking && mounted) {
+        setState(() => _botThinking = false);
+      }
+      return;
+    }
+
+    if (mounted && !_botThinking) {
+      setState(() => _botThinking = true);
+    }
+    Future<void>.delayed(const Duration(milliseconds: 420), () {
+      if (!mounted || ticket != _botTurnToken || !_botTurn) {
+        return;
+      }
+      final move = const ChessBot().chooseMove(
+        _controller.gameState,
+        level: widget.botLevel,
+      );
+      if (move != null && mounted && ticket == _botTurnToken) {
+        _controller.playMove(move);
+      }
+      if (mounted) {
+        setState(() => _botThinking = false);
+      }
+    });
   }
 
   void _scheduleDialogCheck() {
@@ -127,10 +197,7 @@ class _GameScreenState extends State<GameScreen> {
         ],
       ),
     );
-    if (!mounted) {
-      return;
-    }
-    if (confirmed == true) {
+    if (mounted && confirmed == true) {
       _controller.resign();
     }
   }
@@ -161,110 +228,212 @@ class _GameScreenState extends State<GameScreen> {
         ],
       ),
     );
-    if (!mounted) {
-      return;
-    }
-    if (confirmed == true) {
+    if (mounted && confirmed == true) {
+      _botTurnToken++;
       _controller.newGame();
     }
   }
 
-  Widget _buildStatusBar() {
-    return GameStatusBar(
-      controller: _controller,
-      whiteName: widget.whiteName,
-      blackName: widget.blackName,
-    );
+  void _undoMove() {
+    _botTurnToken++;
+    if (_botThinking) setState(() => _botThinking = false);
+    if (widget.mode == GameMode.vsComputer) {
+      final blackToMove =
+          _controller.gameState.position.sideToMove == engine.Color.black;
+      _controller.undoMove();
+      if (!blackToMove) {
+        _controller.undoMove();
+      }
+    } else {
+      _controller.undoMove();
+    }
   }
 
-  Widget _buildControls() {
-    return ListenableBuilder(
-      listenable: _controller,
-      builder: (context, child) {
-        return Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            OutlinedButton(
-              key: const ValueKey('flip-board'),
-              onPressed: _controller.flipOrientation,
-              child: const Text('Flip board'),
-            ),
-            OutlinedButton(
-              key: const ValueKey('resign-button'),
-              onPressed: _controller.isGameOver ? null : _confirmResign,
-              child: const Text('Resign'),
-            ),
-            OutlinedButton(
-              key: const ValueKey('new-game-button'),
-              onPressed: _confirmNewGame,
-              child: const Text('New game'),
-            ),
-          ],
-        );
-      },
-    );
+  void _redoMove() {
+    _botTurnToken++;
+    if (_botThinking) setState(() => _botThinking = false);
+    if (widget.mode == GameMode.vsComputer) {
+      _controller.redoMove();
+      if (_controller.gameState.position.sideToMove == engine.Color.black) {
+        _controller.redoMove();
+      }
+    } else {
+      _controller.redoMove();
+    }
   }
 
-  Widget _buildNarrowLayout() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildStatusBar(),
-            const SizedBox(height: 12),
-            ChessBoard(controller: _controller),
-            const SizedBox(height: 12),
-            _buildControls(),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 200,
-              child: MoveHistoryPanel(controller: _controller),
-            ),
-          ],
+  String _buildPgn() {
+    final records = _controller.gameState.moveHistory;
+    final out = StringBuffer();
+    for (var index = 0; index < records.length; index++) {
+      final record = records[index];
+      if (record.sideThatMoved == engine.Color.white) {
+        if (out.isNotEmpty) out.write(' ');
+        out.write('${record.fullmoveNumberBeforeMove}. ${record.san}');
+      } else {
+        final pairedWhiteMove = index > 0 &&
+            records[index - 1].sideThatMoved == engine.Color.white &&
+            records[index - 1].fullmoveNumberBeforeMove ==
+                record.fullmoveNumberBeforeMove;
+        if (pairedWhiteMove) {
+          out.write(' ${record.san}');
+        } else {
+          if (out.isNotEmpty) out.write(' ');
+          out.write('${record.fullmoveNumberBeforeMove}... ${record.san}');
+        }
+      }
+    }
+
+    final result = _controller.outcome?.result ?? _controller.gameState.result;
+    final resultText = switch (result) {
+      engine.GameResult.whiteWins => '1-0',
+      engine.GameResult.blackWins => '0-1',
+      engine.GameResult.draw => '1/2-1/2',
+      engine.GameResult.ongoing => '*',
+    };
+    if (out.isNotEmpty) out.write(' ');
+    out.write(resultText);
+    return out.toString();
+  }
+
+  Future<void> _showExportDialog({required bool asPgn}) async {
+    final content = asPgn
+        ? _buildPgn()
+        : const engine.FenCodec().toFen(_controller.gameState.position);
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(asPgn ? 'Export PGN' : 'Current FEN'),
+        content: SizedBox(
+          width: 520,
+          child: SingleChildScrollView(child: SelectableText(content)),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+          FilledButton.icon(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: content));
+              if (context.mounted) Navigator.of(context).pop();
+            },
+            icon: const Icon(Icons.copy),
+            label: const Text('Copy'),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildWideLayout() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget _buildStatusCard() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4EEE3),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: GameStatusBar(
+        controller: _controller,
+        whiteName: widget.whiteName,
+        blackName: widget.blackName,
+      ),
+    );
+  }
+
+  Widget _buildControls() {
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      alignment: WrapAlignment.center,
       children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Center(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final side = constraints.biggest.shortestSide;
-                  return SizedBox(
-                    width: side,
-                    height: side,
-                    child: ChessBoard(controller: _controller),
-                  );
-                },
-              ),
-            ),
-          ),
+        IconButton(
+          key: const ValueKey('flip-board'),
+          tooltip: 'Flip board',
+          onPressed: _controller.flipOrientation,
+          icon: const Icon(Icons.flip),
+          color: const Color(0xFFF3E8D4),
         ),
-        SizedBox(
-          width: 340,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildStatusBar(),
-                const SizedBox(height: 12),
-                _buildControls(),
-                const SizedBox(height: 12),
-                Expanded(child: MoveHistoryPanel(controller: _controller)),
-              ],
-            ),
+        IconButton(
+          key: const ValueKey('undo-move'),
+          tooltip: 'Undo move',
+          onPressed: _controller.canUndo ? _undoMove : null,
+          icon: const Icon(Icons.undo),
+          color: const Color(0xFFF3E8D4),
+          disabledColor: const Color(0xFF65717F),
+        ),
+        IconButton(
+          key: const ValueKey('redo-move'),
+          tooltip: 'Redo move',
+          onPressed: _controller.canRedo ? _redoMove : null,
+          icon: const Icon(Icons.redo),
+          color: const Color(0xFFF3E8D4),
+          disabledColor: const Color(0xFF65717F),
+        ),
+        PopupMenuButton<String>(
+          tooltip: 'Export game',
+          icon: const Icon(Icons.ios_share, color: Color(0xFFF3E8D4)),
+          onSelected: (value) => _showExportDialog(asPgn: value == 'pgn'),
+          itemBuilder: (context) => const [
+            PopupMenuItem(value: 'pgn', child: Text('Export PGN')),
+            PopupMenuItem(value: 'fen', child: Text('Copy FEN')),
+          ],
+        ),
+        IconButton(
+          key: const ValueKey('resign-button'),
+          tooltip: 'Resign',
+          onPressed: _controller.isGameOver ? null : _confirmResign,
+          icon: const Icon(Icons.flag_outlined),
+          color: const Color(0xFFF3E8D4),
+        ),
+        IconButton(
+          key: const ValueKey('new-game-button'),
+          tooltip: 'New game',
+          onPressed: _confirmNewGame,
+          icon: const Icon(Icons.refresh),
+          color: const Color(0xFFF3E8D4),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVisualSettings() {
+    return Column(
+      children: [
+        DropdownButtonFormField<BoardFinish>(
+          key: const ValueKey('board-finish-choice'),
+          initialValue: _boardFinish,
+          isExpanded: true,
+          decoration: const InputDecoration(
+            labelText: 'Chessboard',
+            isDense: true,
+            border: OutlineInputBorder(),
           ),
+          items: [
+            for (final finish in BoardFinish.values)
+              DropdownMenuItem(value: finish, child: Text(finish.label)),
+          ],
+          onChanged: (value) {
+            if (value != null) setState(() => _boardFinish = value);
+          },
+        ),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<PieceFinish>(
+          key: const ValueKey('piece-finish-choice'),
+          initialValue: _pieceFinish,
+          isExpanded: true,
+          decoration: const InputDecoration(
+            labelText: 'Chess pieces',
+            isDense: true,
+            border: OutlineInputBorder(),
+          ),
+          items: [
+            for (final finish in PieceFinish.values)
+              DropdownMenuItem(value: finish, child: Text(finish.label)),
+          ],
+          onChanged: (value) {
+            if (value != null) setState(() => _pieceFinish = value);
+          },
         ),
       ],
     );
@@ -272,15 +441,149 @@ class _GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final botTurn = _botTurn;
+    final title = widget.mode == GameMode.vsComputer
+        ? '3D CHESS · VS BOT'
+        : '3D CHESS · LOCAL';
     return Scaffold(
-      appBar: AppBar(title: const Text('Local game')),
+      backgroundColor: const Color(0xFF101821),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final wide =
-                constraints.maxWidth >= 720 &&
-                constraints.maxWidth > constraints.maxHeight;
-            return wide ? _buildWideLayout() : _buildNarrowLayout();
+            final panelWidth = math.min(
+              340.0,
+              math.max(250.0, constraints.maxWidth * 0.31),
+            );
+            final availableBoardWidth =
+                (constraints.maxWidth - panelWidth - 28).clamp(220.0, 2000.0);
+            final boardSide = math.min(
+              constraints.maxHeight,
+              availableBoardWidth,
+            );
+            return Row(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: SizedBox.square(
+                        dimension: boardSide,
+                        child: ChessBoard(
+                          controller: _controller,
+                          canSelect: !botTurn,
+                          boardFinish: _boardFinish,
+                          pieceFinish: _pieceFinish,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: panelWidth,
+                  child: Container(
+                    margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1C2835),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFF34485B)),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x55000000),
+                          blurRadius: 16,
+                          offset: Offset(-4, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.view_in_ar,
+                              color: Color(0xFFD8B77C),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                title,
+                                key: const ValueKey('game-screen-title'),
+                                style: const TextStyle(
+                                  color: Color(0xFFF4E9D6),
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 15,
+                                  letterSpacing: 1.1,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              tooltip: 'Exit game',
+                              onPressed: () => Navigator.of(context).maybePop(),
+                              icon: const Icon(Icons.close),
+                              color: const Color(0xFFF4E9D6),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        _buildStatusCard(),
+                        if (_botThinking)
+                          const Padding(
+                            padding: EdgeInsets.only(top: 5, bottom: 2),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 13,
+                                  height: 13,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Color(0xFFD8B77C),
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Bot is thinking…',
+                                  style: TextStyle(
+                                    color: Color(0xFFD8B77C),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(height: 6),
+                        _buildControls(),
+                        const SizedBox(height: 6),
+                        _buildVisualSettings(),
+                        const SizedBox(height: 8),
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Container(
+                              color: const Color(0xFFF4EEE3),
+                              padding: const EdgeInsets.all(4),
+                              child: MoveHistoryPanel(controller: _controller),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Text(
+                          'TAP PIECE → TAP DESTINATION  ·  DRAG EMPTY BOARD TO ROTATE',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFFACB8C5),
+                            fontSize: 8,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
           },
         ),
       ),
