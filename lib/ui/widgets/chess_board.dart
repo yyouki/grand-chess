@@ -326,7 +326,6 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
         final square = Square(file, rank);
         final name = square.algebraic;
         final piece = position.pieceAt(square);
-        final visual = projection.visualPosition(square);
         final center = projection.centerOf(square);
         final isLast = lastMove != null &&
             (lastMove.from == square || lastMove.to == square);
