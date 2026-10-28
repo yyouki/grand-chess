@@ -106,6 +106,7 @@ Future<GameController> pumpBoard(
   WidgetTester tester, {
   String? fen,
   double side = 400,
+  bool canSelect = true,
 }) async {
   final controller = fen == null
       ? GameController()
@@ -118,7 +119,7 @@ Future<GameController> pumpBoard(
           child: SizedBox(
             width: side,
             height: side,
-            child: ChessBoard(controller: controller),
+            child: ChessBoard(controller: controller, canSelect: canSelect),
           ),
         ),
       ),
