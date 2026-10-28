@@ -12,3 +12,7 @@ Important changes are listed here in plain language. Items stay under **Unreleas
 - Expand GitHub Actions to verify Android, Windows, Linux, macOS, iOS compilation, and web builds.
 - Add a version-tag release workflow that publishes installable/build artifacts only after required checks pass.
 - Rewrite project documentation with beginner-friendly English and Indonesian versions.
+- Add immersive landscape chess mode on supported mobile devices and tap-to-select/tap-to-move controls.
+- Add flat uppercase coordinates, selectable board/piece finishes, and animated movement.
+- Add an offline legal-move bot, undo/redo, and copy/export of FEN and PGN text.
+- Add a playable 3D Arcade with Cube Tic-Tac-Toe and Tower Builder.
