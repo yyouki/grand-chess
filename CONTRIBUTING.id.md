@@ -6,7 +6,7 @@ Terima kasih sudah membantu mengembangkan Grand Chess. Langkah-langkah ini dibua
 
 ## Sebelum mengedit
 
-1. Baca [README](README.id.md) dan [keputusan teknis](Grand-Chess-ADR.id.md).
+1. Baca [README](README.id.md) dan [keputusan teknis](docs/ARCHITECTURE.id.md).
 2. Pasang Flutter stable SDK dan alat yang dibutuhkan platform target.
 3. Buat folder runner native yang belum tersedia dari root proyek bila diperlukan:
 

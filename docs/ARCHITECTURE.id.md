@@ -1,6 +1,6 @@
 # Grand Chess — Keputusan Teknis
 
-**Bahasa / Language:** [Bahasa Indonesia](Grand-Chess-ADR.id.md) | [English](Grand-Chess-ADR.md)
+**Bahasa / Language:** [Bahasa Indonesia](ARCHITECTURE.id.md) | [English](ARCHITECTURE.md)
 
 ADR (Architecture Decision Record) menjelaskan alasan proyek memilih pendekatan teknis tertentu. Dokumen ini memakai bahasa sederhana agar developer baru memahami keputusan dan konsekuensinya.
 

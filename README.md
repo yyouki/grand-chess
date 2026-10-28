@@ -96,10 +96,10 @@ The repository description and source-code license must be confirmed by the owne
 
 ## Project documents
 
-- Product plan: [English](Grand-Chess-PRD.md) | [Bahasa Indonesia](Grand-Chess-PRD.id.md)
-- Technical decisions: [English](Grand-Chess-ADR.md) | [Bahasa Indonesia](Grand-Chess-ADR.id.md)
+- Product plan: [English](docs/PRODUCT_PLAN.md) | [Bahasa Indonesia](docs/PRODUCT_PLAN.id.md)
+- Technical decisions: [English](docs/ARCHITECTURE.md) | [Bahasa Indonesia](docs/ARCHITECTURE.id.md)
 - Contributing guide: [English](CONTRIBUTING.md) | [Bahasa Indonesia](CONTRIBUTING.id.md)
-- Changelog: [English](CHANGELOG.md) | [Bahasa Indonesia](CHANGELOG.id.md)
+- Changelog: [English](docs/CHANGELOG.md) | [Bahasa Indonesia](docs/CHANGELOG.id.md)
 - Security policy: [English](.github/SECURITY.md) | [Bahasa Indonesia](.github/SECURITY.id.md)
 
 ## Contributing

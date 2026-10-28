@@ -1,6 +1,6 @@
 # Grand Chess — Rencana Produk
 
-**Bahasa / Language:** [Bahasa Indonesia](Grand-Chess-PRD.id.md) | [English](Grand-Chess-PRD.md)
+**Bahasa / Language:** [Bahasa Indonesia](PRODUCT_PLAN.id.md) | [English](PRODUCT_PLAN.md)
 
 ## 1. Tujuan
 

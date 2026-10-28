@@ -1,6 +1,6 @@
 # Grand Chess — Technical Decisions
 
-**Language / Bahasa:** [English](Grand-Chess-ADR.md) | [Bahasa Indonesia](Grand-Chess-ADR.id.md)
+**Language / Bahasa:** [English](ARCHITECTURE.md) | [Bahasa Indonesia](ARCHITECTURE.id.md)
 
 An ADR (Architecture Decision Record) explains why the project uses a particular technical approach. This file is intentionally written in plain language so new contributors can understand the trade-offs.
 

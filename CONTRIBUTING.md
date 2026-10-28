@@ -6,7 +6,7 @@ Thanks for helping improve Grand Chess. The following steps are meant to be clea
 
 ## Before editing
 
-1. Read the [README](README.md) and [technical decisions](Grand-Chess-ADR.md).
+1. Read the [README](README.md) and [technical decisions](docs/ARCHITECTURE.md).
 2. Install the Flutter stable SDK and the tools required for the platform you want to build.
 3. Generate missing native runner folders from the project root if needed:
 

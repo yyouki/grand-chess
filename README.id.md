@@ -96,10 +96,10 @@ Deskripsi repositori dan lisensi source code harus dipastikan oleh pemilik sebel
 
 ## Dokumen proyek
 
-- Rencana produk: [Bahasa Indonesia](Grand-Chess-PRD.id.md) | [English](Grand-Chess-PRD.md)
-- Keputusan teknis: [Bahasa Indonesia](Grand-Chess-ADR.id.md) | [English](Grand-Chess-ADR.md)
+- Rencana produk: [Bahasa Indonesia](docs/PRODUCT_PLAN.id.md) | [English](docs/PRODUCT_PLAN.md)
+- Keputusan teknis: [Bahasa Indonesia](docs/ARCHITECTURE.id.md) | [English](docs/ARCHITECTURE.md)
 - Panduan kontribusi: [Bahasa Indonesia](CONTRIBUTING.id.md) | [English](CONTRIBUTING.md)
-- Catatan perubahan: [Bahasa Indonesia](CHANGELOG.id.md) | [English](CHANGELOG.md)
+- Catatan perubahan: [Bahasa Indonesia](docs/CHANGELOG.id.md) | [English](docs/CHANGELOG.md)
 - Kebijakan keamanan: [Bahasa Indonesia](.github/SECURITY.id.md) | [English](.github/SECURITY.md)
 
 ## Kontribusi
