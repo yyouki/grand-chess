@@ -14,7 +14,6 @@ class _ThreeDTicTacToeScreenState extends State<ThreeDTicTacToeScreen> {
   late List<String?> _cells;
   String _turn = 'X';
   String? _winner;
-  int _draws = 0;
 
   static final List<List<int>> _winningLines = _buildWinningLines();
 
@@ -62,7 +61,6 @@ class _ThreeDTicTacToeScreenState extends State<ThreeDTicTacToeScreen> {
     _cells = List<String?>.filled(_cellCount, null);
     _turn = 'X';
     _winner = null;
-    _draws = 0;
   }
 
   void _play(int index) {
