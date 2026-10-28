@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grand_chess/chess_engine/chess_engine.dart' as engine;
 import 'package:grand_chess/chess_engine/chess_engine.dart' hide Color;
+import 'package:grand_chess/ui/widgets/chess_board_3d_renderer.dart';
 
 import 'test_helpers.dart';
 
