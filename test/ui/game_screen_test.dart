@@ -224,7 +224,7 @@ void main() {
       await tapSquare(tester, 'e2');
       expect(markerSquares('selected-'), isEmpty);
       expect(
-        tester.widget<OutlinedButton>(keyed('resign-button')).onPressed,
+        tester.widget<IconButton>(keyed('resign-button')).onPressed,
         isNull,
       );
     });
