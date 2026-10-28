@@ -14,16 +14,18 @@ Grand Chess is a beginner-friendly, cross-platform chess application built with 
 
 ## 3. Current scope
 
-The current app includes the chess rules engine, a game controller, a responsive UI, move history, promotion and result dialogs, and a perspective 3D board. Dragging an empty board area rotates the view; pieces retain consistent white and black materials.
+The current app includes a chess rules engine, an immersive landscape game screen on supported mobile devices, tap-to-select/tap-to-move controls, an offline heuristic bot, undo/redo, FEN/PGN export text, selectable visual finishes, animated moves, and a perspective 3D board. Dragging empty board space rotates and tilts the view; it never triggers a chess move.
 
-Core rules covered by tests include legal move validation, check, checkmate, stalemate, castling, en passant, promotion, draw rules, and move notation. The 3D scene uses Flutter Canvas so it can share the same rendering code across supported Flutter platforms.
+The separate 3D Arcade currently contains playable Cube Tic-Tac-Toe and Tower Builder. Chess rules covered by tests include legal move validation, check, checkmate, stalemate, castling, en passant, promotion, draw rules, and move notation. The renderer uses Flutter Canvas across supported Flutter targets.
 
 ## 4. User stories
 
 - As a player, I can start a new local game and enter optional player names.
 - As a player, I can see whose turn it is and which legal moves are available.
-- As a player, I can move pieces by tapping squares or dragging a piece.
-- As a player, I can rotate the 3D board through 360 degrees and restore the default view.
+- As a player, I tap a piece to select it, then tap a legal destination; dragging the board controls the camera.
+- As a player, I can rotate/tilt the 3D board, restore the default view, and choose board/piece finishes.
+- As a player, I can undo/redo moves and copy the current FEN or move list as PGN text.
+- As a player, I can play a local game against a lightweight offline bot or use the separate 3D Arcade.
 - As a player, I can review the move list, flip the board, promote a pawn, and see the game result.
 - As a developer, I can run the same rule tests and platform build checks in GitHub Actions.
 
@@ -58,7 +60,8 @@ A public release must meet all of these requirements:
 
 ### Later releases
 
-- Optional computer opponent after engine strength and performance are evaluated.
+- Improve the built-in bot or integrate Stockfish after cross-platform engine performance and packaging are evaluated.
+- Add save/resume, clocks, animation settings and a fuller 3D model/material pipeline.
 - Online play only after security, account, synchronization, and anti-cheat design are reviewed.
 - Cloud sync only with clear privacy choices and reliable conflict handling.
 
