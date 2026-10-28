@@ -25,6 +25,9 @@ class _ChessBoardState extends State<ChessBoard> {
   Square _cursor = const Square(4, 1);
   Offset? _pointerDown;
   Square? _dragFrom;
+  Square? _gestureStartSquare;
+  int? _activePointer;
+  bool _gestureMoved = false;
   bool _rotating = false;
   bool _keyboardActive = false;
   double _yaw = -0.55;
@@ -148,65 +151,92 @@ class _ChessBoardState extends State<ChessBoard> {
         piece.color == controller.gameState.position.sideToMove;
   }
 
-  void _handleTapDown(TapDownDetails details) {
-    _pointerDown = details.localPosition;
-    _focusNode.requestFocus();
-  }
-
-  void _handleTapUp(TapUpDetails details, ChessBoardProjection projection) {
-    final square = _squareAt(details.localPosition, projection);
-    _pointerDown = null;
-    if (square == null) {
-      return;
-    }
-    setState(() {
-      _cursor = square;
-      _keyboardActive = false;
-    });
-    widget.controller.selectSquare(square);
-  }
-
-  void _handlePanStart(
-    DragStartDetails details,
+  void _handlePointerDown(
+    PointerDownEvent event,
     ChessBoardProjection projection,
   ) {
-    final start = _pointerDown ?? details.localPosition;
-    final square = _squareAt(start, projection);
-    _focusNode.requestFocus();
-    _dragFrom = null;
-    _rotating = !_canDragFrom(square);
-    if (!_rotating && square != null) {
-      _dragFrom = square;
-      if (widget.controller.selectedSquare != square) {
-        widget.controller.selectSquare(square);
-      }
-      setState(() {
-        _cursor = square;
-        _keyboardActive = false;
-      });
-    }
-  }
-
-  void _handlePanUpdate(DragUpdateDetails details) {
-    if (_dragFrom != null) {
+    if (_activePointer != null) {
       return;
     }
-    if (!_rotating) {
+    _activePointer = event.pointer;
+    _pointerDown = event.localPosition;
+    _lastPointerPosition = event.localPosition;
+    _gestureStartSquare = _squareAt(event.localPosition, projection);
+    _gestureMoved = false;
+    _dragFrom = null;
+    _rotating = false;
+    _focusNode.requestFocus();
+  }
+
+  void _handlePointerMove(
+    PointerMoveEvent event,
+    ChessBoardProjection projection,
+  ) {
+    if (event.pointer != _activePointer) {
+      return;
+    }
+    final startPoint = _pointerDown;
+    if (startPoint == null) {
+      return;
+    }
+
+    final previousPoint = _lastPointerPosition ?? startPoint;
+    final delta = event.localPosition - previousPoint;
+    _lastPointerPosition = event.localPosition;
+
+    if (!_gestureMoved &&
+        (event.localPosition - startPoint).distance >= 6) {
+      _gestureMoved = true;
+      final square = _gestureStartSquare;
+      final piece = square == null
+          ? null
+          : widget.controller.gameState.position.pieceAt(square);
+
+      if (_canDragFrom(square)) {
+        _dragFrom = square;
+        if (widget.controller.selectedSquare != square) {
+          widget.controller.selectSquare(square!);
+        }
+        setState(() {
+          _cursor = square!;
+          _keyboardActive = false;
+        });
+      } else if (piece == null) {
+        // Dragging empty board space rotates the camera, not a chess piece.
+        _rotating = true;
+      }
+    }
+
+    if (_dragFrom != null || !_rotating || delta == Offset.zero) {
       return;
     }
     setState(() {
-      _yaw = (_yaw + details.delta.dx * 0.012) % (math.pi * 2);
-      _pitch = (_pitch + details.delta.dy * 0.004).clamp(0.43, 1.18).toDouble();
+      _yaw = (_yaw + delta.dx * 0.012) % (math.pi * 2);
+      _pitch = (_pitch + delta.dy * 0.004).clamp(0.43, 1.18).toDouble();
     });
   }
 
-  void _handlePanEnd(DragEndDetails details, ChessBoardProjection projection) {
+  void _handlePointerUp(
+    PointerUpEvent event,
+    ChessBoardProjection projection,
+  ) {
+    if (event.pointer != _activePointer) {
+      return;
+    }
+
+    final wasMoved = _gestureMoved;
     final from = _dragFrom;
-    if (from != null) {
-      final endPoint = _lastPointerPosition ?? _pointerDown;
-      final destination = endPoint == null
-          ? null
-          : _squareAt(endPoint, projection);
+    if (!wasMoved) {
+      final square = _squareAt(event.localPosition, projection);
+      if (square != null) {
+        setState(() {
+          _cursor = square;
+          _keyboardActive = false;
+        });
+        widget.controller.selectSquare(square);
+      }
+    } else if (from != null) {
+      final destination = _squareAt(event.localPosition, projection);
       if (destination != null && destination != from) {
         final isLegal = widget.controller.legalMovesFromSelected.any(
           (move) => move.to == destination,
@@ -216,17 +246,23 @@ class _ChessBoardState extends State<ChessBoard> {
         }
       }
     }
-    _dragFrom = null;
-    _rotating = false;
-    _pointerDown = null;
-    _lastPointerPosition = null;
+    _resetPointerGesture();
   }
 
-  Offset? _lastPointerPosition;
+  void _handlePointerCancel(PointerCancelEvent event) {
+    if (event.pointer == _activePointer) {
+      _resetPointerGesture();
+    }
+  }
 
-  void _handlePanMove(DragUpdateDetails details) {
-    _lastPointerPosition = details.localPosition;
-    _handlePanUpdate(details);
+  void _resetPointerGesture() {
+    _activePointer = null;
+    _pointerDown = null;
+    _lastPointerPosition = null;
+    _gestureStartSquare = null;
+    _dragFrom = null;
+    _gestureMoved = false;
+    _rotating = false;
   }
 
   void _resetView() {
@@ -403,27 +439,26 @@ class _ChessBoardState extends State<ChessBoard> {
                     container: true,
                     label:
                         'Three-dimensional chess board. Drag an empty area to rotate the board 360 degrees. Tap a square to move.',
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTapDown: _handleTapDown,
-                      onTapUp: (details) => _handleTapUp(details, projection),
-                      onPanStart: (details) =>
-                          _handlePanStart(details, projection),
-                      onPanUpdate: _handlePanMove,
-                      onPanEnd: (details) => _handlePanEnd(details, projection),
-                      onPanCancel: () {
-                        _dragFrom = null;
-                        _rotating = false;
-                        _pointerDown = null;
-                        _lastPointerPosition = null;
-                      },
-                      child: SizedBox(
-                        width: side,
-                        height: side,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          clipBehavior: Clip.none,
-                          children: <Widget>[
+                    child: SizedBox(
+                      width: side,
+                      height: side,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        clipBehavior: Clip.none,
+                        children: <Widget>[
+                          Listener(
+                            behavior: HitTestBehavior.opaque,
+                            onPointerDown: (event) =>
+                                _handlePointerDown(event, projection),
+                            onPointerMove: (event) =>
+                                _handlePointerMove(event, projection),
+                            onPointerUp: (event) =>
+                                _handlePointerUp(event, projection),
+                            onPointerCancel: _handlePointerCancel,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              clipBehavior: Clip.none,
+                              children: <Widget>[
                             CustomPaint(
                               key: const ValueKey('chess-board-3d-scene'),
                               painter: Chess3DScenePainter(
@@ -447,6 +482,9 @@ class _ChessBoardState extends State<ChessBoard> {
                               interactive: interactive,
                               focused: focused,
                             ),
+                              ],
+                            ),
+                          ),
                             Positioned(
                               top: 4,
                               right: 4,
@@ -512,8 +550,7 @@ class _ChessBoardState extends State<ChessBoard> {
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                        ],
                       ),
                     ),
                   ),
