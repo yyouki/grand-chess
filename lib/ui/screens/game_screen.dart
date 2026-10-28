@@ -545,7 +545,7 @@ class _GameScreenState extends State<GameScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.psychology_alt,
                                   size: 16,
                                   color: Color(0xFFD8B77C),
