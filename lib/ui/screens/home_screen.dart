@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import 'local_game_setup_screen.dart';
-import 'three_d_tic_tac_toe_screen.dart';
+import 'three_d_arcade_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -66,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (context) => const ThreeDTicTacToeScreen(),
+                          builder: (context) => const ThreeDArcadeScreen(),
                         ),
                       );
                     },
