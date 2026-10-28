@@ -16,7 +16,7 @@ import 'game_outcome.dart';
 /// State management: [ChangeNotifier] plus Flutter's own `ListenableBuilder`.
 /// The whole UI state is one small object with one change signal, which is
 /// exactly what the framework's built-in primitives are for, so no state
-/// management package is added (see ADR-011 in Grand-Chess-ADR.md).
+/// management package is added (see the architecture guide in docs/ARCHITECTURE.md).
 class GameController extends ChangeNotifier {
   GameController({GameState? initialState})
     : _gameState = initialState ?? GameState.initial() {
