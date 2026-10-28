@@ -103,7 +103,8 @@ void main() {
       await pumpGameScreen(tester);
 
       await playMoves(tester, ['e2e4', 'e7e5']);
-      await dragPiece(tester, 'g1', 'f3');
+      await tapSquare(tester, 'g1');
+      await tapSquare(tester, 'f3');
 
       expect(textOf(tester, 'move-2-white'), 'Nf3');
       expect(tester.takeException(), isNull);

@@ -11,12 +11,15 @@ const Piece whitePawn = Piece(engine.Color.white, PieceType.pawn);
 
 void main() {
   group('dragging', () {
-    testWidgets('drags a pawn to a legal square and plays the move', (
+    testWidgets('selects a pawn first, then taps a legal destination', (
       tester,
     ) async {
       final controller = await pumpBoard(tester);
 
-      await dragPiece(tester, 'e2', 'e4');
+      await tapSquare(tester, 'e2');
+      expect(markerSquares('selected-'), {'e2'});
+      expect(markerSquares('legal-'), {'e3', 'e4'});
+      await tapSquare(tester, 'e4');
 
       expect(sanList(controller), ['e4']);
       expect(pieceOn(tester, 'e4'), whitePawn);
@@ -25,19 +28,33 @@ void main() {
     });
 
     testWidgets(
-      'a drop on an illegal square makes no move and keeps the selection',
+      'an illegal destination tap clears selection without moving a piece',
       (tester) async {
         final controller = await pumpBoard(tester);
 
-        await dragPiece(tester, 'e2', 'e5');
+        await tapSquare(tester, 'e2');
+        await tapSquare(tester, 'e5');
 
         expect(sanList(controller), isEmpty);
         expect(pieceOn(tester, 'e2'), whitePawn);
         expect(pieceOn(tester, 'e5'), isNull);
-        expect(markerSquares('selected-'), {'e2'});
-        expect(markerSquares('legal-'), {'e3', 'e4'});
+        expect(markerSquares('selected-'), isEmpty);
+        expect(markerSquares('legal-'), isEmpty);
       },
     );
+
+    testWidgets('dragging a piece never makes a chess move', (tester) async {
+      final controller = await pumpBoard(tester);
+
+      await dragPiece(tester, 'e2', 'e4');
+
+      expect(sanList(controller), isEmpty);
+      expect(pieceOn(tester, 'e2'), whitePawn);
+      expect(pieceOn(tester, 'e4'), isNull);
+      await tapSquare(tester, 'e2');
+      await tapSquare(tester, 'e4');
+      expect(sanList(controller), ['e4']);
+    });
 
     testWidgets('drags a piece onto an enemy piece to capture it', (
       tester,
@@ -45,36 +62,23 @@ void main() {
       final controller = await pumpBoard(tester);
       await playMoves(tester, ['e2e4', 'd7d5']);
 
-      await dragPiece(tester, 'e4', 'd5');
+      await tapSquare(tester, 'e4');
+      await tapSquare(tester, 'd5');
 
       expect(sanList(controller), ['e4', 'd5', 'exd5']);
       expect(pieceOn(tester, 'd5'), whitePawn);
       expect(pieceOn(tester, 'e4'), isNull);
     });
 
-    testWidgets('only the pieces of the side to move can be dragged', (
+    testWidgets('only a tap on the current side piece selects it', (
       tester,
     ) async {
       await pumpBoard(tester);
-      expect(find.byType(Draggable<Square>), findsNWidgets(16));
-
-      await playMoves(tester, ['e2e4']);
-
-      expect(find.byType(Draggable<Square>), findsNWidgets(16));
-      expect(
-        find.ancestor(
-          of: pieceFinder('e7'),
-          matching: find.byType(Draggable<Square>),
-        ),
-        findsOneWidget,
-      );
-      expect(
-        find.ancestor(
-          of: pieceFinder('e4'),
-          matching: find.byType(Draggable<Square>),
-        ),
-        findsNothing,
-      );
+      await tapSquare(tester, 'e7');
+      expect(markerSquares('selected-'), isEmpty);
+      await tapSquare(tester, 'e2');
+      expect(markerSquares('selected-'), {'e2'});
+      expect(find.byType(Draggable<Square>), findsNothing);
     });
 
     testWidgets('dragging another piece replaces the current selection', (
@@ -83,7 +87,8 @@ void main() {
       final controller = await pumpBoard(tester);
       await tapSquare(tester, 'e2');
 
-      await dragPiece(tester, 'g1', 'f3');
+      await tapSquare(tester, 'g1');
+      await tapSquare(tester, 'f3');
 
       expect(sanList(controller), ['Nf3']);
     });
@@ -93,7 +98,8 @@ void main() {
       (tester) async {
         final controller = await pumpBoard(tester, fen: promotionFen);
 
-        await dragPiece(tester, 'e7', 'e8');
+        await tapSquare(tester, 'e7');
+        await tapSquare(tester, 'e8');
 
         expect(controller.isAwaitingPromotionChoice, isTrue);
         expect(sanList(controller), isEmpty);
@@ -102,6 +108,19 @@ void main() {
   });
 
   group('keyboard', () {
+    testWidgets('read-only board ignores keyboard activation', (tester) async {
+      final controller = await pumpBoard(tester, canSelect: false);
+
+      await tester.tap(squareFinder('e2'));
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+
+      expect(controller.selectedSquare, isNull);
+      expect(sanList(controller), isEmpty);
+      expect(markerSquares('selected-'), isEmpty);
+    });
+
     testWidgets('Escape clears the selection', (tester) async {
       await pumpBoard(tester);
       await tapSquare(tester, 'e2');

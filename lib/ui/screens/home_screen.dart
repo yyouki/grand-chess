@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import 'local_game_setup_screen.dart';
+import 'three_d_arcade_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -57,6 +58,22 @@ class HomeScreen extends StatelessWidget {
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
                       child: Text('New Local Game'),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    key: const ValueKey('open-3d-arcade'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (context) => const ThreeDArcadeScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.view_in_ar),
+                    label: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      child: Text('Open 3D Arcade'),
                     ),
                   ),
                 ],

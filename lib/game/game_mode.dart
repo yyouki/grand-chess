@@ -1,5 +1,9 @@
-/// How the current game session is being played. Only [localTwoPlayer] is
-/// functional in Phase 3 — [vsComputer] exists so the setup UI can show the
-/// shape of the future option without pretending it works. Stockfish
-/// integration is Phase 4, not implemented here.
-enum GameMode { localTwoPlayer, vsComputer }
+/// How this chess session is played.
+enum GameMode {
+  /// Two people take turns on the same device.
+  localTwoPlayer,
+
+  /// White is controlled by the person; Black is controlled by the built-in
+  /// offline legal-move bot.
+  vsComputer,
+}

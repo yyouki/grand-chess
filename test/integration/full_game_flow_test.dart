@@ -79,12 +79,18 @@ void main() {
     },
   );
 
-  testWidgets('mixes taps and drags in the same game', (tester) async {
+  testWidgets('dragging a piece never moves it; tapping does', (tester) async {
     await startGameFromHome(tester);
 
     await playMoves(tester, ['e2e4']);
     await dragPiece(tester, 'e7', 'e5');
-    await playMoves(tester, ['g1f3']);
+
+    expect(textOf(tester, 'turn-indicator'), 'Black to move');
+    expect(textOf(tester, 'move-1-black'), '');
+    expect(pieceOn(tester, 'e7'), isNotNull);
+    expect(pieceOn(tester, 'e5'), isNull);
+
+    await playMoves(tester, ['e7e5', 'g1f3']);
 
     expect(textOf(tester, 'move-1-white'), 'e4');
     expect(textOf(tester, 'move-1-black'), 'e5');
