@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -55,9 +56,15 @@ class _GameScreenState extends State<GameScreen> {
     _queueBotIfNeeded();
   }
 
+  bool get _supportsImmersiveMobileUi =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
+
   void _enterImmersiveLandscape() {
-    // These settings are applied on supported mobile targets. Desktop targets
-    // keep their host window size and still render this screen without chrome.
+    // Lock orientation and hide system chrome on mobile only. Desktop window
+    // management remains under the user's control.
+    if (!_supportsImmersiveMobileUi) return;
     unawaited(
       SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
         DeviceOrientation.landscapeLeft,
@@ -74,10 +81,12 @@ class _GameScreenState extends State<GameScreen> {
     _botTurnToken++;
     _controller.removeListener(_handleControllerChanged);
     _controller.dispose();
-    unawaited(
-      SystemChrome.setPreferredOrientations(const <DeviceOrientation>[]),
-    );
-    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+    if (_supportsImmersiveMobileUi) {
+      unawaited(
+        SystemChrome.setPreferredOrientations(const <DeviceOrientation>[]),
+      );
+      unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+    }
     super.dispose();
   }
 
