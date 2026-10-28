@@ -70,6 +70,7 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                   DropdownButtonFormField<GameMode>(
                     key: const ValueKey('game-mode-choice'),
                     initialValue: _mode,
+                    isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: 'Game mode',
                       border: OutlineInputBorder(),
@@ -93,6 +94,7 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                     DropdownButtonFormField<BotLevel>(
                       key: const ValueKey('bot-level-choice'),
                       initialValue: _botLevel,
+                      isExpanded: true,
                       decoration: const InputDecoration(
                         labelText: 'Bot style',
                         border: OutlineInputBorder(),
