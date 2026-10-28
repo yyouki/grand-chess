@@ -125,7 +125,7 @@ void main() {
       await openSetup(tester);
       await startGame(tester);
 
-      await tester.pageBack();
+      await tester.tap(keyed('exit-game-button'));
       await tester.pumpAndSettle();
       expect(find.byType(LocalGameSetupScreen), findsOneWidget);
 
