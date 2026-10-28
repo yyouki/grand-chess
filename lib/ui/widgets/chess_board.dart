@@ -280,6 +280,7 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
   }
 
   void _activateCursor() {
+    if (!widget.canSelect) return;
     setState(() {
       _keyboardActive = true;
     });
