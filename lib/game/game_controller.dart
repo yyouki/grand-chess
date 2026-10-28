@@ -34,6 +34,8 @@ class GameController extends ChangeNotifier {
   /// Legal moves for [_gameState], computed once per state change rather
   /// than once per tap or per rebuild.
   List<Move> _legalMoves = const [];
+  final List<GameState> _undoStack = [];
+  final List<GameState> _redoStack = [];
 
   Square? _selectedSquare;
   Move? _pendingPromotionMove;
@@ -71,6 +73,47 @@ class GameController extends ChangeNotifier {
     return _legalMoves
         .where((move) => move.from == selected)
         .toList(growable: false);
+  }
+
+  bool get canUndo => _undoStack.isNotEmpty || _resignationOutcome != null;
+  bool get canRedo => _redoStack.isNotEmpty;
+
+  /// Plays a move supplied by a bot, replay tool, or other trusted UI client.
+  /// Legality is still checked by the same immutable chess engine.
+  void playMove(Move move) {
+    if (isGameOver || isAwaitingPromotionChoice) return;
+    _commitMove(move);
+  }
+
+  /// Restores the previous immutable game state. This also makes undo suitable
+  /// for the move-history UI without duplicating any chess-rule logic.
+  void undoMove() {
+    if (_undoStack.isEmpty) {
+      if (_resignationOutcome != null) {
+        _resignationOutcome = null;
+        notifyListeners();
+      }
+      return;
+    }
+    _redoStack.add(_gameState);
+    _setGameState(_undoStack.removeLast());
+    _resignationOutcome = null;
+    _selectedSquare = null;
+    _pendingPromotionMove = null;
+    _errorMessage = null;
+    notifyListeners();
+  }
+
+  /// Reapplies the last undone state, if one exists.
+  void redoMove() {
+    if (_redoStack.isEmpty) return;
+    _undoStack.add(_gameState);
+    _setGameState(_redoStack.removeLast());
+    _resignationOutcome = null;
+    _selectedSquare = null;
+    _pendingPromotionMove = null;
+    _errorMessage = null;
+    notifyListeners();
   }
 
   /// Handles a tap on [square]: selects an own piece, or — when a piece is
@@ -133,6 +176,8 @@ class GameController extends ChangeNotifier {
   }
 
   void newGame() {
+    _undoStack.clear();
+    _redoStack.clear();
     _setGameState(GameState.initial());
     _selectedSquare = null;
     _pendingPromotionMove = null;
@@ -151,6 +196,8 @@ class GameController extends ChangeNotifier {
   void _commitMove(Move move) {
     final result = _gameState.applyMove(move);
     if (result.isOk) {
+      _undoStack.add(_gameState);
+      _redoStack.clear();
       _setGameState(result.valueOrNull!);
       _errorMessage = null;
     } else {
