@@ -54,7 +54,8 @@ Rilis publik harus memenuhi semua syarat berikut:
 
 - Menyimpan dan melanjutkan permainan lokal.
 - Mengekspor dan mengimpor permainan PGN.
-- Menambahkan bahan papan, set buah, preset kamera, dan highlight yang ramah buta warna.
+- [x] Menambahkan pilihan tampilan/material papan dan buah catur.
+- Menambahkan preset kamera dan highlight yang ramah buta warna.
 - Menambahkan suara, pengaturan animasi, dan pemeriksaan aksesibilitas keyboard/mouse.
 - Menambahkan UI aplikasi yang diterjemahkan dan pilihan bahasa.
 
