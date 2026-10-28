@@ -226,15 +226,6 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
     });
   }
 
-    if (_dragFrom != null || !_rotating || delta == Offset.zero) {
-      return;
-    }
-    setState(() {
-      _yaw = (_yaw + delta.dx * 0.012) % (math.pi * 2);
-      _pitch = (_pitch + delta.dy * 0.004).clamp(0.43, 1.18).toDouble();
-    });
-  }
-
   void _handlePointerUp(PointerUpEvent event, ChessBoardProjection projection) {
     if (event.pointer != _activePointer) {
       return;
