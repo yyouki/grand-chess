@@ -141,11 +141,13 @@ class ChessClockController extends ChangeNotifier {
   /// If a snapshot is not available, it preserves remaining time and aligns
   /// the active clock with the chess position.
   void restoreToPly(int ply, engine.Color sideToMove) {
-    final shouldResume = _isRunning || _flaggedSide != null;
+    final snapshot = _snapshots[ply];
+    final shouldResume =
+        isEnabled && (_isRunning || _flaggedSide != null || snapshot != null);
     _pulse();
     _flaggedSide = null;
 
-    final snapshot = _snapshots[ply];
+    
     if (snapshot != null) {
       _whiteRemaining = snapshot.white;
       _blackRemaining = snapshot.black;
@@ -194,7 +196,7 @@ class ChessClockController extends ChangeNotifier {
 
     final before = _displaySeconds(remainingFor(_activeSide));
     final current = remainingFor(_activeSide);
-    final nextMs = math.max(0, current.inMilliseconds - elapsed.inMilliseconds);
+    final nextMs = math.max(0, current.inMilliseconds - elapsed.inMilliseconds).toInt();
     final next = Duration(milliseconds: nextMs);
     if (_activeSide == engine.Color.white) {
       _whiteRemaining = next;
