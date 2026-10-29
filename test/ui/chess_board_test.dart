@@ -12,6 +12,25 @@ const Piece whiteRook = Piece(engine.Color.white, PieceType.rook);
 const Piece whiteQueen = Piece(engine.Color.white, PieceType.queen);
 
 void main() {
+  group('camera presets', () {
+    testWidgets('offers a preset that looks beneath the board', (tester) async {
+      await pumpBoard(tester);
+
+      expect(find.byKey(const ValueKey('camera-presets')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('camera-presets')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Classic angle'), findsOneWidget);
+      expect(find.text('Overhead'), findsOneWidget);
+      expect(find.text('Low angle'), findsOneWidget);
+      expect(find.text('Under the board'), findsOneWidget);
+
+      await tester.tap(find.text('Under the board'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('camera-presets')), findsOneWidget);
+    });
+  });
+
   group('initial position', () {
     testWidgets('draws 64 squares and 32 pieces', (tester) async {
       await pumpBoard(tester);
