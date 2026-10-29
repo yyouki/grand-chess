@@ -27,7 +27,8 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final wide = constraints.maxWidth >= 760;
+            // Keep the single-column layout on small laptop/tablet widths so actions remain visible.
+            final wide = constraints.maxWidth >= 960;
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(
                 horizontal: wide ? 36 : 22,
