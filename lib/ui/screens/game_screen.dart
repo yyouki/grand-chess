@@ -436,9 +436,7 @@ class _GameScreenState extends State<GameScreen> {
                 : AppTheme.surface,
             borderRadius: BorderRadius.circular(9),
             border: Border.all(
-              color: isActive
-                  ? AppTheme.seed
-                  : AppTheme.line,
+              color: isActive ? AppTheme.seed : AppTheme.line,
               width: isActive ? 2 : 1,
             ),
           ),
@@ -829,10 +827,7 @@ class _GameScreenState extends State<GameScreen> {
                         SizedBox(width: 8),
                         Text(
                           'Bot is thinking…',
-                          style: TextStyle(
-                            color: AppTheme.seed,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: AppTheme.seed, fontSize: 12),
                         ),
                       ],
                     ),

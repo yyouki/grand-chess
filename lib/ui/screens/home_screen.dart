@@ -129,10 +129,7 @@ class HomeScreen extends StatelessWidget {
                       'A small space for strategy',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppTheme.mutedInk,
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: AppTheme.mutedInk, fontSize: 11),
                     ),
                   ],
                 ],
