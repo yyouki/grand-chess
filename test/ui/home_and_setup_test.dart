@@ -70,6 +70,8 @@ void main() {
       await tester.tap(find.text('3 + 2 · Blitz').last);
       await tester.pumpAndSettle();
 
+      await tester.ensureVisible(keyed('start-game'));
+      await tester.pumpAndSettle();
       await tester.tap(keyed('start-game'));
       await tester.pump();
 
