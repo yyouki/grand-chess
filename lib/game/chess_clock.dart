@@ -105,6 +105,12 @@ class ChessClockController extends ChangeNotifier {
     _currentPly = 0;
   }
 
+  _ClockSnapshot _capture() => _ClockSnapshot(
+    white: _whiteRemaining,
+    black: _blackRemaining,
+    activeSide: _activeSide,
+  );
+
   /// Called when a legal chess move has just been committed. Increment is
   /// added to the player who moved, and the other clock becomes active.
   void completeMove({
