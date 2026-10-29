@@ -88,7 +88,8 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'Choose your opponent, set the pace, then make your first move.',
+                    'Choose your opponent, set the pace, then make your '
+                    'first move.',
                     key: ValueKey('setup-hint'),
                     style: TextStyle(
                       color: AppTheme.mutedInk,
@@ -156,7 +157,9 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                                 ),
                             ],
                             onChanged: (level) {
-                              if (level != null) setState(() => _botLevel = level);
+                              if (level != null) {
+                                setState(() => _botLevel = level);
+                              }
                             },
                           ),
                         ],
