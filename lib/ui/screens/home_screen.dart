@@ -68,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                       if (wide) ...[
                         const SizedBox(height: 30),
                         const Text(
-                          'PLAY AT YOUR PACE  ·  LOCAL BY DESIGN  ·  NO ACCOUNT REQUIRED',
+                          'PLAY AT YOUR PACE · LOCAL BY DESIGN · NO ACCOUNT REQUIRED',
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             color: AppTheme.mutedInk,
@@ -249,7 +249,9 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildFooter(bool wide) {
     return Row(
-      mainAxisAlignment: wide ? MainAxisAlignment.start : MainAxisAlignment.center,
+      mainAxisAlignment: wide
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.center,
       children: [
         const Icon(Icons.circle, size: 5, color: AppTheme.line),
         const SizedBox(width: 8),
