@@ -269,6 +269,25 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
     });
   }
 
+  void _setCameraPreset(String preset) {
+    setState(() {
+      switch (preset) {
+        case 'overhead':
+          _yaw = 0;
+          _pitch = math.pi / 2;
+        case 'low':
+          _yaw = -0.55;
+          _pitch = 0.52;
+        case 'underside':
+          _yaw = -0.55;
+          _pitch = 2.55;
+        default:
+          _yaw = -0.55;
+          _pitch = 0.90;
+      }
+    });
+  }
+
   int _clampIndex(int value) => value.clamp(0, 7);
 
   void _moveCursor(int columnDelta, int rowDelta) {
@@ -579,6 +598,42 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
                                     ],
                                   ),
                                 ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 4,
+                            right: 44,
+                            child: Material(
+                              color: const Color(0xCC202630),
+                              borderRadius: BorderRadius.circular(24),
+                              child: PopupMenuButton<String>(
+                                key: const ValueKey('camera-presets'),
+                                tooltip: 'Camera presets',
+                                icon: const Icon(
+                                  Icons.videocam_outlined,
+                                  size: 17,
+                                  color: Color(0xFFF5F3EF),
+                                ),
+                                onSelected: _setCameraPreset,
+                                itemBuilder: (context) => const [
+                                  PopupMenuItem(
+                                    value: 'classic',
+                                    child: Text('Classic angle'),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'overhead',
+                                    child: Text('Overhead'),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'low',
+                                    child: Text('Low angle'),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'underside',
+                                    child: Text('Under the board'),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
