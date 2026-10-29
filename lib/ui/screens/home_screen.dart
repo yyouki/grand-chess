@@ -27,55 +27,29 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Keep the single-column layout on small laptop/tablet widths so actions remain visible.
             final wide = constraints.maxWidth >= 960;
+            final compact = constraints.maxWidth < 420;
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(
-                horizontal: wide ? 36 : 22,
+                horizontal: wide ? 32 : 22,
                 vertical: wide ? 28 : 20,
               ),
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1080),
+                  // A single editorial column keeps the primary actions easy to find.
+                  constraints: const BoxConstraints(maxWidth: 680),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildBrandBar(compact: constraints.maxWidth < 380),
-                      SizedBox(height: wide ? 70 : 38),
-                      if (wide)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 11,
-                              child: _buildIntro(context, wide: true),
-                            ),
-                            const SizedBox(width: 52),
-                            const Expanded(flex: 9, child: _BoardPreviewCard()),
-                          ],
-                        )
-                      else ...[
-                        _buildIntro(context, wide: false),
-                        const SizedBox(height: 24),
-                        _buildActions(context),
-                        const SizedBox(height: 30),
-                        const _BoardPreviewCard(),
-                      ],
-                      if (wide) ...[
-                        const SizedBox(height: 30),
-                        const Text(
-                          'PLAY AT YOUR PACE · LOCAL BY DESIGN · NO ACCOUNT REQUIRED',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: AppTheme.mutedInk,
-                            fontSize: 10,
-                            letterSpacing: 1.1,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                      _buildBrandBar(compact: compact),
+                      SizedBox(height: wide ? 64 : 38),
+                      _buildIntro(context, wide: false),
                       const SizedBox(height: 24),
-                      _buildFooter(wide, compact: constraints.maxWidth < 420),
+                      _buildActions(context),
+                      const SizedBox(height: 30),
+                      const _BoardPreviewCard(),
+                      const SizedBox(height: 24),
+                      _buildFooter(wide, compact: compact),
                     ],
                   ),
                 ),
@@ -221,34 +195,41 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildActions(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        FilledButton.icon(
-          key: const ValueKey('new-local-game'),
-          onPressed: () => _openLocalGame(context),
-          icon: const Icon(Icons.arrow_forward_rounded, size: 19),
-          label: const Text('Start a game'),
-          style: FilledButton.styleFrom(
-            alignment: Alignment.center,
-            minimumSize: const Size(0, 56),
-          ),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FilledButton.icon(
+              key: const ValueKey('new-local-game'),
+              onPressed: () => _openLocalGame(context),
+              icon: const Icon(Icons.arrow_forward_rounded, size: 19),
+              label: const Text('Start a game'),
+              style: FilledButton.styleFrom(
+                alignment: Alignment.center,
+                minimumSize: const Size(0, 56),
+              ),
+            ),
+            const SizedBox(height: 10),
+            OutlinedButton.icon(
+              key: const ValueKey('open-3d-arcade'),
+              onPressed: () => _openArcade(context),
+              icon: const Icon(Icons.view_in_ar, size: 19),
+              label: const Text('Explore 3D arcade'),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 54),
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'No account. No matchmaking. Just the board.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppTheme.mutedInk, fontSize: 11),
+            ),
+          ],
         ),
-        const SizedBox(height: 10),
-        OutlinedButton.icon(
-          key: const ValueKey('open-3d-arcade'),
-          onPressed: () => _openArcade(context),
-          icon: const Icon(Icons.view_in_ar, size: 19),
-          label: const Text('Explore 3D arcade'),
-          style: OutlinedButton.styleFrom(minimumSize: const Size(0, 54)),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          'No account. No matchmaking. Just the board.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: AppTheme.mutedInk, fontSize: 11),
-        ),
-      ],
+      ),
     );
   }
 
