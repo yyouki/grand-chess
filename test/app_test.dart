@@ -28,8 +28,8 @@ void main() {
       await tester.pumpWidget(const GrandChessApp());
 
       expect(find.byType(HomeScreen), findsOneWidget);
-      expect(find.text('Grand Chess'), findsOneWidget);
-      expect(find.text('New Local Game'), findsOneWidget);
+      expect(textOf(tester, 'home-title'), 'A quieter way\nto play.');
+      expect(find.text('Start a game'), findsOneWidget);
     });
 
     testWidgets('no longer shows the foundation placeholder', (tester) async {

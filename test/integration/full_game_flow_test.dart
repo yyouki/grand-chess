@@ -74,7 +74,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(HomeScreen), findsOneWidget);
-      expect(textOf(tester, 'home-title'), 'Grand Chess');
+      expect(textOf(tester, 'home-title'), 'A quieter way\nto play.');
       expect(tester.takeException(), isNull);
     },
   );
