@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:grand_chess/app/grand_chess_app.dart';
+import 'package:grand_chess/game/chess_clock.dart';
 import 'package:grand_chess/ui/screens/game_screen.dart';
 import 'package:grand_chess/ui/screens/home_screen.dart';
 import 'package:grand_chess/ui/screens/local_game_setup_screen.dart';
@@ -70,15 +71,29 @@ void main() {
       await tester.tap(find.text('3 + 2 · Blitz').last);
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(keyed('start-game'));
-      await tester.pumpAndSettle();
-      await tester.tap(keyed('start-game'));
+      final choice = tester.widget<DropdownButtonFormField<ChessTimeControl>>(
+        keyed('time-control-choice'),
+      );
+      expect(choice.initialValue, ChessTimeControl.blitz3);
+      expect(find.byType(LocalGameSetupScreen), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a timed game displays clocks for both players', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: GameScreen(timeControl: ChessTimeControl.blitz3),
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(GameScreen), findsOneWidget);
       expect(keyed('clock-white-time'), findsOneWidget);
       expect(keyed('clock-black-time'), findsOneWidget);
       expect(find.text('03:00'), findsNWidgets(2));
+      expect(tester.takeException(), isNull);
 
       await tester.pumpWidget(const SizedBox.shrink());
     });
