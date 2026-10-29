@@ -60,10 +60,10 @@ class HomeScreen extends StatelessWidget {
                         )
                       else ...[
                         _buildIntro(context, wide: false),
-                        const SizedBox(height: 30),
-                        const _BoardPreviewCard(),
                         const SizedBox(height: 24),
                         _buildActions(context),
+                        const SizedBox(height: 30),
+                        const _BoardPreviewCard(),
                       ],
                       if (wide) ...[
                         const SizedBox(height: 30),
