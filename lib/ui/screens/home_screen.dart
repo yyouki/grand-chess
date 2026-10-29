@@ -217,9 +217,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () => _openArcade(context),
               icon: const Icon(Icons.view_in_ar, size: 19),
               label: const Text('Explore 3D arcade'),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(0, 54),
-              ),
+              style: OutlinedButton.styleFrom(minimumSize: const Size(0, 54)),
             ),
             const SizedBox(height: 10),
             const Text(
