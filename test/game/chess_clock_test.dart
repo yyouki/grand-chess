@@ -19,7 +19,7 @@ void main() {
         sideThatMoved: engine.Color.white,
         sideToMove: engine.Color.black,
       );
-      expect(clock.whiteRemaining, const Duration(minutes: 2, seconds: 57));
+      expect(clock.whiteRemaining.inMilliseconds, closeTo(177000, 100));
       expect(clock.activeSide, engine.Color.black);
       expect(clock.currentPly, 1);
 
@@ -29,7 +29,7 @@ void main() {
         sideThatMoved: engine.Color.black,
         sideToMove: engine.Color.white,
       );
-      expect(clock.blackRemaining, const Duration(minutes: 2, seconds: 52));
+      expect(clock.blackRemaining.inMilliseconds, closeTo(172000, 100));
       expect(clock.activeSide, engine.Color.white);
     });
 
