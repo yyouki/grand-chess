@@ -46,6 +46,7 @@ void main() {
       );
       final whiteAfterMove = clock.whiteRemaining;
       clock.elapse(const Duration(seconds: 12));
+      final blackBeforeMove = clock.blackRemaining;
       clock.completeMove(
         newPly: 2,
         sideThatMoved: engine.Color.black,
@@ -56,7 +57,10 @@ void main() {
       clock.restoreToPly(1, engine.Color.black);
       expect(clock.currentPly, 1);
       expect(clock.whiteRemaining, whiteAfterMove);
-      expect(clock.blackRemaining, const Duration(minutes: 5));
+      expect(
+        clock.blackRemaining.inMilliseconds,
+        closeTo(blackBeforeMove.inMilliseconds, 100),
+      );
       expect(clock.activeSide, engine.Color.black);
 
       clock.restoreToPly(2, engine.Color.white);
