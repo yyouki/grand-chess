@@ -14,7 +14,7 @@ Grand Chess is a beginner-friendly, cross-platform chess application built with 
 
 ## 3. Current scope
 
-The current app includes a chess rules engine, an immersive landscape game screen on supported mobile devices, tap-to-select/tap-to-move controls, an offline heuristic bot, undo/redo, FEN/PGN export text, selectable visual finishes, animated moves, and a perspective 3D board. Dragging empty board space rotates and tilts the view; it never triggers a chess move.
+The current app includes a chess rules engine, an immersive landscape game screen on supported mobile devices, tap-to-select/tap-to-move controls, an offline heuristic bot, undo/redo, FEN/PGN export text, selectable visual finishes, animated moves, and a perspective 3D board. Dragging empty board space rotates and tilts the view; it never triggers a chess move. Camera presets provide classic, overhead, low-angle, and underside views.
 
 The separate 3D Arcade currently contains playable Cube Tic-Tac-Toe and Tower Builder. Chess rules covered by tests include legal move validation, check, checkmate, stalemate, castling, en passant, promotion, draw rules, and move notation. The renderer uses Flutter Canvas across supported Flutter targets.
 
@@ -23,7 +23,7 @@ The separate 3D Arcade currently contains playable Cube Tic-Tac-Toe and Tower Bu
 - As a player, I can start a new local game and enter optional player names.
 - As a player, I can see whose turn it is and which legal moves are available.
 - As a player, I tap a piece to select it, then tap a legal destination; dragging the board controls the camera.
-- As a player, I can rotate/tilt the 3D board, restore the default view, and choose board/piece finishes.
+- As a player, I can rotate/tilt the 3D board, choose classic, overhead, low-angle, or underside camera presets, restore the default view, and choose board/piece finishes.
 - As a player, I can undo/redo moves and copy the current FEN or move list as PGN text.
 - As a player, I can choose a standard time control, track both clocks, and lose on time when the active clock reaches zero.
 - As a player, I can play a local game against a lightweight offline bot or use the separate 3D Arcade.
@@ -57,7 +57,7 @@ A public release must meet all of these requirements:
 - Save and resume local games.
 - Export and import PGN games.
 - [x] Add selectable board and piece finishes.
-- Add camera presets and color-blind-friendly highlights.
+- [x] Add camera presets; add color-blind-friendly highlights.
 - Add sound, animation preferences, and keyboard/mouse accessibility checks.
 - Add localized app UI and language selection.
 
