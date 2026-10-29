@@ -14,6 +14,7 @@ Grand Chess is a cross-platform Flutter chess app with a Dart rules engine, a sc
 - Drag empty board space to rotate the camera through 360 degrees and tilt the view. Use the reset button to restore the default angle.
 - Flat uppercase A–H and 1–8 coordinates, animated piece movement, and selectable board and piece finishes.
 - Move history, flip board, undo/redo, pawn promotion, check/checkmate/stalemate, castling, en passant, and copy/export of FEN and PGN text.
+- Optional chess clocks: Unlimited, Bullet 1+0, Blitz 3+2 or 5+3, and Rapid 10+0 or 15+10. Increment is added after a move and a flag fall awards the opponent the game.
 - Chess uses immersive landscape mode on supported mobile devices. Desktop targets use a full-window chess layout without forcing the operating-system window into fullscreen.
 - A separate 3D Arcade with playable Cube Tic-Tac-Toe and Tower Builder.
 - Automated formatting, static analysis, tests, and platform build checks in GitHub Actions.
@@ -92,7 +93,7 @@ Keep chess rules independent from widgets. Put reusable display logic in `ui/wid
 
 ## Known limitations before a public 1.0 release
 
-The built-in bot is a lightweight offline opponent, not a Stockfish-strength engine. Online matchmaking, cloud accounts, persistent save/resume, clocks, sound effects, a full 3D model/PBR pipeline, and signed App Store packages are not yet included. iOS signing and store submission need credentials owned by the project maintainer.
+The built-in bot is a lightweight offline opponent, not a Stockfish-strength engine. Online matchmaking, cloud accounts, persistent save/resume, sound effects, a full 3D model/PBR pipeline, and signed App Store packages are not yet included. iOS signing and store submission need credentials owned by the project maintainer.
 
 The owner still needs to choose a source-code license before announcing a public release. CI builds pass, but visual checks on real Android/iOS devices and desktop computers are still needed.
 
