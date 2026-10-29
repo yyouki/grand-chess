@@ -170,9 +170,7 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                           key: const ValueKey('time-control-choice'),
                           initialValue: _timeControl,
                           isExpanded: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Clock',
-                          ),
+                          decoration: const InputDecoration(labelText: 'Clock'),
                           items: [
                             for (final control in ChessTimeControl.values)
                               DropdownMenuItem(

@@ -17,9 +17,7 @@ class HomeScreen extends StatelessWidget {
 
   void _openArcade(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (context) => const ThreeDArcadeScreen(),
-      ),
+      MaterialPageRoute<void>(builder: (context) => const ThreeDArcadeScreen()),
     );
   }
 
@@ -52,10 +50,7 @@ class HomeScreen extends StatelessWidget {
                               child: _buildIntro(context, wide: true),
                             ),
                             const SizedBox(width: 52),
-                            const Expanded(
-                              flex: 9,
-                              child: _BoardPreviewCard(),
-                            ),
+                            const Expanded(flex: 9, child: _BoardPreviewCard()),
                           ],
                         )
                       else ...[
@@ -124,10 +119,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 2),
               const Text(
                 'A small space for strategy',
-                style: TextStyle(
-                  color: AppTheme.mutedInk,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: AppTheme.mutedInk, fontSize: 11),
               ),
             ],
           ],
@@ -205,10 +197,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ),
-        if (wide) ...[
-          const SizedBox(height: 30),
-          _buildActions(context),
-        ],
+        if (wide) ...[const SizedBox(height: 30), _buildActions(context)],
       ],
     );
   }
@@ -233,9 +222,7 @@ class HomeScreen extends StatelessWidget {
           onPressed: () => _openArcade(context),
           icon: const Icon(Icons.view_in_ar, size: 19),
           label: const Text('Explore 3D arcade'),
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size(0, 54),
-          ),
+          style: OutlinedButton.styleFrom(minimumSize: const Size(0, 54)),
         ),
         const SizedBox(height: 10),
         const Text(
@@ -392,10 +379,7 @@ class _BoardPreviewCard extends StatelessWidget {
                     SizedBox(height: 4),
                     Text(
                       'A familiar game, seen differently.',
-                      style: TextStyle(
-                        color: AppTheme.mutedInk,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: AppTheme.mutedInk, fontSize: 12),
                     ),
                   ],
                 ),

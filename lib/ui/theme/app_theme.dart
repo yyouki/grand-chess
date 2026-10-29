@@ -16,18 +16,19 @@ class AppTheme {
   static const Color boardDark = Color(0xFF8B6449);
 
   static ThemeData light() {
-    final colors = ColorScheme.fromSeed(
-      seedColor: seed,
-      brightness: Brightness.light,
-    ).copyWith(
-      primary: seed,
-      onPrimary: Colors.white,
-      secondary: sage,
-      onSecondary: Colors.white,
-      surface: surface,
-      onSurface: ink,
-      outline: line,
-    );
+    final colors =
+        ColorScheme.fromSeed(
+          seedColor: seed,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: seed,
+          onPrimary: Colors.white,
+          secondary: sage,
+          onSecondary: Colors.white,
+          surface: surface,
+          onSurface: ink,
+          outline: line,
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -83,10 +84,7 @@ class AppTheme {
           side: const BorderSide(color: line),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           minimumSize: const Size(0, 52),
-          textStyle: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-          ),
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -114,11 +112,7 @@ class AppTheme {
           borderSide: const BorderSide(color: seed, width: 1.5),
         ),
       ),
-      dividerTheme: const DividerThemeData(
-        color: line,
-        thickness: 1,
-        space: 1,
-      ),
+      dividerTheme: const DividerThemeData(color: line, thickness: 1, space: 1),
     );
   }
 }
