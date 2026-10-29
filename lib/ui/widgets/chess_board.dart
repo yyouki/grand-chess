@@ -275,15 +275,19 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
         case 'overhead':
           _yaw = 0;
           _pitch = math.pi / 2;
+          break;
         case 'low':
           _yaw = -0.55;
           _pitch = 0.52;
+          break;
         case 'underside':
           _yaw = -0.55;
           _pitch = 2.55;
+          break;
         default:
           _yaw = -0.55;
           _pitch = 0.90;
+          break;
       }
     });
   }
