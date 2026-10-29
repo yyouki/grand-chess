@@ -25,6 +25,7 @@ Aplikasi saat ini mencakup mesin aturan catur, layar landscape imersif di perang
 - Saya memilih buah dengan mengetuknya, lalu mengetuk tujuan legal; drag papan mengendalikan kamera.
 - Saya bisa memutar/memiringkan papan 3D, mereset sudut pandang, dan memilih material papan/buah.
 - Saya bisa undo/redo langkah dan menyalin posisi sebagai FEN atau riwayat sebagai teks PGN.
+- Saya bisa memilih kontrol waktu standar, melihat kedua jam, dan kalah berdasarkan waktu ketika jam aktif mencapai nol.
 - Saya bisa bermain lokal melawan bot offline sederhana atau membuka 3D Arcade.
 - Saya bisa melihat riwayat, membalik orientasi papan, memilih promosi pion, dan melihat hasil pertandingan.
 - Sebagai developer, saya bisa menjalankan tes aturan dan build platform melalui GitHub Actions.
@@ -35,7 +36,7 @@ Rilis publik harus memenuhi semua syarat berikut:
 
 1. Format Dart, analisis statis, dan tes berhasil.
 2. Build release berhasil untuk Android, Windows, Linux, macOS, kompilasi iOS, dan web.
-3. Input papan, rotasi 3D, legalitas langkah, dialog, dan tata letak responsif diperiksa melalui tes otomatis.
+3. Input papan, rotasi 3D, legalitas langkah, dialog, increment jam, kehabisan waktu, dan tata letak responsif diperiksa melalui tes otomatis.
 4. Pengelola menguji tampilan dan input sentuh/mouse pada perangkat nyata.
 5. Pemilik proyek memilih lisensi source code dan memperbarui deskripsi repositori GitHub.
 6. Paket untuk toko aplikasi ditandatangani oleh pemilik; kompilasi iOS tanpa tanda tangan bukan berarti aplikasi siap diunggah ke App Store.
@@ -49,6 +50,7 @@ Rilis publik harus memenuhi semua syarat berikut:
 - [x] Menambahkan tes mesin dan UI.
 - [ ] Memeriksa renderer 3D melalui CI dan pengujian langsung pada perangkat.
 - [ ] Menyelesaikan metadata rilis, lisensi, dan aksesibilitas.
+- [x] Menambahkan preset jam dan penanganan kalah waktu.
 
 ### Versi 1.x — Kenyamanan bermain
 
@@ -62,7 +64,7 @@ Rilis publik harus memenuhi semua syarat berikut:
 ### Rilis berikutnya
 
 - Tingkatkan bot bawaan atau integrasikan Stockfish setelah evaluasi performa serta packaging lintas platform.
-- Tambahkan simpan/lanjut permainan, jam catur, pengaturan animasi, serta pipeline model/material 3D yang lebih lengkap.
+- Tambahkan simpan/lanjut permainan, pengaturan animasi, serta pipeline model/material 3D yang lebih lengkap.
 - Permainan online hanya setelah keamanan, akun, sinkronisasi, dan pencegahan kecurangan ditinjau.
 - Sinkronisasi cloud hanya dengan pilihan privasi yang jelas serta penanganan konflik yang andal.
 
