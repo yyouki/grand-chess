@@ -227,17 +227,22 @@ void main() {
 
       expect(pitch(), lessThan(math.pi / 2));
 
-      // Drag empty board space downward far enough to pass the horizon.
+      // Drag far enough to move the camera into the lower hemisphere, not
+      // merely past the screen-space horizon while still above the board.
       final gesture = await tester.startGesture(
         tester.getCenter(squareFinder('d4')),
       );
       await tester.pump();
-      await gesture.moveBy(const Offset(0, 160));
+      await gesture.moveBy(const Offset(0, 500));
       await tester.pump();
       await gesture.up();
       await tester.pumpAndSettle();
 
-      expect(pitch(), greaterThan(math.pi / 2));
+      final projection =
+          (tester.widget<CustomPaint>(scene).painter! as Chess3DScenePainter)
+              .projection;
+      expect(pitch(), greaterThan(math.pi));
+      expect(projection.depthOf(const Chess3DVector(0, 1, 0)), lessThan(0));
       expect(tester.takeException(), isNull);
     });
   });
