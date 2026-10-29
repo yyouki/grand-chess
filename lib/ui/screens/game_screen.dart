@@ -11,6 +11,7 @@ import '../../game/chess_bot.dart';
 import '../../game/chess_clock.dart';
 import '../../game/game_controller.dart';
 import '../../game/game_mode.dart';
+import '../theme/app_theme.dart';
 import '../theme/chess_visual_theme.dart';
 import '../widgets/chess_board.dart';
 import '../widgets/game_dialogs.dart';
@@ -431,13 +432,13 @@ class _GameScreenState extends State<GameScreen> {
             color: isFlagged
                 ? const Color(0xFF8B2C2C)
                 : isActive
-                ? const Color(0xFFE4C987)
-                : const Color(0xFF263544),
+                ? AppTheme.accentWash
+                : AppTheme.surface,
             borderRadius: BorderRadius.circular(9),
             border: Border.all(
               color: isActive
-                  ? const Color(0xFFFFE7A7)
-                  : const Color(0xFF405468),
+                  ? AppTheme.seed
+                  : AppTheme.line,
               width: isActive ? 2 : 1,
             ),
           ),
@@ -449,9 +450,7 @@ class _GameScreenState extends State<GameScreen> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: isActive
-                      ? const Color(0xFF25231D)
-                      : const Color(0xFFF3E8D4),
+                  color: isFlagged ? Colors.white : AppTheme.ink,
                   fontWeight: FontWeight.w700,
                   fontSize: compact ? 10 : 12,
                 ),
@@ -461,9 +460,7 @@ class _GameScreenState extends State<GameScreen> {
                 ChessClockController.format(remaining),
                 key: ValueKey('$key-time'),
                 style: TextStyle(
-                  color: isActive
-                      ? const Color(0xFF25231D)
-                      : const Color(0xFFF3E8D4),
+                  color: isFlagged ? Colors.white : AppTheme.ink,
                   fontFeatures: const [FontFeature.tabularFigures()],
                   fontWeight: FontWeight.w900,
                   fontFamily: 'monospace',
@@ -509,8 +506,9 @@ class _GameScreenState extends State<GameScreen> {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4EEE3),
-        borderRadius: BorderRadius.circular(12),
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.line),
       ),
       child: GameStatusBar(
         controller: _controller,
@@ -547,7 +545,7 @@ class _GameScreenState extends State<GameScreen> {
             padding: buttonPadding,
             visualDensity: buttonDensity,
             constraints: iconConstraints,
-            color: const Color(0xFFF3E8D4),
+            color: AppTheme.ink,
           ),
           IconButton(
             key: const ValueKey('undo-move'),
@@ -558,8 +556,8 @@ class _GameScreenState extends State<GameScreen> {
             padding: buttonPadding,
             visualDensity: buttonDensity,
             constraints: iconConstraints,
-            color: const Color(0xFFF3E8D4),
-            disabledColor: const Color(0xFF65717F),
+            color: AppTheme.ink,
+            disabledColor: AppTheme.mutedInk,
           ),
           IconButton(
             key: const ValueKey('redo-move'),
@@ -570,12 +568,12 @@ class _GameScreenState extends State<GameScreen> {
             padding: buttonPadding,
             visualDensity: buttonDensity,
             constraints: iconConstraints,
-            color: const Color(0xFFF3E8D4),
-            disabledColor: const Color(0xFF65717F),
+            color: AppTheme.ink,
+            disabledColor: AppTheme.mutedInk,
           ),
           PopupMenuButton<String>(
             tooltip: 'Export game',
-            icon: const Icon(Icons.ios_share, color: Color(0xFFF3E8D4)),
+            icon: const Icon(Icons.ios_share, color: AppTheme.ink),
             iconSize: compact ? 18 : 24,
             padding: buttonPadding,
             onSelected: (value) => _showExportDialog(asPgn: value == 'pgn'),
@@ -593,7 +591,7 @@ class _GameScreenState extends State<GameScreen> {
             padding: buttonPadding,
             visualDensity: buttonDensity,
             constraints: iconConstraints,
-            color: const Color(0xFFF3E8D4),
+            color: AppTheme.ink,
           ),
           IconButton(
             key: const ValueKey('new-game-button'),
@@ -604,7 +602,7 @@ class _GameScreenState extends State<GameScreen> {
             padding: buttonPadding,
             visualDensity: buttonDensity,
             constraints: iconConstraints,
-            color: const Color(0xFFF3E8D4),
+            color: AppTheme.ink,
           ),
         ],
       ),
@@ -769,14 +767,14 @@ class _GameScreenState extends State<GameScreen> {
             margin: const EdgeInsets.fromLTRB(0, 8, 8, 8),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFF1C2835),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFF34485B)),
+              color: AppTheme.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppTheme.line),
               boxShadow: const [
                 BoxShadow(
-                  color: Color(0x55000000),
-                  blurRadius: 16,
-                  offset: Offset(-4, 4),
+                  color: Color(0x10000000),
+                  blurRadius: 24,
+                  offset: Offset(0, 10),
                 ),
               ],
             ),
@@ -787,7 +785,7 @@ class _GameScreenState extends State<GameScreen> {
                   children: [
                     const Icon(
                       Icons.view_in_ar,
-                      color: Color(0xFFD8B77C),
+                      color: AppTheme.seed,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
@@ -798,7 +796,7 @@ class _GameScreenState extends State<GameScreen> {
                             : '3D CHESS · LOCAL',
                         key: const ValueKey('game-screen-title'),
                         style: const TextStyle(
-                          color: Color(0xFFF4E9D6),
+                          color: AppTheme.ink,
                           fontWeight: FontWeight.w900,
                           fontSize: 15,
                           letterSpacing: 1.1,
@@ -826,13 +824,13 @@ class _GameScreenState extends State<GameScreen> {
                         Icon(
                           Icons.psychology_alt,
                           size: 16,
-                          color: Color(0xFFD8B77C),
+                          color: AppTheme.seed,
                         ),
                         SizedBox(width: 8),
                         Text(
                           'Bot is thinking…',
                           style: TextStyle(
-                            color: Color(0xFFD8B77C),
+                            color: AppTheme.seed,
                             fontSize: 12,
                           ),
                         ),
@@ -848,7 +846,7 @@ class _GameScreenState extends State<GameScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Container(
-                      color: const Color(0xFFF4EEE3),
+                      color: AppTheme.paper,
                       padding: const EdgeInsets.all(4),
                       child: MoveHistoryPanel(controller: _controller),
                     ),
@@ -859,7 +857,7 @@ class _GameScreenState extends State<GameScreen> {
                   'TAP PIECE → TAP DESTINATION  ·  DRAG EMPTY BOARD TO ROTATE',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Color(0xFFACB8C5),
+                    color: AppTheme.mutedInk,
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                   ),
@@ -881,7 +879,7 @@ class _GameScreenState extends State<GameScreen> {
         ? '3D Chess · VS Bot'
         : '3D Chess · Local';
     return Scaffold(
-      backgroundColor: const Color(0xFF101821),
+      backgroundColor: AppTheme.paper,
       appBar: preferWide ? null : AppBar(title: Text(title)),
       body: SafeArea(
         child: LayoutBuilder(
