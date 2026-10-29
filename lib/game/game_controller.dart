@@ -95,8 +95,9 @@ class GameController extends ChangeNotifier {
   /// for the move-history UI without duplicating any chess-rule logic.
   void undoMove() {
     if (_undoStack.isEmpty) {
-      if (_resignationOutcome != null) {
+      if (_resignationOutcome != null || _timeForfeitOutcome != null) {
         _resignationOutcome = null;
+        _timeForfeitOutcome = null;
         notifyListeners();
       }
       return;
@@ -117,6 +118,7 @@ class GameController extends ChangeNotifier {
     _undoStack.add(_gameState);
     _setGameState(_redoStack.removeLast());
     _resignationOutcome = null;
+    _timeForfeitOutcome = null;
     _selectedSquare = null;
     _pendingPromotionMove = null;
     _errorMessage = null;
