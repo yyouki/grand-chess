@@ -74,7 +74,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ],
                       const SizedBox(height: 24),
-                      _buildFooter(wide),
+                      _buildFooter(wide, compact: constraints.maxWidth < 420),
                     ],
                   ),
                 ),
@@ -87,68 +87,88 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildBrandBar({required bool compact}) {
-    return Row(
-      children: [
-        Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: AppTheme.accentWash,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Icon(
-            Icons.casino_outlined,
-            color: AppTheme.seed,
-            size: 21,
-          ),
-        ),
-        const SizedBox(width: 11),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Reserve enough width for the brand and status chip on small screens.
+        final small = compact || constraints.maxWidth < 420;
+        return Row(
           children: [
-            const Text(
-              'GRAND CHESS',
-              style: TextStyle(
-                color: AppTheme.ink,
-                fontSize: 12,
-                letterSpacing: 2.0,
-                fontWeight: FontWeight.w800,
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: AppTheme.accentWash,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.casino_outlined,
+                color: AppTheme.seed,
+                size: 21,
               ),
             ),
-            if (!compact) ...[
-              const SizedBox(height: 2),
-              const Text(
-                'A small space for strategy',
-                style: TextStyle(color: AppTheme.mutedInk, fontSize: 11),
+            const SizedBox(width: 11),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'GRAND CHESS',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: AppTheme.ink,
+                      fontSize: 12,
+                      letterSpacing: 2.0,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  if (!small) ...[
+                    const SizedBox(height: 2),
+                    const Text(
+                      'A small space for strategy',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppTheme.mutedInk,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ],
               ),
-            ],
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: small ? 8 : 11,
+                vertical: 7,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(color: AppTheme.line),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.circle, size: 7, color: AppTheme.sage),
+                  SizedBox(width: small ? 5 : 7),
+                  Text(
+                    small ? 'OFFLINE' : 'OFFLINE PLAY',
+                    maxLines: 1,
+                    style: const TextStyle(
+                      color: AppTheme.mutedInk,
+                      fontSize: 9,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
-        ),
-        const Spacer(),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
-          decoration: BoxDecoration(
-            border: Border.all(color: AppTheme.line),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.circle, size: 7, color: AppTheme.sage),
-              const SizedBox(width: 7),
-              Text(
-                compact ? 'OFFLINE' : 'OFFLINE PLAY',
-                style: TextStyle(
-                  color: AppTheme.mutedInk,
-                  fontSize: 9,
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -234,7 +254,21 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter(bool wide) {
+  Widget _buildFooter(bool wide, {required bool compact}) {
+    if (compact) {
+      return const Center(
+        child: Text(
+          'MADE FOR THE LOVE OF THE GAME',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppTheme.mutedInk,
+            fontSize: 8,
+            letterSpacing: 0.8,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+    }
     return Row(
       mainAxisAlignment: wide
           ? MainAxisAlignment.start
@@ -289,30 +323,41 @@ class _BoardPreviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Row(
-            children: [
-              Text(
-                'THE BOARD',
-                style: TextStyle(
-                  color: AppTheme.mutedInk,
-                  fontSize: 10,
-                  letterSpacing: 1.7,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              Spacer(),
-              Icon(Icons.blur_on_rounded, size: 14, color: AppTheme.sage),
-              SizedBox(width: 5),
-              Text(
-                'PERSPECTIVE VIEW',
-                style: TextStyle(
-                  color: AppTheme.sage,
-                  fontSize: 9,
-                  letterSpacing: 0.8,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxWidth < 300;
+              return Row(
+                children: [
+                  const Text(
+                    'THE BOARD',
+                    style: TextStyle(
+                      color: AppTheme.mutedInk,
+                      fontSize: 10,
+                      letterSpacing: 1.7,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const Spacer(),
+                  const Icon(
+                    Icons.blur_on_rounded,
+                    size: 14,
+                    color: AppTheme.sage,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    compact ? '3D VIEW' : 'PERSPECTIVE VIEW',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppTheme.sage,
+                      fontSize: 9,
+                      letterSpacing: 0.8,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 16),
           AspectRatio(
