@@ -108,10 +108,10 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 11),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'GRAND CHESS',
               style: TextStyle(
                 color: AppTheme.ink,
@@ -121,8 +121,8 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             if (!compact) ...[
-              SizedBox(height: 2),
-              Text(
+              const SizedBox(height: 2),
+              const Text(
                 'A small space for strategy',
                 style: TextStyle(
                   color: AppTheme.mutedInk,
@@ -139,11 +139,11 @@ class HomeScreen extends StatelessWidget {
             border: Border.all(color: AppTheme.line),
             borderRadius: BorderRadius.circular(30),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.circle, size: 7, color: AppTheme.sage),
-              SizedBox(width: 7),
+              const Icon(Icons.circle, size: 7, color: AppTheme.sage),
+              const SizedBox(width: 7),
               Text(
                 compact ? 'OFFLINE' : 'OFFLINE PLAY',
                 style: TextStyle(
