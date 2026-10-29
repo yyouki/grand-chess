@@ -48,9 +48,7 @@ class HomeScreen extends StatelessWidget {
                       _buildActions(context),
                       const SizedBox(height: 18),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: wide ? 0 : 4,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: wide ? 0 : 4),
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 460),
                           child: Text(
