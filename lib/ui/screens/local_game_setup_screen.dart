@@ -63,7 +63,9 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
             border: Border(top: BorderSide(color: AppTheme.line)),
           ),
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
-          child: Center(
+          child: Align(
+            alignment: Alignment.center,
+            heightFactor: 1,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 560),
               child: Column(
