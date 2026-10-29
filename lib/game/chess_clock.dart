@@ -141,8 +141,9 @@ class ChessClockController extends ChangeNotifier {
   /// If a snapshot is not available, it preserves remaining time and aligns
   /// the active clock with the chess position.
   void restoreToPly(int ply, engine.Color sideToMove) {
+    final shouldResume = _isRunning || _flaggedSide != null;
     _pulse();
-    if (_flaggedSide != null) return;
+    _flaggedSide = null;
 
     final snapshot = _snapshots[ply];
     if (snapshot != null) {
@@ -153,8 +154,12 @@ class ChessClockController extends ChangeNotifier {
       _activeSide = sideToMove;
     }
     _currentPly = ply;
-    _lastTickAt = _isRunning ? DateTime.now() : null;
-    notifyListeners();
+    _lastTickAt = null;
+    if (shouldResume) {
+      start();
+    } else {
+      notifyListeners();
+    }
   }
 
   /// Allows deterministic clock tests and is also the accounting primitive
