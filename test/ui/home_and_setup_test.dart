@@ -27,7 +27,7 @@ void main() {
       await tester.pumpWidget(const GrandChessApp());
 
       expect(find.byType(HomeScreen), findsOneWidget);
-      expect(textOf(tester, 'home-title'), 'Grand Chess');
+      expect(textOf(tester, 'home-title'), 'A quieter way\nto play.');
       expect(keyed('home-tagline'), findsOneWidget);
       expect(keyed('new-local-game'), findsOneWidget);
       expect(find.text('Start a game'), findsOneWidget);
