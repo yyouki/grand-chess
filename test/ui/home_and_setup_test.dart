@@ -30,7 +30,8 @@ void main() {
       expect(textOf(tester, 'home-title'), 'Grand Chess');
       expect(keyed('home-tagline'), findsOneWidget);
       expect(keyed('new-local-game'), findsOneWidget);
-      expect(find.text('New Local Game'), findsOneWidget);
+      expect(find.text('Start a game'), findsOneWidget);
+      expect(find.text('THE BOARD'), findsOneWidget);
     });
 
     testWidgets('does not show the foundation placeholder', (tester) async {
