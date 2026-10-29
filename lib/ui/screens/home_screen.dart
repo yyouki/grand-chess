@@ -42,11 +42,32 @@ class HomeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _buildBrandBar(compact: compact),
-                      SizedBox(height: wide ? 64 : 38),
-                      _buildIntro(context, wide: false),
-                      const SizedBox(height: 24),
+                      SizedBox(height: wide ? 48 : 24),
+                      _buildIntro(wide: wide),
+                      const SizedBox(height: 18),
                       _buildActions(context),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 18),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: wide ? 0 : 4,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 460),
+                          child: Text(
+                            'Grand Chess brings the familiar game into a '
+                            'thoughtful 3D space. Play side by side, or take '
+                            'on the offline bot.',
+                            key: const ValueKey('home-tagline'),
+                            textAlign: wide ? TextAlign.left : TextAlign.center,
+                            style: const TextStyle(
+                              color: AppTheme.mutedInk,
+                              fontSize: 14,
+                              height: 1.65,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 26),
                       const _BoardPreviewCard(),
                       const SizedBox(height: 24),
                       _buildFooter(wide, compact: compact),
@@ -144,7 +165,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIntro(BuildContext context, {required bool wide}) {
+  Widget _buildIntro({required bool wide}) {
     return Column(
       crossAxisAlignment: wide
           ? CrossAxisAlignment.start
@@ -152,15 +173,15 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           'YOUR NEXT MOVE STARTS HERE',
-          style: TextStyle(
+          textAlign: wide ? TextAlign.left : TextAlign.center,
+          style: const TextStyle(
             color: AppTheme.seed,
             fontSize: 10,
             letterSpacing: 1.8,
             fontWeight: FontWeight.w800,
           ),
-          textAlign: wide ? TextAlign.left : TextAlign.center,
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
         Text(
           'A quieter way\nto play.',
           key: const ValueKey('home-title'),
@@ -168,28 +189,12 @@ class HomeScreen extends StatelessWidget {
           style: TextStyle(
             color: AppTheme.ink,
             fontFamily: 'serif',
-            fontSize: wide ? 64 : 47,
-            height: 0.99,
+            fontSize: wide ? 58 : 44,
+            height: 1.0,
             fontWeight: FontWeight.w500,
-            letterSpacing: wide ? -2.3 : -1.5,
+            letterSpacing: wide ? -2.0 : -1.4,
           ),
         ),
-        const SizedBox(height: 18),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 390),
-          child: Text(
-            'Grand Chess brings the familiar game into a thoughtful 3D space. '
-            'Play side by side, or take on the offline bot.',
-            key: const ValueKey('home-tagline'),
-            textAlign: wide ? TextAlign.left : TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.mutedInk,
-              fontSize: 15,
-              height: 1.7,
-            ),
-          ),
-        ),
-        if (wide) ...[const SizedBox(height: 30), _buildActions(context)],
       ],
     );
   }
