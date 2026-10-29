@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildBrandBar(),
+                      _buildBrandBar(compact: constraints.maxWidth < 380),
                       SizedBox(height: wide ? 70 : 38),
                       if (wide)
                         Row(
@@ -91,7 +91,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBrandBar() {
+  Widget _buildBrandBar({required bool compact}) {
     return Row(
       children: [
         Container(
@@ -120,14 +120,16 @@ class HomeScreen extends StatelessWidget {
                 fontWeight: FontWeight.w800,
               ),
             ),
-            SizedBox(height: 2),
-            Text(
-              'A small space for strategy',
-              style: TextStyle(
-                color: AppTheme.mutedInk,
-                fontSize: 11,
+            if (!compact) ...[
+              SizedBox(height: 2),
+              Text(
+                'A small space for strategy',
+                style: TextStyle(
+                  color: AppTheme.mutedInk,
+                  fontSize: 11,
+                ),
               ),
-            ),
+            ],
           ],
         ),
         const Spacer(),
@@ -143,7 +145,7 @@ class HomeScreen extends StatelessWidget {
               Icon(Icons.circle, size: 7, color: AppTheme.sage),
               SizedBox(width: 7),
               Text(
-                'OFFLINE PLAY',
+                compact ? 'OFFLINE' : 'OFFLINE PLAY',
                 style: TextStyle(
                   color: AppTheme.mutedInk,
                   fontSize: 9,
@@ -229,7 +231,7 @@ class HomeScreen extends StatelessWidget {
         OutlinedButton.icon(
           key: const ValueKey('open-3d-arcade'),
           onPressed: () => _openArcade(context),
-          icon: const Icon(Icons.view_in_ar_outlined, size: 19),
+          icon: const Icon(Icons.view_in_ar, size: 19),
           label: const Text('Explore 3D arcade'),
           style: OutlinedButton.styleFrom(
             minimumSize: const Size(0, 54),
