@@ -656,22 +656,25 @@ class ChessBoardProjection {
   Offset project(Chess3DVector point) {
     final cosineYaw = math.cos(yaw);
     final sineYaw = math.sin(yaw);
+    // Pitch is measured from the board's horizon: 0 and pi are edge-on,
+    // pi/2 is the overhead view. Crossing pi/2 must reverse the camera's
+    // vertical side; otherwise the camera keeps looking at the top face.
     final cosinePitch = math.cos(pitch);
     final sinePitch = math.sin(pitch);
     final rotatedX = point.x * cosineYaw - point.z * sineYaw;
     final rotatedZ = point.x * sineYaw + point.z * cosineYaw;
-    final depth = rotatedZ * cosinePitch + point.y * sinePitch;
+    final depth = rotatedZ * sinePitch + point.y * cosinePitch;
     final perspective = 40 / (40 - depth);
     return Offset(
       size.width / 2 + rotatedX * perspective * _scale,
       size.height * 0.52 -
-          (point.y * cosinePitch - rotatedZ * sinePitch) * perspective * _scale,
+          (point.y * sinePitch - rotatedZ * cosinePitch) * perspective * _scale,
     );
   }
 
   double depthOf(Chess3DVector point) {
     final rotatedZ = point.x * math.sin(yaw) + point.z * math.cos(yaw);
-    return rotatedZ * math.cos(pitch) + point.y * math.sin(pitch);
+    return rotatedZ * math.sin(pitch) + point.y * math.cos(pitch);
   }
 
   Square squareAtVisualPosition(int column, int row) {
