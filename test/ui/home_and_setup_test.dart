@@ -58,6 +58,28 @@ void main() {
       expect(markerSquares('piece-'), hasLength(32));
     });
 
+    testWidgets('lets players choose a clock preset before starting', (
+      tester,
+    ) async {
+      await openSetup(tester);
+      expect(keyed('time-control-choice'), findsOneWidget);
+
+      await tester.tap(keyed('time-control-choice'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('3 + 2 · Blitz').last);
+      await tester.pumpAndSettle();
+
+      await tester.tap(keyed('start-game'));
+      await tester.pump();
+
+      expect(find.byType(GameScreen), findsOneWidget);
+      expect(keyed('clock-white-time'), findsOneWidget);
+      expect(keyed('clock-black-time'), findsOneWidget);
+      expect(find.text('03:00'), findsNWidgets(2));
+
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
     testWidgets('starts a game against the built-in offline bot', (
       tester,
     ) async {
