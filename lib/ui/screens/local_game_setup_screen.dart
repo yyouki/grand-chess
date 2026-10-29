@@ -72,10 +72,7 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                   const Text(
                     'Your settings stay on this device.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppTheme.mutedInk,
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: AppTheme.mutedInk, fontSize: 11),
                   ),
                   const SizedBox(height: 8),
                   FilledButton(
