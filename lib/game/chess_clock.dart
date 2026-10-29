@@ -147,7 +147,6 @@ class ChessClockController extends ChangeNotifier {
     _pulse();
     _flaggedSide = null;
 
-    
     if (snapshot != null) {
       _whiteRemaining = snapshot.white;
       _blackRemaining = snapshot.black;
@@ -196,7 +195,9 @@ class ChessClockController extends ChangeNotifier {
 
     final before = _displaySeconds(remainingFor(_activeSide));
     final current = remainingFor(_activeSide);
-    final nextMs = math.max(0, current.inMilliseconds - elapsed.inMilliseconds).toInt();
+    final nextMs = math
+        .max(0, current.inMilliseconds - elapsed.inMilliseconds)
+        .toInt();
     final next = Duration(milliseconds: nextMs);
     if (_activeSide == engine.Color.white) {
       _whiteRemaining = next;

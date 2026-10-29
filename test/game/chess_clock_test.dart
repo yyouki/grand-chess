@@ -5,9 +5,7 @@ import 'package:grand_chess/game/chess_clock.dart';
 void main() {
   group('ChessClockController', () {
     test('counts down the active side and adds increment after a move', () {
-      final clock = ChessClockController(
-        timeControl: ChessTimeControl.blitz3,
-      );
+      final clock = ChessClockController(timeControl: ChessTimeControl.blitz3);
       addTearDown(clock.dispose);
 
       clock.start();
@@ -36,9 +34,7 @@ void main() {
     });
 
     test('undo and redo restore the same saved times', () {
-      final clock = ChessClockController(
-        timeControl: ChessTimeControl.blitz5,
-      );
+      final clock = ChessClockController(timeControl: ChessTimeControl.blitz5);
       addTearDown(clock.dispose);
       clock.start();
 
@@ -70,9 +66,7 @@ void main() {
     });
 
     test('flags the active player at zero', () {
-      final clock = ChessClockController(
-        timeControl: ChessTimeControl.bullet1,
-      );
+      final clock = ChessClockController(timeControl: ChessTimeControl.bullet1);
       addTearDown(clock.dispose);
       clock.start();
 
@@ -84,9 +78,7 @@ void main() {
     });
 
     test('untimed mode does not start a running clock', () {
-      final clock = ChessClockController(
-        timeControl: ChessTimeControl.untimed,
-      );
+      final clock = ChessClockController(timeControl: ChessTimeControl.untimed);
       addTearDown(clock.dispose);
 
       clock.start();
@@ -99,10 +91,7 @@ void main() {
     });
 
     test('formats minutes and hours consistently', () {
-      expect(
-        ChessClockController.format(const Duration(minutes: 3)),
-        '03:00',
-      );
+      expect(ChessClockController.format(const Duration(minutes: 3)), '03:00');
       expect(
         ChessClockController.format(const Duration(minutes: 9, seconds: 7)),
         '09:07',

@@ -109,10 +109,7 @@ class _GameScreenState extends State<GameScreen> {
     if (_clockResetting) {
       _lastClockPly = ply;
     } else if (_clockNavigation) {
-      _clock.restoreToPly(
-        ply,
-        _controller.gameState.position.sideToMove,
-      );
+      _clock.restoreToPly(ply, _controller.gameState.position.sideToMove);
       _lastClockPly = ply;
     } else if (ply > _lastClockPly) {
       final record = _controller.gameState.moveHistory.last;
@@ -123,10 +120,7 @@ class _GameScreenState extends State<GameScreen> {
         sideToMove: _controller.gameState.position.sideToMove,
       );
     } else if (ply < _lastClockPly) {
-      _clock.restoreToPly(
-        ply,
-        _controller.gameState.position.sideToMove,
-      );
+      _clock.restoreToPly(ply, _controller.gameState.position.sideToMove);
       _lastClockPly = ply;
     }
 
@@ -420,7 +414,8 @@ class _GameScreenState extends State<GameScreen> {
       required String name,
       required engine.Color side,
     }) {
-      final isActive = _clock.isRunning &&
+      final isActive =
+          _clock.isRunning &&
           _clock.flaggedSide == null &&
           _clock.activeSide == side;
       final isFlagged = _clock.flaggedSide == side;
@@ -495,9 +490,17 @@ class _GameScreenState extends State<GameScreen> {
       padding: EdgeInsets.only(top: compact ? 4 : 8, bottom: compact ? 4 : 8),
       child: Row(
         children: [
-          tile(key: 'clock-white', name: widget.whiteName, side: engine.Color.white),
+          tile(
+            key: 'clock-white',
+            name: widget.whiteName,
+            side: engine.Color.white,
+          ),
           const SizedBox(width: 8),
-          tile(key: 'clock-black', name: widget.blackName, side: engine.Color.black),
+          tile(
+            key: 'clock-black',
+            name: widget.blackName,
+            side: engine.Color.black,
+          ),
         ],
       ),
     );
