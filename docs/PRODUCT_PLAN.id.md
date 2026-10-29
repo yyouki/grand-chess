@@ -14,7 +14,7 @@ Grand Chess adalah aplikasi catur multiplatform yang dibangun dengan Flutter dan
 
 ## 3. Lingkup saat ini
 
-Aplikasi saat ini mencakup mesin aturan catur, layar landscape imersif di perangkat seluler yang mendukungnya, kontrol ketuk-buah-lalu-tujuan, bot offline sederhana, undo/redo, teks ekspor FEN/PGN, pilihan material visual, animasi langkah, dan papan perspektif 3D. Geser area kosong papan hanya menggerakkan kamera, tidak menjalankan langkah catur.
+Aplikasi saat ini mencakup mesin aturan catur, layar landscape imersif di perangkat seluler yang mendukungnya, kontrol ketuk-buah-lalu-tujuan, bot offline sederhana, undo/redo, teks ekspor FEN/PGN, pilihan material visual, animasi langkah, dan papan perspektif 3D. Geser area kosong papan hanya menggerakkan kamera, tidak menjalankan langkah catur. Preset kamera menyediakan sudut klasik, dari atas, sudut rendah, dan dari bawah papan.
 
 3D Arcade terpisah saat ini memiliki Cube Tic-Tac-Toe dan Tower Builder yang dapat dimainkan. Tes catur mencakup legalitas langkah, skak, skakmat, remis, rokade, en passant, promosi, aturan remis, dan notasi. Renderer memakai Flutter Canvas di target Flutter yang didukung.
 
@@ -23,7 +23,7 @@ Aplikasi saat ini mencakup mesin aturan catur, layar landscape imersif di perang
 - Sebagai pemain, saya bisa memulai permainan lokal baru dan mengisi nama pemain bila perlu.
 - Saya bisa melihat giliran dan tujuan langkah legal.
 - Saya memilih buah dengan mengetuknya, lalu mengetuk tujuan legal; drag papan mengendalikan kamera.
-- Saya bisa memutar/memiringkan papan 3D, mereset sudut pandang, dan memilih material papan/buah.
+- Saya bisa memutar/memiringkan papan 3D, memilih preset kamera klasik, dari atas, sudut rendah, atau dari bawah papan, mereset sudut pandang, dan memilih material papan/buah.
 - Saya bisa undo/redo langkah dan menyalin posisi sebagai FEN atau riwayat sebagai teks PGN.
 - Saya bisa memilih kontrol waktu standar, melihat kedua jam, dan kalah berdasarkan waktu ketika jam aktif mencapai nol.
 - Saya bisa bermain lokal melawan bot offline sederhana atau membuka 3D Arcade.
@@ -57,7 +57,7 @@ Rilis publik harus memenuhi semua syarat berikut:
 - Menyimpan dan melanjutkan permainan lokal.
 - Mengekspor dan mengimpor permainan PGN.
 - [x] Menambahkan pilihan tampilan/material papan dan buah catur.
-- Menambahkan preset kamera dan highlight yang ramah buta warna.
+- [x] Menambahkan preset kamera; menambahkan highlight yang ramah buta warna.
 - Menambahkan suara, pengaturan animasi, dan pemeriksaan aksesibilitas keyboard/mouse.
 - Menambahkan UI aplikasi yang diterjemahkan dan pilihan bahasa.
 
