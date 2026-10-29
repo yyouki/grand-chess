@@ -222,7 +222,10 @@ class _ChessBoardState extends State<ChessBoard> with TickerProviderStateMixin {
     }
     setState(() {
       _yaw = (_yaw + delta.dx * 0.012) % (math.pi * 2);
-      _pitch = (_pitch + delta.dy * 0.005).clamp(0.35, 1.20).toDouble();
+      // Let the camera pass the horizon so players can inspect the board underside.
+      _pitch = (_pitch + delta.dy * 0.005)
+          .clamp(0.35, math.pi - 0.35)
+          .toDouble();
     });
   }
 
