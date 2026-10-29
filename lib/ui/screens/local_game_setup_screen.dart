@@ -55,6 +55,47 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('New game')),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          decoration: const BoxDecoration(
+            color: AppTheme.paper,
+            border: Border(top: BorderSide(color: AppTheme.line)),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 14),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Your settings stay on this device.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppTheme.mutedInk,
+                      fontSize: 11,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FilledButton(
+                    key: const ValueKey('start-game'),
+                    onPressed: _startGame,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Start game'),
+                        SizedBox(width: 9),
+                        Icon(Icons.arrow_forward_rounded, size: 18),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -213,28 +254,7 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                             ),
                           ),
                         ],
-                        const SizedBox(height: 24),
-                        FilledButton(
-                          key: const ValueKey('start-game'),
-                          onPressed: _startGame,
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Start game'),
-                              SizedBox(width: 9),
-                              Icon(Icons.arrow_forward_rounded, size: 18),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Your settings stay on this device.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppTheme.mutedInk,
-                            fontSize: 11,
-                          ),
-                        ),
+                        const SizedBox(height: 6),
                       ],
                     ),
                   ),
