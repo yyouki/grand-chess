@@ -14,6 +14,7 @@ Menurut [daftar platform resmi Flutter](https://docs.flutter.dev/reference/suppo
 - Geser area kosong papan untuk memutar kamera hingga 360 derajat dan mengubah kemiringan. Gunakan tombol reset untuk kembali ke sudut awal.
 - Koordinat A–H dan 1–8 yang datar dan tegak, animasi langkah, serta pilihan material papan dan buah.
 - Riwayat langkah, membalik papan, undo/redo, promosi pion, skak/skakmat/remis, rokade, en passant, serta salin/ekspor teks FEN dan PGN.
+- Jam catur opsional: Unlimited, Bullet 1+0, Blitz 3+2 atau 5+3, dan Rapid 10+0 atau 15+10. Bonus waktu ditambahkan setelah langkah; pemain yang waktunya habis kalah pada jam.
 - Catur memakai mode landscape imersif di perangkat seluler yang mendukungnya. Di desktop, layar permainan memakai tata letak lebar tetapi tidak memaksa ukuran jendela OS menjadi fullscreen.
 - 3D Arcade terpisah dengan Cube Tic-Tac-Toe dan Tower Builder yang bisa dimainkan.
 - Pemeriksaan format kode, analisis statis, tes, dan build platform melalui GitHub Actions.
@@ -92,7 +93,7 @@ Pisahkan aturan catur dari widget UI. Letakkan logika tampilan yang dapat dipaka
 
 ## Batasan sebelum rilis publik 1.0
 
-Bot bawaan adalah lawan offline sederhana, bukan mesin setara Stockfish. Matchmaking online, akun cloud, simpan/lanjut permainan secara permanen, jam catur, efek suara, pipeline model 3D/PBR lengkap, serta paket App Store yang sudah ditandatangani belum tersedia. Penandatanganan iOS dan pengiriman ke toko aplikasi membutuhkan kredensial milik pengelola proyek.
+Bot bawaan adalah lawan offline sederhana, bukan mesin setara Stockfish. Matchmaking online, akun cloud, simpan/lanjut permainan secara permanen, efek suara, pipeline model 3D/PBR lengkap, serta paket App Store yang sudah ditandatangani belum tersedia. Penandatanganan iOS dan pengiriman ke toko aplikasi membutuhkan kredensial milik pengelola proyek.
 
 Pemilik masih perlu menentukan lisensi source code sebelum mengumumkan rilis publik. Build CI sudah berhasil, tetapi pemeriksaan visual pada perangkat Android/iOS serta komputer desktop tetap diperlukan.
 

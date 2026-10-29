@@ -25,6 +25,7 @@ The separate 3D Arcade currently contains playable Cube Tic-Tac-Toe and Tower Bu
 - As a player, I tap a piece to select it, then tap a legal destination; dragging the board controls the camera.
 - As a player, I can rotate/tilt the 3D board, restore the default view, and choose board/piece finishes.
 - As a player, I can undo/redo moves and copy the current FEN or move list as PGN text.
+- As a player, I can choose a standard time control, track both clocks, and lose on time when the active clock reaches zero.
 - As a player, I can play a local game against a lightweight offline bot or use the separate 3D Arcade.
 - As a player, I can review the move list, flip the board, promote a pawn, and see the game result.
 - As a developer, I can run the same rule tests and platform build checks in GitHub Actions.
@@ -35,7 +36,7 @@ A public release must meet all of these requirements:
 
 1. Dart formatting, static analysis, and tests pass.
 2. Release builds succeed for Android, Windows, Linux, macOS, iOS compilation, and web.
-3. Board input, 3D rotation, move legality, dialogs, and responsive layouts are checked through automated tests.
+3. Board input, 3D rotation, move legality, dialogs, clock increments and flag fall, and responsive layouts are checked through automated tests.
 4. The maintainer tests visuals and touch/mouse input on real devices.
 5. The project owner chooses the source-code license and updates the GitHub repository description.
 6. Store-bound packages are signed by the owner; a successful unsigned iOS compile is not an App Store release.
@@ -49,6 +50,7 @@ A public release must meet all of these requirements:
 - [x] Add automated engine and UI tests.
 - [ ] Verify the 3D renderer through CI and hands-on device testing.
 - [ ] Complete release metadata, licensing, and accessibility review.
+- [x] Add configurable clock presets and time-forfeit handling.
 
 ### Version 1.x — Quality of life
 
@@ -62,7 +64,7 @@ A public release must meet all of these requirements:
 ### Later releases
 
 - Improve the built-in bot or integrate Stockfish after cross-platform engine performance and packaging are evaluated.
-- Add save/resume, clocks, animation settings and a fuller 3D model/material pipeline.
+- Add save/resume, animation settings and a fuller 3D model/material pipeline.
 - Online play only after security, account, synchronization, and anti-cheat design are reviewed.
 - Cloud sync only with clear privacy choices and reliable conflict handling.
 

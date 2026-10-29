@@ -12,6 +12,7 @@ enum GameEndReason {
   threefoldRepetition,
   insufficientMaterial,
   resignation,
+  timeForfeit,
 }
 
 /// How a game session ended: the result and why. Built either from the
@@ -48,6 +49,16 @@ class GameOutcome {
     );
   }
 
+  /// [flaggedSide] ran out of time, so the opponent wins on time.
+  factory GameOutcome.timeForfeit(engine.Color flaggedSide) {
+    return GameOutcome(
+      flaggedSide == engine.Color.white
+          ? GameResult.blackWins
+          : GameResult.whiteWins,
+      GameEndReason.timeForfeit,
+    );
+  }
+
   final GameResult result;
   final GameEndReason reason;
 
@@ -66,5 +77,9 @@ class GameOutcome {
     GameEndReason.insufficientMaterial => 'Insufficient material',
     GameEndReason.resignation =>
       result == GameResult.whiteWins ? 'Black resigned' : 'White resigned',
+    GameEndReason.timeForfeit =>
+      result == GameResult.whiteWins
+          ? 'Black ran out of time'
+          : 'White ran out of time',
   };
 }

@@ -16,3 +16,4 @@ Perubahan penting dicatat di sini dengan bahasa sederhana. Catatan tetap berada 
 - Menambahkan koordinat datar huruf besar, pilihan material papan/buah, dan animasi langkah.
 - Menambahkan bot offline berbasis langkah legal, undo/redo, serta salin/ekspor teks FEN dan PGN.
 - Menambahkan 3D Arcade yang dapat dimainkan: Cube Tic-Tac-Toe dan Tower Builder.
+- Menambahkan jam catur dengan preset bullet/blitz/rapid, increment, snapshot waktu untuk undo/redo, dan hasil kalah waktu.

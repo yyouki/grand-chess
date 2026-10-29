@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../game/chess_bot.dart';
+import '../../game/chess_clock.dart';
 import '../../game/game_mode.dart';
 import 'game_screen.dart';
 
@@ -17,6 +18,7 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
 
   GameMode _mode = GameMode.localTwoPlayer;
   BotLevel _botLevel = BotLevel.easy;
+  ChessTimeControl _timeControl = ChessTimeControl.untimed;
 
   @override
   void dispose() {
@@ -42,6 +44,7 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
           blackName: blackName,
           mode: _mode,
           botLevel: _botLevel,
+          timeControl: _timeControl,
         ),
       ),
     );
@@ -111,6 +114,28 @@ class _LocalGameSetupScreenState extends State<LocalGameSetupScreen> {
                       },
                     ),
                   ],
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<ChessTimeControl>(
+                    key: const ValueKey('time-control-choice'),
+                    initialValue: _timeControl,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Time control',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: [
+                      for (final control in ChessTimeControl.values)
+                        DropdownMenuItem(
+                          value: control,
+                          child: Text(control.label),
+                        ),
+                    ],
+                    onChanged: (control) {
+                      if (control != null) {
+                        setState(() => _timeControl = control);
+                      }
+                    },
+                  ),
                   const SizedBox(height: 16),
                   TextField(
                     key: const ValueKey('white-name-field'),

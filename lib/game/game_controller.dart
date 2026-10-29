@@ -40,6 +40,7 @@ class GameController extends ChangeNotifier {
   Square? _selectedSquare;
   Move? _pendingPromotionMove;
   GameOutcome? _resignationOutcome;
+  GameOutcome? _timeForfeitOutcome;
   String? _errorMessage;
   engine.Color _orientation = engine.Color.white;
 
@@ -55,6 +56,8 @@ class GameController extends ChangeNotifier {
 
   /// Why the game ended and who won, or null while it is still in progress.
   GameOutcome? get outcome {
+    final timeForfeit = _timeForfeitOutcome;
+    if (timeForfeit != null) return timeForfeit;
     final resigned = _resignationOutcome;
     if (resigned != null) return resigned;
     if (!_gameState.status.isGameOver) return null;
@@ -75,7 +78,10 @@ class GameController extends ChangeNotifier {
         .toList(growable: false);
   }
 
-  bool get canUndo => _undoStack.isNotEmpty || _resignationOutcome != null;
+  bool get canUndo =>
+      _undoStack.isNotEmpty ||
+      _resignationOutcome != null ||
+      _timeForfeitOutcome != null;
   bool get canRedo => _redoStack.isNotEmpty;
 
   /// Plays a move supplied by a bot, replay tool, or other trusted UI client.
@@ -89,8 +95,9 @@ class GameController extends ChangeNotifier {
   /// for the move-history UI without duplicating any chess-rule logic.
   void undoMove() {
     if (_undoStack.isEmpty) {
-      if (_resignationOutcome != null) {
+      if (_resignationOutcome != null || _timeForfeitOutcome != null) {
         _resignationOutcome = null;
+        _timeForfeitOutcome = null;
         notifyListeners();
       }
       return;
@@ -98,6 +105,7 @@ class GameController extends ChangeNotifier {
     _redoStack.add(_gameState);
     _setGameState(_undoStack.removeLast());
     _resignationOutcome = null;
+    _timeForfeitOutcome = null;
     _selectedSquare = null;
     _pendingPromotionMove = null;
     _errorMessage = null;
@@ -110,6 +118,7 @@ class GameController extends ChangeNotifier {
     _undoStack.add(_gameState);
     _setGameState(_redoStack.removeLast());
     _resignationOutcome = null;
+    _timeForfeitOutcome = null;
     _selectedSquare = null;
     _pendingPromotionMove = null;
     _errorMessage = null;
@@ -175,6 +184,16 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Records that [side] has run out of time. Chess rules still come from the
+  /// engine; the time control belongs to the application/session layer.
+  void flagFell(engine.Color side) {
+    if (isGameOver) return;
+    _timeForfeitOutcome = GameOutcome.timeForfeit(side);
+    _selectedSquare = null;
+    _pendingPromotionMove = null;
+    notifyListeners();
+  }
+
   void newGame() {
     _undoStack.clear();
     _redoStack.clear();
@@ -182,6 +201,7 @@ class GameController extends ChangeNotifier {
     _selectedSquare = null;
     _pendingPromotionMove = null;
     _resignationOutcome = null;
+    _timeForfeitOutcome = null;
     _errorMessage = null;
     notifyListeners();
   }
