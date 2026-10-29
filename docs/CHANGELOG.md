@@ -16,3 +16,4 @@ Important changes are listed here in plain language. Items stay under **Unreleas
 - Add flat uppercase coordinates, selectable board/piece finishes, and animated movement.
 - Add an offline legal-move bot, undo/redo, and copy/export of FEN and PGN text.
 - Add a playable 3D Arcade with Cube Tic-Tac-Toe and Tower Builder.
+- Add configurable chess clocks with standard bullet/blitz/rapid presets, increment support, takeback/redo clock snapshots, and time-forfeit results.
