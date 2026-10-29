@@ -46,16 +46,23 @@ class Chess3DScenePainter extends CustomPainter {
 
     final baseFaces = <_Face>[];
     _addBoardFrame(baseFaces);
-    _addBoardTiles(baseFaces);
+    final viewingUnderside = projection.pitch > math.pi / 2;
+    if (viewingUnderside) {
+      _addBoardUnderside(baseFaces);
+    } else {
+      _addBoardTiles(baseFaces);
+    }
     _drawFaces(canvas, baseFaces);
 
-    _drawPieceShadows(canvas, size);
-    final pieceFaces = <_Face>[];
-    _addPieces(pieceFaces);
-    _drawFaces(canvas, pieceFaces);
+    if (!viewingUnderside) {
+      _drawPieceShadows(canvas, size);
+      final pieceFaces = <_Face>[];
+      _addPieces(pieceFaces);
+      _drawFaces(canvas, pieceFaces);
 
-    _drawMarkers(canvas, size);
-    _drawCursor(canvas);
+      _drawMarkers(canvas, size);
+      _drawCursor(canvas);
+    }
     _drawOuterRim(canvas);
   }
 
@@ -106,6 +113,21 @@ class Chess3DScenePainter extends CustomPainter {
       const Chess3DVector(lip, -0.02, lip),
       const Chess3DVector(-lip, -0.02, lip),
     ], boardFinish.frameTop);
+  }
+
+  void _addBoardUnderside(List<_Face> faces) {
+    // The board is a solid wooden object. Once the camera passes below the
+    // horizon, show its plain underside and hide the pieces mounted on top.
+    _addFace(
+      faces,
+      const [
+        Chess3DVector(-4.28, -0.34, -4.28),
+        Chess3DVector(4.28, -0.34, -4.28),
+        Chess3DVector(4.28, -0.34, 4.28),
+        Chess3DVector(-4.28, -0.34, 4.28),
+      ],
+      boardFinish.frameFar,
+    );
   }
 
   void _addBoardTiles(List<_Face> faces) {
