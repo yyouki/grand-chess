@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -211,5 +213,32 @@ void main() {
         expect(tester.takeException(), isNull);
       },
     );
+
+    testWidgets('can tilt below the board plane to inspect its underside', (
+      tester,
+    ) async {
+      await pumpBoard(tester);
+      final scene = find.byKey(const ValueKey('chess-board-3d-scene'));
+
+      double pitch() {
+        final painter = tester.widget<CustomPaint>(scene).painter!;
+        return (painter as Chess3DScenePainter).projection.pitch;
+      }
+
+      expect(pitch(), lessThan(math.pi / 2));
+
+      // Drag empty board space downward far enough to pass the horizon.
+      final gesture = await tester.startGesture(
+        tester.getCenter(squareFinder('d4')),
+      );
+      await tester.pump();
+      await gesture.moveBy(const Offset(0, 160));
+      await tester.pump();
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(pitch(), greaterThan(math.pi / 2));
+      expect(tester.takeException(), isNull);
+    });
   });
 }
